@@ -1,7 +1,6 @@
 package ace.charitan.project.controller;
 
-import ace.charitan.project.dto.TestKafkaRequestDto;
-import ace.charitan.project.service.ProjectService;
+import ace.charitan.project.service.ProjectServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,18 +8,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ProjectController {
+class ProjectController {
 
     @Autowired
-    private ProjectService service;
+    private ProjectServiceImpl service;
 
     @GetMapping("/health")
-    public String checkHealth() {
+    String checkHealth() {
         return "Project service is oki";
     }
 
-    @PostMapping("/test-kafka")
-    public void testKafka(@RequestBody TestKafkaRequestDto dto) {
-        service.testKafka(dto.getMessage());
-    }
+//    @PostMapping("/test-kafka")
+//    void testKafka(@RequestBody TestKafkaRequestDto dto) {
+//        service.testKafka(dto.getMessage());
+//    }
 }
