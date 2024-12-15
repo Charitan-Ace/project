@@ -1,4 +1,4 @@
-package ace.charitan.project.entity;
+package ace.charitan.project.service;
 
 import ace.charitan.project.internal.dto.InternalProjectDto;
 
