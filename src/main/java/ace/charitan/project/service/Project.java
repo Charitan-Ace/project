@@ -7,6 +7,7 @@ import lombok.Setter;
 
 
 import ace.charitan.project.internal.InternalProjectDto;
+import ace.charitan.project.utils.AbstractEntity;
 import jakarta.persistence.Entity;
 
 @Entity
@@ -14,7 +15,7 @@ import jakarta.persistence.Entity;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-class Project   {
+class Project extends AbstractEntity  {
 
     
 }
