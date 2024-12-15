@@ -1,9 +1,20 @@
 package ace.charitan.project.service;
 
-import ace.charitan.project.internal.dto.InternalProjectDto;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.Entity;
+
+import ace.charitan.project.internal.InternalProjectDto;
+import jakarta.persistence.Entity;
 
 @Entity
-class Project implements InternalProjectDto {
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+class Project   {
+
+    
 }
