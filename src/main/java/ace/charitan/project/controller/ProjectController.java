@@ -29,6 +29,7 @@ class ProjectController {
     ResponseEntity<InternalProjectDto> createProject(@Validated @RequestBody CreateProjectDto createProjectDto) {
 
         InternalProjectDto projectDto = internalProjectService.createProject(createProjectDto);
+        System.out.println(projectDto.getTitle());
 
         if (Objects.isNull(projectDto)) {
             return ResponseEntity.badRequest().build();
