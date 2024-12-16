@@ -24,13 +24,11 @@ public class ProjectRequestBody {
 
         private double goal;
 
-        @DateTimeFormat(pattern = Constants.DATE_TIME_FORMAT)
-        @Pattern(regexp = Constants.DATE_TIME_REGEX, message = Constants.INVALID_DATE_TIME_MESSAGE)
+        // @DateTimeFormat(pattern = Constants.DATE_TIME_FORMAT)
         @Future
         private ZonedDateTime startTime;
 
-        @DateTimeFormat(pattern = Constants.DATE_TIME_FORMAT)
-        @Pattern(regexp = Constants.DATE_TIME_REGEX, message = Constants.INVALID_DATE_TIME_MESSAGE)
+        // @DateTimeFormat(pattern = Constants.DATE_TIME_FORMAT)
         @Future
         private ZonedDateTime endTime;
 
