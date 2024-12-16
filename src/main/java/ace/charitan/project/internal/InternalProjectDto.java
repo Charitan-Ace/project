@@ -1,6 +1,6 @@
 package ace.charitan.project.internal;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 public interface InternalProjectDto {
     String getTitle();
@@ -9,8 +9,8 @@ public interface InternalProjectDto {
 
     Double getGoal();
 
-    Date getStartTime();
+    ZonedDateTime getStartTime();
 
-    Date getEndTime();
+    ZonedDateTime getEndTime();
 
 }

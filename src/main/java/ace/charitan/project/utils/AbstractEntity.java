@@ -1,7 +1,7 @@
 package ace.charitan.project.utils;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -35,12 +35,12 @@ public abstract class AbstractEntity implements Serializable {
     @CreatedDate
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    private ZonedDateTime createdAt;
 
     @LastModifiedDate
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
+    private ZonedDateTime updatedAt;
 
     public AbstractEntity(Long id) {
         this.id = id;

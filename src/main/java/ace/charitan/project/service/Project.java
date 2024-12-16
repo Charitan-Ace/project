@@ -1,6 +1,6 @@
 package ace.charitan.project.service;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 import ace.charitan.project.controller.ProjectRequestBody.CreateProjectDto;
 import ace.charitan.project.service.ProjectEnum.StatusType;
@@ -24,9 +24,9 @@ class Project extends AbstractEntity {
 
     private double goal;
 
-    private Date startTime;
+    private ZonedDateTime startTime;
 
-    private Date endTime;
+    private ZonedDateTime endTime;
 
     private StatusType statusType;
 

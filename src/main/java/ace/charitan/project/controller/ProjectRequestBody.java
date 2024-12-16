@@ -1,6 +1,6 @@
 package ace.charitan.project.controller;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -27,12 +27,12 @@ public class ProjectRequestBody {
         @DateTimeFormat(pattern = Constants.DATE_TIME_FORMAT)
         @Pattern(regexp = Constants.DATE_TIME_REGEX, message = Constants.INVALID_DATE_TIME_MESSAGE)
         @Future
-        private Date startTime;
+        private ZonedDateTime startTime;
 
         @DateTimeFormat(pattern = Constants.DATE_TIME_FORMAT)
         @Pattern(regexp = Constants.DATE_TIME_REGEX, message = Constants.INVALID_DATE_TIME_MESSAGE)
         @Future
-        private Date endTime;
+        private ZonedDateTime endTime;
 
     }
 
