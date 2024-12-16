@@ -9,7 +9,7 @@ public class ProjectEnum {
 
     @AllArgsConstructor
     public static enum StatusType {
-        APPRENTICE("APPRENTICE"), ADEPT("ADEPT"), EXPERT("EXPERT");
+        PENDING("PENDING"), APPROVED("APPROVED"), ONGOING("ONGOING"), COMPLETED("COMPLETED"), ENDED("ENDED");
 
         private String value;
 
