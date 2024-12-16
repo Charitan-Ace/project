@@ -10,6 +10,6 @@ import ace.charitan.project.internal.InternalProjectDto;
 @Repository
 interface ProjectRepository extends JpaRepository<Project, Long> {
 
-    // Optional<InternalProjectDto> 
+    Optional<InternalProjectDto> findOneById(Long id);
 
 }
