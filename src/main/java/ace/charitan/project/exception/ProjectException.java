@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class ProjectException {
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public static class InvalidProjectDateTimeException extends RuntimeException {
+    public static class InvalidProjectException extends RuntimeException {
 
-        public InvalidProjectDateTimeException(String message) {
+        public InvalidProjectException(String message) {
             super(message);
         }
 

@@ -51,6 +51,14 @@ class ProjectController {
         return new ResponseEntity<>(projectDto, HttpStatus.OK);
     }
 
+    @PostMapping("/{projectId}")
+    ResponseEntity<InternalProjectDto> approveProject(@PathVariable Long projectId) {
+        return null;
+    }
+    
+
+    
+
     // @PostMapping("/approve/{id}")
     // ResponseEntity<InternalProjectDto> approveProject(@PathVariable Long
     // projectId) {

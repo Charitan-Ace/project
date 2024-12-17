@@ -9,10 +9,11 @@ import org.springframework.stereotype.Service;
 
 import ace.charitan.project.controller.ProjectRequestBody.CreateProjectDto;
 import ace.charitan.project.controller.ProjectRequestBody.UpdateProjectDto;
-import ace.charitan.project.exception.ProjectException.InvalidProjectDateTimeException;
+import ace.charitan.project.exception.ProjectException.InvalidProjectException;
 import ace.charitan.project.exception.ProjectException.NotFoundProjectException;
 import ace.charitan.project.internal.InternalProjectDto;
 import ace.charitan.project.internal.InternalProjectService;
+import ace.charitan.project.service.ProjectEnum.StatusType;
 
 @Service
 class ProjectServiceImpl implements InternalProjectService, ExternalProjectService {
@@ -37,7 +38,7 @@ class ProjectServiceImpl implements InternalProjectService, ExternalProjectServi
         Project project = new Project(createProjectDto, charityId);
 
         if (!validateStartEndTime(project)) {
-            throw new InvalidProjectDateTimeException("Project must be last for at least 7 days");
+            throw new InvalidProjectException("Project must be last for at least 7 days");
         }
 
         return projectRepository.save(project);
@@ -69,15 +70,44 @@ class ProjectServiceImpl implements InternalProjectService, ExternalProjectServi
         // Check date time is pass or not
         ZonedDateTime currentDateTime = ZonedDateTime.now();
         if (currentDateTime.isAfter(project.getStartTime()) || currentDateTime.isAfter(project.getEndTime())) {
-            throw new InvalidProjectDateTimeException("Start time and end time must not before the current date time");
+            throw new InvalidProjectException("Start time and end time must not before the current date time");
         }
 
         project.updateDetails(updateProjectDto);
 
         if (!validateStartEndTime(project)) {
-            throw new InvalidProjectDateTimeException("Project must be last for at least 7 days");
+            throw new InvalidProjectException("Project must be last for at least 7 days");
         }
 
+        project = projectRepository.save(project);
+
+        return project;
+    }
+
+    @Override
+    public InternalProjectDto approveProject(Long projectId) {
+        // If project not found
+        Optional<Project> existedOptionalProject = projectRepository.findById(projectId);
+
+        if (existedOptionalProject.isEmpty()) {
+            throw new NotFoundProjectException();
+        }
+
+        Project project = existedOptionalProject.get();
+
+        // If project status is not PENDING
+        if (!project.getStatusType().equals(StatusType.PENDING)) {
+            throw new InvalidProjectException("Project can be approved if status is PENDING");
+        }
+
+        // If project is approved after endTime
+        ZonedDateTime currentDateTime = ZonedDateTime.now();
+        if (currentDateTime.isAfter(project.getEndTime())) {
+            throw new InvalidProjectException(
+                    "Project can be approved if end time is before the current date time");
+        }
+
+        project.setStatusType(StatusType.APPROVED);
         project = projectRepository.save(project);
 
         return project;
