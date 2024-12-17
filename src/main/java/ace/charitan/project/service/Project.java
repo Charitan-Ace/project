@@ -3,26 +3,25 @@ package ace.charitan.project.service;
 import java.time.ZonedDateTime;
 
 import ace.charitan.project.controller.ProjectRequestBody.CreateProjectDto;
+import ace.charitan.project.internal.InternalProjectDto;
 import ace.charitan.project.service.ProjectEnum.StatusType;
 import ace.charitan.project.utils.AbstractEntity;
 import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-class Project extends AbstractEntity {
+class Project extends AbstractEntity implements InternalProjectDto {
 
     private String title;
 
     private String description;
 
-    private double goal;
+    private Double goal;
 
     private ZonedDateTime startTime;
 
