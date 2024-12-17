@@ -57,7 +57,7 @@ class ProjectServiceImpl implements InternalProjectService, ExternalProjectServi
     }
 
     @Override
-    public InternalProjectDto updateProjectId(Long projectId, UpdateProjectDto updateProjectDto) {
+    public InternalProjectDto updateProjectDetails(Long projectId, UpdateProjectDto updateProjectDto) {
         // If project not found
         Optional<Project> existedOptionalProject = projectRepository.findById(projectId);
 

@@ -6,9 +6,9 @@ spring:
     username: postgres
     password: secret
 
-  jpa:
-    hibernate:
-      ddl-auto: update  # Automatically updates the schema on startup
+  # jpa:
+  #   hibernate:
+  #     ddl-auto: update  # Automatically updates the schema on startup
 
 server:
   port: 8090

@@ -44,28 +44,22 @@ class ProjectController {
 
     }
 
-    @PutMapping("/{projectId}")
-    ResponseEntity<InternalProjectDto> updateProject(@PathVariable Long projectId,
+    @PutMapping("/update-details/{projectId}")
+    ResponseEntity<InternalProjectDto> updateProjectDetails(@PathVariable Long projectId,
             @RequestBody UpdateProjectDto updateProjectDto) {
-        InternalProjectDto projectDto = internalProjectService.updateProjectId(projectId, updateProjectDto);
+        InternalProjectDto projectDto = internalProjectService.updateProjectDetails(projectId, updateProjectDto);
         return new ResponseEntity<>(projectDto, HttpStatus.OK);
     }
 
-    @PostMapping("/{projectId}")
+    @PostMapping("/approve/{projectId}")
     ResponseEntity<InternalProjectDto> approveProject(@PathVariable Long projectId) {
-        return null;
+
+        InternalProjectDto projectDto = internalProjectService.approveProject(projectId);
+        return new ResponseEntity<>(projectDto, HttpStatus.OK);
     }
-    
 
-    
-
-    // @PostMapping("/approve/{id}")
-    // ResponseEntity<InternalProjectDto> approveProject(@PathVariable Long
-    // projectId) {
-
-    // InternalProjectDto projectDto =
-    // internalProjectService.approveProject(projectId);
-    // return ResponseEntity.ok(projectDto);
+    // @PostMapping("/halt/{projectId}")
+    // public String postMethodName(@RequestBody String entity) {
     // }
 
 }

@@ -9,7 +9,7 @@ public interface InternalProjectService {
 
     InternalProjectDto getProjectById(Long projectId);
 
-    InternalProjectDto updateProjectId(Long projectId, UpdateProjectDto updateProjectDto);
+    InternalProjectDto updateProjectDetails(Long projectId, UpdateProjectDto updateProjectDto);
 
     InternalProjectDto approveProject(Long projectId);
 }
