@@ -53,7 +53,7 @@ class Project extends AbstractEntity implements InternalProjectDto {
         this.charityId = charityId;
     }
 
-    public void update(UpdateProjectDto updateProjectDto) {
+    public void updateDetails(UpdateProjectDto updateProjectDto) {
         this.title = updateProjectDto.getTitle();
         this.description = updateProjectDto.getDescription();
         this.goal = updateProjectDto.getGoal();

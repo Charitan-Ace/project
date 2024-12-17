@@ -11,9 +11,8 @@ public class ProjectEnum {
     public static enum StatusType {
         PENDING("PENDING"),
         APPROVED("APPROVED"),
-        ONGOING("ONGOING"),
-        COMPLETED("COMPLETED"),
-        ENDED("ENDED");
+        HALTED("HALTED"),
+        DELETED("DELETED");
 
         private String value;
 

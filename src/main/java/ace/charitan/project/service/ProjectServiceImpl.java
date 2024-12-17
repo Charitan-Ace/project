@@ -72,7 +72,7 @@ class ProjectServiceImpl implements InternalProjectService, ExternalProjectServi
             throw new InvalidProjectDateTimeException("Start time and end time must not before the current date time");
         }
 
-        project.update(updateProjectDto);
+        project.updateDetails(updateProjectDto);
 
         if (!validateStartEndTime(project)) {
             throw new InvalidProjectDateTimeException("Project must be last for at least 7 days");
