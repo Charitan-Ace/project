@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
-import ace.charitan.project.exception.ProjectException.InvalidProjectDateTime;
+import ace.charitan.project.exception.ProjectException.InvalidProjectDateTimeException;
 
 @ControllerAdvice
 class ProjectExceptionHandler {
@@ -20,7 +20,7 @@ class ProjectExceptionHandler {
     // For invalid request body
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex, WebRequest request) {
+    ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex, WebRequest request) {
 
         String message = "";
         for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
@@ -35,8 +35,8 @@ class ProjectExceptionHandler {
 
     // For remaining custom exception handlers
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({ InvalidProjectDateTime.class })
-    public ResponseEntity<Object> handleException(
+    @ExceptionHandler(RuntimeException.class)
+    ResponseEntity<Object> handleException(
             RuntimeException exception) {
 
         Map<String, Object> responseBody = new HashMap<>();

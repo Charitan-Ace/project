@@ -1,9 +1,12 @@
 package ace.charitan.project.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ace.charitan.project.controller.ProjectRequestBody.CreateProjectDto;
 import ace.charitan.project.internal.InternalProjectDto;
 import ace.charitan.project.internal.InternalProjectService;
-
 
 @RestController
 class ProjectController {
@@ -29,23 +31,27 @@ class ProjectController {
 
         InternalProjectDto projectDto = internalProjectService.createProject(createProjectDto);
 
-        return ResponseEntity.ok(projectDto);
+        return new ResponseEntity<InternalProjectDto>(projectDto, HttpStatus.CREATED);
+
     }
 
-    // @GetMapping("/{id}")
-    // ResponseEntity<InternalProjectDto> getProjectById(@PathVariable Long projectId) {
-    //     ret
-    // }
-    
+    @GetMapping("/{projectId}")
+    ResponseEntity<InternalProjectDto> getProjectById(@PathVariable Long projectId) {
+        System.out.println("call");
+
+        InternalProjectDto projectDto = internalProjectService.getProjectById(projectId);
+
+        return new ResponseEntity<>(projectDto, HttpStatus.OK);
+
+    }
 
     // @PostMapping("/approve/{id}")
-    // ResponseEntity<InternalProjectDto> approveProject(@PathVariable Long projectId) {
+    // ResponseEntity<InternalProjectDto> approveProject(@PathVariable Long
+    // projectId) {
 
-    //     InternalProjectDto projectDto = internalProjectService.approveProject(projectId);
-    //     return ResponseEntity.ok(projectDto);
+    // InternalProjectDto projectDto =
+    // internalProjectService.approveProject(projectId);
+    // return ResponseEntity.ok(projectDto);
     // }
-
-
-    
 
 }
