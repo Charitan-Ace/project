@@ -49,6 +49,8 @@ class Project extends AbstractEntity implements InternalProjectDto {
         this.goal = createProjectDto.getGoal();
         this.startTime = createProjectDto.getStartTime();
         this.endTime = createProjectDto.getEndTime();
+        this.statusType = StatusType.PENDING;
+        this.charityId = charityId;
     }
 
     public void update(UpdateProjectDto updateProjectDto) {
