@@ -36,12 +36,12 @@ class ProjectExceptionHandler {
     // For remaining custom exception handlers
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({ InvalidProjectDateTime.class })
-    public ResponseEntity<String> handleException(
+    public ResponseEntity<Object> handleException(
             RuntimeException exception) {
 
         Map<String, Object> responseBody = new HashMap<>();
         responseBody.put("message", exception.getMessage());
 
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
     }
 }

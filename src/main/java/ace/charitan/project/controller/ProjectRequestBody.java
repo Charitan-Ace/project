@@ -18,7 +18,7 @@ public class ProjectRequestBody {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public class CreateProjectDto {
+    public static class CreateProjectDto {
 
         @NotBlank(message = "Title must not be null or blank.")
         private String title;
@@ -30,11 +30,11 @@ public class ProjectRequestBody {
         private double goal;
 
         @Future(message = "Start time must be in the future.")
-        @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}([+-]\\d{2}:\\d{2})$", message = "Start time must follow the format 'yyyy-MM-ddTHH:mm:ssXXX' (e.g., 2025-12-16T16:30:45+07:00).")
+        // @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}([+-]\\d{2}:\\d{2})$", message = "Start time must follow the format 'yyyy-MM-ddTHH:mm:ssXXX' (e.g., 2025-12-16T16:30:45+07:00).")
         private ZonedDateTime startTime;
 
         @Future(message = "End time must be in the future.")
-        @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}([+-]\\d{2}:\\d{2})$", message = "End time must follow the format 'yyyy-MM-ddTHH:mm:ssXXX' (e.g., 2025-12-16T16:30:45+07:00).")
+        // @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}([+-]\\d{2}:\\d{2})$", message = "End time must follow the format 'yyyy-MM-ddTHH:mm:ssXXX' (e.g., 2025-12-16T16:30:45+07:00).")
         private ZonedDateTime endTime;
     }
 
