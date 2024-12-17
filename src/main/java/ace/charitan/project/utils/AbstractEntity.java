@@ -1,7 +1,6 @@
 package ace.charitan.project.utils;
 
 import java.io.Serializable;
-import java.time.ZonedDateTime;
 import java.util.Date;
 
 import org.springframework.data.annotation.CreatedDate;

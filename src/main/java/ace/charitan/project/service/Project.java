@@ -3,6 +3,7 @@ package ace.charitan.project.service;
 import java.time.ZonedDateTime;
 
 import ace.charitan.project.controller.ProjectRequestBody.CreateProjectDto;
+import ace.charitan.project.controller.ProjectRequestBody.UpdateProjectDto;
 import ace.charitan.project.internal.InternalProjectDto;
 import ace.charitan.project.service.ProjectEnum.StatusType;
 import ace.charitan.project.utils.AbstractEntity;
@@ -48,6 +49,14 @@ class Project extends AbstractEntity implements InternalProjectDto {
         this.goal = createProjectDto.getGoal();
         this.startTime = createProjectDto.getStartTime();
         this.endTime = createProjectDto.getEndTime();
+    }
+
+    public void update(UpdateProjectDto updateProjectDto) {
+        this.title = updateProjectDto.getTitle();
+        this.description = updateProjectDto.getDescription();
+        this.goal = updateProjectDto.getGoal();
+        this.startTime = updateProjectDto.getStartTime();
+        this.endTime = updateProjectDto.getEndTime();
     }
 
 }

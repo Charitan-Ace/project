@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
-import ace.charitan.project.exception.ProjectException.InvalidProjectDateTimeException;
-
 @ControllerAdvice
 class ProjectExceptionHandler {
 
