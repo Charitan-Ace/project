@@ -8,6 +8,8 @@ import ace.charitan.project.internal.InternalProjectDto;
 import ace.charitan.project.service.ProjectEnum.StatusType;
 import ace.charitan.project.utils.AbstractEntity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,6 +32,7 @@ class Project extends AbstractEntity implements InternalProjectDto {
 
     private ZonedDateTime endTime;
 
+    @Enumerated(EnumType.STRING)
     private StatusType statusType;
 
     private Long charityId;
