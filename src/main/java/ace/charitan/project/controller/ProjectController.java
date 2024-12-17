@@ -58,8 +58,11 @@ class ProjectController {
         return new ResponseEntity<>(projectDto, HttpStatus.OK);
     }
 
-    // @PostMapping("/halt/{projectId}")
-    // public String postMethodName(@RequestBody String entity) {
-    // }
+    @PostMapping("/halt/{projectId}")
+    ResponseEntity<InternalProjectDto> haltProject(@PathVariable Long projectId) {
+
+        InternalProjectDto projectDto = internalProjectService.haltProject(projectId);
+        return new ResponseEntity<>(projectDto, HttpStatus.OK);
+    }
 
 }

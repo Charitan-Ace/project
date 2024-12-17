@@ -12,4 +12,6 @@ public interface InternalProjectService {
     InternalProjectDto updateProjectDetails(Long projectId, UpdateProjectDto updateProjectDto);
 
     InternalProjectDto approveProject(Long projectId);
+
+    InternalProjectDto haltProject(Long projectId);
 }
