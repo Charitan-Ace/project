@@ -142,4 +142,33 @@ class ProjectServiceImpl implements InternalProjectService, ExternalProjectServi
         return project;
     }
 
+    @Override
+    public InternalProjectDto resumeProjec(Long projectId) {
+        // If project not found
+        Optional<Project> existedOptionalProject = projectRepository.findById(projectId);
+
+        if (existedOptionalProject.isEmpty()) {
+            throw new NotFoundProjectException();
+        }
+
+        Project project = existedOptionalProject.get();
+
+        // If project status is not HALTED
+        if (!project.getStatusType().equals(StatusType.HALTED)) {
+            throw new InvalidProjectException("Project can be resumed if status is HALTED");
+        }
+
+        // If project is resumed after endTime
+        ZonedDateTime currentDateTime = ZonedDateTime.now();
+        if (currentDateTime.isAfter(project.getEndTime())) {
+            throw new InvalidProjectException(
+                    "Project can not be resumed if end time is before the current date time");
+        }
+
+        project.setStatusType(StatusType.APPROVED);
+        project = projectRepository.save(project);
+
+        return project;
+    }
+
 }

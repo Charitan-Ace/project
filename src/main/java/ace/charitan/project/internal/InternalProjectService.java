@@ -14,4 +14,6 @@ public interface InternalProjectService {
     InternalProjectDto approveProject(Long projectId);
 
     InternalProjectDto haltProject(Long projectId);
+
+    InternalProjectDto resumeProjec(Long projectId);
 }

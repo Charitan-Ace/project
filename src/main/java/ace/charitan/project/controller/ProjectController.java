@@ -65,4 +65,12 @@ class ProjectController {
         return new ResponseEntity<>(projectDto, HttpStatus.OK);
     }
 
+    @PostMapping("/resume/{projectId}")
+    ResponseEntity<InternalProjectDto> resumeProject(@PathVariable Long projectId) {
+
+        InternalProjectDto projectDto = internalProjectService.resumeProject(projectId);
+        return new ResponseEntity<>(projectDto, HttpStatus.OK);
+    }
+    
+
 }
