@@ -1,29 +1,25 @@
 package ace.charitan.project.service;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import ace.charitan.project.controller.ProjectRequestBody.CreateProjectDto;
 import ace.charitan.project.controller.ProjectRequestBody.UpdateProjectDto;
-import ace.charitan.project.internal.InternalProjectDto;
 import ace.charitan.project.service.ProjectEnum.StatusType;
 import ace.charitan.project.service.a.CategoryType;
 import ace.charitan.project.utils.AbstractEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
+@Document(collection = "project") // MongoDB collection name
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-class Project extends AbstractEntity implements InternalProjectDto {
+public class Project extends AbstractEntity {
 
     private String title;
 
@@ -35,41 +31,33 @@ class Project extends AbstractEntity implements InternalProjectDto {
 
     private ZonedDateTime endTime;
 
-    @Enumerated(EnumType.STRING)
-    private StatusType statusType;
+    private StatusType statusType; // Enum stored as String
+
+    private CategoryType categoryType; // Enum stored as String
 
     private Long charityId;
 
-    @Enumerated(EnumType.STRING)
-    private CategoryType categoryType;
+    // private List<String> imageUrls;
 
-    // @Enumerated(EnumType.)
+    // private String thumbnailUrl;
 
-    // // Array of image url separated by comma
-    // private String imageUrls;
+    // private List<String> videoUrls;
 
-    // private String thumbnailUrl ;
-
-    // private String videoUrls;
-
-    Project(CreateProjectDto createProjectDto, long charityId) {
-        this.title = createProjectDto.getTitle();
-        this.description = createProjectDto.getDescription();
-        this.goal = createProjectDto.getGoal();
-        this.startTime = createProjectDto.getStartTime();
-        this.endTime = createProjectDto.getEndTime();
-        this.statusType = StatusType.PENDING;
-        this.charityId = charityId;
+    public Project(CreateProjectDto createProjectDto, long charityId) {
+        this.setTitle(createProjectDto.getTitle());
+        this.setDescription(createProjectDto.getDescription());
+        this.setGoal(createProjectDto.getGoal());
+        this.setStartTime(createProjectDto.getStartTime());
+        this.setEndTime(createProjectDto.getEndTime());
+        this.setStatusType(StatusType.PENDING);
+        this.setCharityId(charityId);
     }
 
     public void updateDetails(UpdateProjectDto updateProjectDto) {
-        this.title = updateProjectDto.getTitle();
-        this.description = updateProjectDto.getDescription();
-        this.goal = updateProjectDto.getGoal();
-        this.startTime = updateProjectDto.getStartTime();
-        this.endTime = updateProjectDto.getEndTime();
+        this.setTitle(updateProjectDto.getTitle());
+        this.setDescription(updateProjectDto.getDescription());
+        this.setGoal(updateProjectDto.getGoal());
+        this.setStartTime(updateProjectDto.getStartTime());
+        this.setEndTime(updateProjectDto.getEndTime());
     }
-
 }
-
-
