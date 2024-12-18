@@ -143,7 +143,7 @@ class ProjectServiceImpl implements InternalProjectService, ExternalProjectServi
     }
 
     @Override
-    public InternalProjectDto resumeProjec(Long projectId) {
+    public InternalProjectDto resumeProject(Long projectId) {
         // If project not found
         Optional<Project> existedOptionalProject = projectRepository.findById(projectId);
 
@@ -166,6 +166,28 @@ class ProjectServiceImpl implements InternalProjectService, ExternalProjectServi
         }
 
         project.setStatusType(StatusType.APPROVED);
+        project = projectRepository.save(project);
+
+        return project;
+    }
+
+    @Override
+    public InternalProjectDto deleteProject(Long projectId) {
+        // If project not found
+        Optional<Project> existedOptionalProject = projectRepository.findById(projectId);
+
+        if (existedOptionalProject.isEmpty()) {
+            throw new NotFoundProjectException();
+        }
+
+        Project project = existedOptionalProject.get();
+
+        // If project status is not HALTED
+        if (!project.getStatusType().equals(StatusType.DELETED)) {
+            throw new InvalidProjectException("Project can be deleted if status is RESUMED");
+        }
+
+        project.setStatusType(StatusType.DELETED);
         project = projectRepository.save(project);
 
         return project;

@@ -72,5 +72,10 @@ class ProjectController {
         return new ResponseEntity<>(projectDto, HttpStatus.OK);
     }
     
+    @PostMapping("/delete/{projectId}")
+    ResponseEntity<InternalProjectDto> deleteProject(@PathVariable Long projectId) {
 
+        InternalProjectDto projectDto = internalProjectService.deleteProject(projectId);
+        return new ResponseEntity<>(projectDto, HttpStatus.OK);
+    }
 }
