@@ -36,46 +36,46 @@ class ProjectController {
 
     }
 
-    @GetMapping("/{projectId}")
-    ResponseEntity<InternalProjectDto> getProjectById(@PathVariable Long projectId) {
+    // @GetMapping("/{projectId}")
+    // ResponseEntity<InternalProjectDto> getProjectById(@PathVariable Long projectId) {
 
-        InternalProjectDto projectDto = internalProjectService.getProjectById(projectId);
-        return new ResponseEntity<>(projectDto, HttpStatus.OK);
+    //     InternalProjectDto projectDto = internalProjectService.getProjectById(projectId);
+    //     return new ResponseEntity<>(projectDto, HttpStatus.OK);
 
-    }
+    // }
 
-    @PutMapping("/update-details/{projectId}")
-    ResponseEntity<InternalProjectDto> updateProjectDetails(@PathVariable Long projectId,
-            @RequestBody UpdateProjectDto updateProjectDto) {
-        InternalProjectDto projectDto = internalProjectService.updateProjectDetails(projectId, updateProjectDto);
-        return new ResponseEntity<>(projectDto, HttpStatus.OK);
-    }
+    // @PutMapping("/update-details/{projectId}")
+    // ResponseEntity<InternalProjectDto> updateProjectDetails(@PathVariable Long projectId,
+    //         @RequestBody UpdateProjectDto updateProjectDto) {
+    //     InternalProjectDto projectDto = internalProjectService.updateProjectDetails(projectId, updateProjectDto);
+    //     return new ResponseEntity<>(projectDto, HttpStatus.OK);
+    // }
 
-    @PostMapping("/approve/{projectId}")
-    ResponseEntity<InternalProjectDto> approveProject(@PathVariable Long projectId) {
+    // @PostMapping("/approve/{projectId}")
+    // ResponseEntity<InternalProjectDto> approveProject(@PathVariable Long projectId) {
 
-        InternalProjectDto projectDto = internalProjectService.approveProject(projectId);
-        return new ResponseEntity<>(projectDto, HttpStatus.OK);
-    }
+    //     InternalProjectDto projectDto = internalProjectService.approveProject(projectId);
+    //     return new ResponseEntity<>(projectDto, HttpStatus.OK);
+    // }
 
-    @PostMapping("/halt/{projectId}")
-    ResponseEntity<InternalProjectDto> haltProject(@PathVariable Long projectId) {
+    // @PostMapping("/halt/{projectId}")
+    // ResponseEntity<InternalProjectDto> haltProject(@PathVariable Long projectId) {
 
-        InternalProjectDto projectDto = internalProjectService.haltProject(projectId);
-        return new ResponseEntity<>(projectDto, HttpStatus.OK);
-    }
+    //     InternalProjectDto projectDto = internalProjectService.haltProject(projectId);
+    //     return new ResponseEntity<>(projectDto, HttpStatus.OK);
+    // }
 
-    @PostMapping("/resume/{projectId}")
-    ResponseEntity<InternalProjectDto> resumeProject(@PathVariable Long projectId) {
+    // @PostMapping("/resume/{projectId}")
+    // ResponseEntity<InternalProjectDto> resumeProject(@PathVariable Long projectId) {
 
-        InternalProjectDto projectDto = internalProjectService.resumeProject(projectId);
-        return new ResponseEntity<>(projectDto, HttpStatus.OK);
-    }
+    //     InternalProjectDto projectDto = internalProjectService.resumeProject(projectId);
+    //     return new ResponseEntity<>(projectDto, HttpStatus.OK);
+    // }
     
-    @PostMapping("/delete/{projectId}")
-    ResponseEntity<InternalProjectDto> deleteProject(@PathVariable Long projectId) {
+    // @PostMapping("/delete/{projectId}")
+    // ResponseEntity<InternalProjectDto> deleteProject(@PathVariable Long projectId) {
 
-        InternalProjectDto projectDto = internalProjectService.deleteProject(projectId);
-        return new ResponseEntity<>(projectDto, HttpStatus.OK);
-    }
+    //     InternalProjectDto projectDto = internalProjectService.deleteProject(projectId);
+    //     return new ResponseEntity<>(projectDto, HttpStatus.OK);
+    // }
 }

@@ -2,6 +2,8 @@ package ace.charitan.project.service;
 
 import java.time.ZonedDateTime;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import ace.charitan.project.controller.ProjectRequestBody.CreateProjectDto;
 import ace.charitan.project.controller.ProjectRequestBody.UpdateProjectDto;
 import ace.charitan.project.internal.InternalProjectDto;
@@ -69,3 +71,5 @@ class Project extends AbstractEntity implements InternalProjectDto {
     }
 
 }
+
+

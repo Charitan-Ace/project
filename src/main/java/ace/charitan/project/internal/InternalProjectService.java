@@ -7,15 +7,15 @@ public interface InternalProjectService {
 
     InternalProjectDto createProject(CreateProjectDto createProjectDto);
 
-    InternalProjectDto getProjectById(Long projectId);
+    // InternalProjectDto getProjectById(Long projectId);
 
-    InternalProjectDto updateProjectDetails(Long projectId, UpdateProjectDto updateProjectDto);
+    // InternalProjectDto updateProjectDetails(Long projectId, UpdateProjectDto updateProjectDto);
 
-    InternalProjectDto approveProject(Long projectId);
+    // InternalProjectDto approveProject(Long projectId);
 
-    InternalProjectDto haltProject(Long projectId);
+    // InternalProjectDto haltProject(Long projectId);
 
-    InternalProjectDto resumeProject(Long projectId);
+    // InternalProjectDto resumeProject(Long projectId);
 
-    InternalProjectDto deleteProject(Long projectId);
+    // InternalProjectDto deleteProject(Long projectId);
 }
