@@ -1,15 +1,13 @@
 package ace.charitan.project.service;
 
-import java.time.Instant;
 import java.time.ZonedDateTime;
-import java.util.List;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import ace.charitan.project.controller.ProjectRequestBody.CreateProjectDto;
 import ace.charitan.project.controller.ProjectRequestBody.UpdateProjectDto;
+import ace.charitan.project.service.ProjectEnum.CategoryType;
 import ace.charitan.project.service.ProjectEnum.StatusType;
-import ace.charitan.project.service.a.CategoryType;
 import ace.charitan.project.utils.AbstractEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
