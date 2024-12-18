@@ -6,6 +6,7 @@ import ace.charitan.project.controller.ProjectRequestBody.CreateProjectDto;
 import ace.charitan.project.controller.ProjectRequestBody.UpdateProjectDto;
 import ace.charitan.project.internal.InternalProjectDto;
 import ace.charitan.project.service.ProjectEnum.StatusType;
+import ace.charitan.project.service.a.CategoryType;
 import ace.charitan.project.utils.AbstractEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -37,7 +38,10 @@ class Project extends AbstractEntity implements InternalProjectDto {
 
     private Long charityId;
 
-    // private CategoryType categoryType;
+    @Enumerated(EnumType.STRING)
+    private CategoryType categoryType;
+
+    // @Enumerated(EnumType.)
 
     // // Array of image url separated by comma
     // private String imageUrls;
