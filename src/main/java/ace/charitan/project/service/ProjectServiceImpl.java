@@ -26,7 +26,6 @@ class ProjectServiceImpl implements InternalProjectService, ExternalProjectServi
 
         Duration timeDifference = Duration.between(project.getStartTime(), project.getEndTime());
         return timeDifference.toDays() >= 7;
-
     }
 
     @Override
