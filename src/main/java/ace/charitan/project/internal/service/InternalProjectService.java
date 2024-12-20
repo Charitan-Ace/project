@@ -1,7 +1,8 @@
-package ace.charitan.project.internal;
+package ace.charitan.project.internal.service;
 
-import ace.charitan.project.controller.ProjectRequestBody.CreateProjectDto;
-import ace.charitan.project.controller.ProjectRequestBody.UpdateProjectDto;
+import ace.charitan.project.internal.controller.ProjectRequestBody.CreateProjectDto;
+import ace.charitan.project.internal.controller.ProjectRequestBody.UpdateProjectDto;
+import ace.charitan.project.internal.dto.InternalProjectDto;
 
 public interface InternalProjectService {
 

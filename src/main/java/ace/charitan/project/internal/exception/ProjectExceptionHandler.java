@@ -1,4 +1,4 @@
-package ace.charitan.project.exception;
+package ace.charitan.project.internal.exception;
 
 import java.util.HashMap;
 import java.util.Map;

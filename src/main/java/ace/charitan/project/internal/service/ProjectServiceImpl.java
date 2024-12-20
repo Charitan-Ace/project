@@ -1,4 +1,4 @@
-package ace.charitan.project.service;
+package ace.charitan.project.internal.service;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -7,13 +7,12 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ace.charitan.project.controller.ProjectRequestBody.CreateProjectDto;
-import ace.charitan.project.controller.ProjectRequestBody.UpdateProjectDto;
-import ace.charitan.project.exception.ProjectException.InvalidProjectException;
-import ace.charitan.project.exception.ProjectException.NotFoundProjectException;
-import ace.charitan.project.internal.InternalProjectDto;
-import ace.charitan.project.internal.InternalProjectService;
-import ace.charitan.project.service.ProjectEnum.StatusType;
+import ace.charitan.project.internal.controller.ProjectRequestBody.CreateProjectDto;
+import ace.charitan.project.internal.controller.ProjectRequestBody.UpdateProjectDto;
+import ace.charitan.project.internal.dto.InternalProjectDto;
+import ace.charitan.project.internal.exception.ProjectException.InvalidProjectException;
+import ace.charitan.project.internal.exception.ProjectException.NotFoundProjectException;
+import ace.charitan.project.internal.service.ProjectEnum.StatusType;
 
 @Service
 class ProjectServiceImpl implements InternalProjectService, ExternalProjectService {

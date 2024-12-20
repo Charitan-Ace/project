@@ -1,33 +1,33 @@
-DROP TABLE IF EXISTS project CASCADE;
+-- DROP TABLE IF EXISTS project CASCADE;
 
-CREATE TABLE project (
-    id BIGSERIAL PRIMARY KEY,  -- assuming this is inherited from AbstractEntity, which likely has an id field
-    title VARCHAR(255) NOT NULL,
-    description TEXT,
-    goal DOUBLE PRECISION,
-    start_time TIMESTAMP WITH TIME ZONE,
-    end_time TIMESTAMP WITH TIME ZONE,
-    status_type VARCHAR(50) NOT NULL,  -- assuming StatusType is an enum and its values are stored as strings
-    charity_id BIGINT NOT NULL,  -- assuming charityId is a foreign key referencing another table (charity table)
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- created_at
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- updated_at
-);
+-- CREATE TABLE project (
+--     id BIGSERIAL PRIMARY KEY,  -- assuming this is inherited from AbstractEntity, which likely has an id field
+--     title VARCHAR(255) NOT NULL,
+--     description TEXT,
+--     goal DOUBLE PRECISION,
+--     start_time TIMESTAMP WITH TIME ZONE,
+--     end_time TIMESTAMP WITH TIME ZONE,
+--     status_type VARCHAR(50) NOT NULL,  -- assuming StatusType is an enum and its values are stored as strings
+--     charity_id BIGINT NOT NULL,  -- assuming charityId is a foreign key referencing another table (charity table)
+--     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- created_at
+--     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- updated_at
+-- );
 
 
--- Create function to update the updated_at column in project_entity
-CREATE OR REPLACE FUNCTION update_project_timestamp()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = NOW();
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+-- -- Create function to update the updated_at column in project_entity
+-- CREATE OR REPLACE FUNCTION update_project_timestamp()
+-- RETURNS TRIGGER AS $$
+-- BEGIN
+--     NEW.updated_at = NOW();
+--     RETURN NEW;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
--- Create trigger to invoke the function on update for project_entity
-CREATE TRIGGER set_project_timestamp
-BEFORE UPDATE ON project
-FOR EACH ROW
-EXECUTE PROCEDURE update_project_timestamp();
+-- -- Create trigger to invoke the function on update for project_entity
+-- CREATE TRIGGER set_project_timestamp
+-- BEFORE UPDATE ON project
+-- FOR EACH ROW
+-- EXECUTE PROCEDURE update_project_timestamp();
 
 -- Insert Global Charity Projects
 
