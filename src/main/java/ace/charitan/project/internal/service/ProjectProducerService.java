@@ -17,7 +17,7 @@ import ace.charitan.project.internal.dto.country.GetCountryByIsoCode.GetCountryB
 class ProjectProducerService {
 
     @Autowired
-    private KafkaTemplate<String, Serializable> kafkaTemplate;
+    private KafkaTemplate<String, Object> kafkaTemplate;
 
     @Bean
     public KafkaTemplate<String, Object> kafkaTemplate() {
