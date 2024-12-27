@@ -8,11 +8,12 @@ spring:
     password: secret
 
   kafka:
-    bootstrap-servers: localhost:9092
-    
+    bootstrap-servers: kafka:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer    
+
+
 
   # jpa:
   #   hibernate:
@@ -56,3 +57,8 @@ springdoc:
     path: /swagger-ui.html
   api-docs:
     path: /v1/api-docs
+
+logging:
+  level:
+    org.apache.kafka: DEBUG
+    org.springframework.kafka: DEBUG
