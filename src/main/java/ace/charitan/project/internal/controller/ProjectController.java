@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ace.charitan.project.internal.controller.ProjectRequestBody.CreateProjectDto;
 import ace.charitan.project.internal.controller.ProjectRequestBody.UpdateProjectDto;
-import ace.charitan.project.internal.dto.InternalProjectDto;
+import ace.charitan.project.internal.dto.project.InternalProjectDto;
 import ace.charitan.project.internal.service.InternalProjectService;
 
 @RestController
@@ -31,7 +31,6 @@ class ProjectController {
     ResponseEntity<InternalProjectDto> createProject(@Validated @RequestBody CreateProjectDto createProjectDto) {
 
         InternalProjectDto projectDto = internalProjectService.createProject(createProjectDto);
-
         return new ResponseEntity<InternalProjectDto>(projectDto, HttpStatus.CREATED);
 
     }
@@ -71,7 +70,7 @@ class ProjectController {
         InternalProjectDto projectDto = internalProjectService.resumeProject(projectId);
         return new ResponseEntity<>(projectDto, HttpStatus.OK);
     }
-    
+
     @PostMapping("/delete/{projectId}")
     ResponseEntity<InternalProjectDto> deleteProject(@PathVariable Long projectId) {
 

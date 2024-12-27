@@ -33,7 +33,6 @@ public class ProjectEnum {
             // Return a response entity with a 400 Bad Request status
             throw new IllegalArgumentException("Invalid value for StatusType Enum: " + value);
         }
-
     }
 
     @AllArgsConstructor
@@ -68,7 +67,5 @@ public class ProjectEnum {
         }
 
     }
-
-
 
 }

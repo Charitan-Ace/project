@@ -9,13 +9,13 @@ import org.springframework.stereotype.Service;
 
 import ace.charitan.project.internal.controller.ProjectRequestBody.CreateProjectDto;
 import ace.charitan.project.internal.controller.ProjectRequestBody.UpdateProjectDto;
-import ace.charitan.project.internal.dto.InternalProjectDto;
+import ace.charitan.project.internal.dto.project.InternalProjectDto;
 import ace.charitan.project.internal.exception.ProjectException.InvalidProjectException;
 import ace.charitan.project.internal.exception.ProjectException.NotFoundProjectException;
 import ace.charitan.project.internal.service.ProjectEnum.StatusType;
 
 @Service
-class ProjectServiceImpl implements InternalProjectService, ExternalProjectService {
+class ProjectServiceImpl implements InternalProjectService {
 
     @Autowired
     private ProjectRepository projectRepository;
@@ -28,6 +28,54 @@ class ProjectServiceImpl implements InternalProjectService, ExternalProjectServi
 
     }
 
+    // private Optional<CountryDto> getCountryDtoByCountryIsoCode(String
+    // countryIsoCode) {
+
+    // // Check country iso code valid
+    // String correlationId = UUID.randomUUID().toString();
+
+    // CompletableFuture<CountryDto> asyncCallToGeographyServer = new
+    // CompletableFuture<>();
+
+    // pendingCountryRequests.put(correlationId, asyncCallToGeographyServer);
+
+    // CountryCodeWithUuid countryIdWithUuidDto = new CountryCodeWithUuid(
+    // correlationId, countryIsoCode);
+
+    // try {
+
+    // countryKafkaProducer.sendMessage(KafkaConstant.COUNTRY_TOPIC,
+    // countryIdWithUuidDto);
+
+    // CountryDto countryDto = asyncCallToGeographyServer.get(200,
+    // TimeUnit.MILLISECONDS);
+
+    // System.out.println(countryDto.getRegionName());
+
+    // return Optional.of(countryDto);
+
+    // } catch (InterruptedException | ExecutionException | TimeoutException e) {
+    // System.err.println("Error in getting HabitatDescDto");
+    // e.printStackTrace();
+    // return Optional.empty();
+    // }
+    // }
+
+    private void validateProjectDetails(Project project) {
+        // Check start end time constraint
+        if (!validateStartEndTime(project)) {
+            throw new InvalidProjectException("Project must be last for at least 7 days");
+        }
+
+        // // Check country existed or not
+        // Optional<CountryDto> optionalCountryDto =
+        // getCountryDtoByCountryIsoCode(project.getCountryIsoCode());
+        // if (optionalCountryDto.isEmpty()) {
+        // throw new InvalidProjectException("Country code is invalid");
+        // }
+
+    }
+
     @Override
     public InternalProjectDto createProject(CreateProjectDto createProjectDto) {
 
@@ -35,10 +83,7 @@ class ProjectServiceImpl implements InternalProjectService, ExternalProjectServi
         Long charityId = 1L;
 
         Project project = new Project(createProjectDto, charityId);
-
-        if (!validateStartEndTime(project)) {
-            throw new InvalidProjectException("Project must be last for at least 7 days");
-        }
+        validateProjectDetails(project);
 
         return projectRepository.save(project);
 

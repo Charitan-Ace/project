@@ -1,20 +1,17 @@
 package ace.charitan.project.internal.service;
 
 import java.time.ZonedDateTime;
-import java.util.Set;
+import java.util.List;
 
 import ace.charitan.project.internal.controller.ProjectRequestBody.CreateProjectDto;
 import ace.charitan.project.internal.controller.ProjectRequestBody.UpdateProjectDto;
-import ace.charitan.project.internal.dto.InternalProjectDto;
+import ace.charitan.project.internal.dto.project.InternalProjectDto;
 import ace.charitan.project.internal.service.ProjectEnum.CategoryType;
 import ace.charitan.project.internal.service.ProjectEnum.StatusType;
 import ace.charitan.project.internal.utils.AbstractEntity;
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.JoinColumn;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,10 +42,11 @@ class Project extends AbstractEntity implements InternalProjectDto {
 
     private Long charityId;
 
-    @ElementCollection
-    @CollectionTable(name = "project_countries", joinColumns = @JoinColumn(name = "project_id"))
-    // @Column(name = "country_id")
-    private Set<Long> countryIdSet;
+    private String countryIsoCode;
+
+    // private List<Long> imageIdList;
+
+    // private List<Long> videoIdList;
 
     // @Enumerated(EnumType.)
 

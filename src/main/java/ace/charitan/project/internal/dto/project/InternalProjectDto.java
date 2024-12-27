@@ -1,4 +1,4 @@
-package ace.charitan.project.internal.dto;
+package ace.charitan.project.internal.dto.project;
 
 import java.time.ZonedDateTime;
 
