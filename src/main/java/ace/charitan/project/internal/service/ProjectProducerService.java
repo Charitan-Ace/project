@@ -1,31 +1,18 @@
 package ace.charitan.project.internal.service;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.apache.kafka.clients.producer.ProducerConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import ace.charitan.project.internal.dto.country.GetCountryByIsoCode.GetCountryByIsoCodeRequestDto;
 
-@Service
+@Component
 class ProjectProducerService {
 
     @Autowired
     private KafkaTemplate<String, Object> kafkaTemplate;
-
-    @Bean
-    public KafkaTemplate<String, Object> kafkaTemplate() {
-        Map<String, Object> configs = new HashMap<>();
-        configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:9092");
-        // other configurations
-        return new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(configs));
-    }
 
     void send(ProjectProducerTopic topic, Serializable data) {
 

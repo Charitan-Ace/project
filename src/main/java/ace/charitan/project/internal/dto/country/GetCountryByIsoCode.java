@@ -1,7 +1,5 @@
 package ace.charitan.project.internal.dto.country;
 
-import java.io.Serializable;
-
 import ace.charitan.project.internal.utils.DtoWithProcessId;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
