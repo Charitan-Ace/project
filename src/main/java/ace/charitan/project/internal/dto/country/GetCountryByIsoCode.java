@@ -23,7 +23,6 @@ public class GetCountryByIsoCode {
         public String getIsoCode() {
             return isoCode;
         }
-
     }
 
     @Getter
