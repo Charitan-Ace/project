@@ -3,12 +3,14 @@ package ace.charitan.project.internal.service;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ace.charitan.project.internal.controller.ProjectRequestBody.CreateProjectDto;
 import ace.charitan.project.internal.controller.ProjectRequestBody.UpdateProjectDto;
+import ace.charitan.project.internal.dto.country.GetCountryByIsoCode.GetCountryByIsoCodeRequestDto;
 import ace.charitan.project.internal.dto.project.InternalProjectDto;
 import ace.charitan.project.internal.exception.ProjectException.InvalidProjectException;
 import ace.charitan.project.internal.exception.ProjectException.NotFoundProjectException;
@@ -20,11 +22,33 @@ class ProjectServiceImpl implements InternalProjectService {
     @Autowired
     private ProjectRepository projectRepository;
 
+    @Autowired
+    private ProjectProducerService projectProducerService;
+
     // Validate endTime - startTime >= 1 week
     private boolean validateStartEndTime(Project project) {
 
         Duration timeDifference = Duration.between(project.getStartTime(), project.getEndTime());
         return timeDifference.toDays() >= 7;
+
+    }
+
+    private void validateProjectDetails(Project project) {
+        // Check start end time constraint
+        if (!validateStartEndTime(project)) {
+            throw new InvalidProjectException("Project must be last for at least 7 days");
+        }
+
+        // Check country existed or not
+        GetCountryByIsoCodeRequestDto getCountryByIsoCodeRequestDto = new GetCountryByIsoCodeRequestDto(
+                UUID.randomUUID().toString(), project.getCountryIsoCode());
+        projectProducerService
+                .send(getCountryByIsoCodeRequestDto);
+        // Optional<CountryDto> optionalCountryDto =
+        // getCountryDtoByCountryIsoCode(project.getCountryIsoCode());
+        // if (optionalCountryDto.isEmpty()) {
+        // throw new InvalidProjectException("Country code is invalid");
+        // }
 
     }
 
@@ -60,21 +84,6 @@ class ProjectServiceImpl implements InternalProjectService {
     // return Optional.empty();
     // }
     // }
-
-    private void validateProjectDetails(Project project) {
-        // Check start end time constraint
-        if (!validateStartEndTime(project)) {
-            throw new InvalidProjectException("Project must be last for at least 7 days");
-        }
-
-        // // Check country existed or not
-        // Optional<CountryDto> optionalCountryDto =
-        // getCountryDtoByCountryIsoCode(project.getCountryIsoCode());
-        // if (optionalCountryDto.isEmpty()) {
-        // throw new InvalidProjectException("Country code is invalid");
-        // }
-
-    }
 
     @Override
     public InternalProjectDto createProject(CreateProjectDto createProjectDto) {
