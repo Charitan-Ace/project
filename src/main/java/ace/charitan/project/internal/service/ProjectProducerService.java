@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
-import ace.charitan.project.internal.dto.country.GetCountryByIsoCode.GetCountryByIsoCodeRequestDto;
+import ace.charitan.common.dto.country.GetCountryByIsoCode.GetCountryByIsoCodeRequestDto;
 
 @Component
 class ProjectProducerService {
