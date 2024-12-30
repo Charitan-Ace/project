@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.requestreply.ReplyingKafkaTemplate;
 import org.springframework.kafka.requestreply.RequestReplyFuture;
-import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
 
+import ace.charitan.common.dto.TestKafkaMessageDto;
 import ace.charitan.common.dto.country.GetCountryByIsoCode.GetCountryByIsoCodeRequestDto;
 import ace.charitan.common.dto.country.GetCountryByIsoCode.GetCountryByIsoCodeResponseDto;
 
@@ -47,9 +47,19 @@ class ProjectProducerService {
         }
     }
 
-    GetCountryByIsoCodeResponseDto sendAndReceive(GetCountryByIsoCodeRequestDto data) {
-        Object response = sendAndReceive(ProjectProducerTopic.PROJECT_GEOGRAPHY_GET_COUNTRY_BY_ISO_CODE, data);
-        return (GetCountryByIsoCodeResponseDto) response;
+    // GetCountryByIsoCodeResponseDto sendAndReceive(GetCountryByIsoCodeRequestDto
+    // data) {
+    // Object response =
+    // sendAndReceive(ProjectProducerTopic.PROJECT_GEOGRAPHY_GET_COUNTRY_BY_ISO_CODE,
+    // data);
+    // return (GetCountryByIsoCodeResponseDto) response;
+    // }
+
+    TestKafkaMessageDto sendAndReceive(GetCountryByIsoCodeRequestDto data) {
+        TestKafkaMessageDto response = (TestKafkaMessageDto) sendAndReceive(
+                ProjectProducerTopic.PROJECT_GEOGRAPHY_GET_COUNTRY_BY_ISO_CODE, data);
+        System.out.println(response.getName());
+        return response;
     }
 
     // void send(GetCountryByIsoCodeRequestDto data) {

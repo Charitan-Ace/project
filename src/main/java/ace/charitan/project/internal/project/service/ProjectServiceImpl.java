@@ -42,8 +42,10 @@ class ProjectServiceImpl implements InternalProjectService {
         // Check country existed or not
         GetCountryByIsoCodeRequestDto getCountryByIsoCodeRequestDto = new GetCountryByIsoCodeRequestDto(
                 UUID.randomUUID().toString(), project.getCountryIsoCode());
+
         projectProducerService
-                .send(getCountryByIsoCodeRequestDto);
+                .sendAndReceive(getCountryByIsoCodeRequestDto);
+
         // Optional<CountryDto> optionalCountryDto =
         // getCountryDtoByCountryIsoCode(project.getCountryIsoCode());
         // if (optionalCountryDto.isEmpty()) {
