@@ -1,8 +1,8 @@
-package ace.charitan.project.internal.controller;
+package ace.charitan.project.internal.project.controller;
 
 import java.time.ZonedDateTime;
 
-import ace.charitan.project.internal.service.ProjectEnum.CategoryType;
+import ace.charitan.project.internal.project.service.ProjectEnum.CategoryType;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

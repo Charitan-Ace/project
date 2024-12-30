@@ -1,4 +1,4 @@
-package ace.charitan.project.internal.service;
+package ace.charitan.project.internal.project.service;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -8,12 +8,12 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ace.charitan.project.internal.controller.ProjectRequestBody.CreateProjectDto;
-import ace.charitan.project.internal.controller.ProjectRequestBody.UpdateProjectDto;
-import ace.charitan.project.internal.dto.project.InternalProjectDto;
-import ace.charitan.project.internal.exception.ProjectException.InvalidProjectException;
-import ace.charitan.project.internal.exception.ProjectException.NotFoundProjectException;
-import ace.charitan.project.internal.service.ProjectEnum.StatusType;
+import ace.charitan.project.internal.project.controller.ProjectRequestBody.CreateProjectDto;
+import ace.charitan.project.internal.project.controller.ProjectRequestBody.UpdateProjectDto;
+import ace.charitan.project.internal.project.dto.project.InternalProjectDto;
+import ace.charitan.project.internal.project.exception.ProjectException.InvalidProjectException;
+import ace.charitan.project.internal.project.exception.ProjectException.NotFoundProjectException;
+import ace.charitan.project.internal.project.service.ProjectEnum.StatusType;
 import ace.charitan.common.dto.country.GetCountryByIsoCode.GetCountryByIsoCodeRequestDto;
 
 @Service

@@ -1,4 +1,4 @@
-package ace.charitan.project.internal.controller;
+package ace.charitan.project.internal.project.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import ace.charitan.project.internal.controller.ProjectRequestBody.CreateProjectDto;
-import ace.charitan.project.internal.controller.ProjectRequestBody.UpdateProjectDto;
-import ace.charitan.project.internal.dto.project.InternalProjectDto;
-import ace.charitan.project.internal.service.InternalProjectService;
+import ace.charitan.project.internal.project.controller.ProjectRequestBody.CreateProjectDto;
+import ace.charitan.project.internal.project.controller.ProjectRequestBody.UpdateProjectDto;
+import ace.charitan.project.internal.project.dto.project.InternalProjectDto;
+import ace.charitan.project.internal.project.service.InternalProjectService;
 
 @RestController
 class ProjectController {

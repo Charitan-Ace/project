@@ -1,13 +1,13 @@
-package ace.charitan.project.internal.service;
+package ace.charitan.project.internal.project.service;
 
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import ace.charitan.project.internal.controller.ProjectRequestBody.CreateProjectDto;
-import ace.charitan.project.internal.controller.ProjectRequestBody.UpdateProjectDto;
-import ace.charitan.project.internal.dto.project.InternalProjectDto;
-import ace.charitan.project.internal.service.ProjectEnum.CategoryType;
-import ace.charitan.project.internal.service.ProjectEnum.StatusType;
+import ace.charitan.project.internal.project.controller.ProjectRequestBody.CreateProjectDto;
+import ace.charitan.project.internal.project.controller.ProjectRequestBody.UpdateProjectDto;
+import ace.charitan.project.internal.project.dto.project.InternalProjectDto;
+import ace.charitan.project.internal.project.service.ProjectEnum.CategoryType;
+import ace.charitan.project.internal.project.service.ProjectEnum.StatusType;
 import ace.charitan.project.internal.utils.AbstractEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

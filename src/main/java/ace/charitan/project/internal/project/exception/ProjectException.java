@@ -1,4 +1,4 @@
-package ace.charitan.project.internal.exception;
+package ace.charitan.project.internal.project.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

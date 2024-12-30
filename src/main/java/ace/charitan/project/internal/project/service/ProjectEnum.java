@@ -1,4 +1,4 @@
-package ace.charitan.project.internal.service;
+package ace.charitan.project.internal.project.service;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;

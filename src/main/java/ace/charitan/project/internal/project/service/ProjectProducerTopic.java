@@ -1,4 +1,4 @@
-package ace.charitan.project.internal.service;
+package ace.charitan.project.internal.project.service;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
