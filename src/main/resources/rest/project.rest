@@ -1,0 +1,131 @@
+### Valid project creation
+
+POST http://localhost:8090/create
+Content-Type: application/json
+
+{
+    "title": "Cung tre den truong",
+    "description": "Chung tay giup tre em viet nam duoc den truong an toan",
+    "goal": 100000000,
+    "startTime": "2025-12-16T07:30:45+07:00",
+    "endTime": "2025-12-23T07:30:45+07:00",
+    "countryIsoCode": "CN",
+    "categoryType": "FOOD"
+}
+
+### Get project
+
+GET http://localhost:8090/8
+
+
+### Update project
+PUT http://localhost:8090/update-details/1
+Content-Type: application/json
+
+{
+    "title": "Tre ve nha an toan",
+    "description": "Chung tay giup tre em viet nam duoc den truong an toan",
+    "goal": 100000000,
+    "startTime": "2025-12-16T07:30:45+07:00",
+    "endTime": "2025-12-23T07:30:45+07:00"
+}
+
+### Approve project
+POST http://localhost:8090/approve/1
+
+### Halt project
+POST http://localhost:8090/halt/1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Title is blank
+POST http://localhost:8090/create
+Content-Type: application/json
+
+{
+    "title": "",
+    "description": "",
+    "goal": 100000000,
+    "startTime": "2025-12-16T07:30:45+07:00",
+    "endTime": "2025-12-23T07:30:45+07:00"
+}
+
+### Description is blank
+POST http://localhost:8090/create
+Content-Type: application/json
+
+{
+    "title": "Cung tre den truong",
+    "description": "",
+    "goal": 100000000,
+    "startTime": "2025-12-16T07:30:45+07:00",
+    "endTime": "2025-12-23T07:30:45+07:00"
+}
+
+### Goal is negative
+POST http://localhost:8090/create
+Content-Type: application/json
+
+{
+    "title": "Cung tre den truong",
+    "description": "Chung tay giup tre em viet nam duoc den truong an toan",
+    "goal": -1000,
+    "startTime": "2025-12-16T07:30:45+07:00",
+    "endTime": "2025-12-23T07:30:45+07:00"
+}
+
+### Start time is in the past
+POST http://localhost:8090/create
+Content-Type: application/json
+
+{
+    "title": "Cung tre den truong",
+    "description": "Chung tay giup tre em viet nam duoc den truong an toan",
+    "goal": 100000000,
+    "startTime": "2024-01-01T07:30:45+07:00",
+    "endTime": "2025-12-23T07:30:45+07:00"
+}
+
+### End time is less than 7 days after start time
+POST http://localhost:8090/create
+Content-Type: application/json
+
+{
+    "title": "Cung tre den truong",
+    "description": "Chung tay giup tre em viet nam duoc den truong an toan",
+    "goal": 100000000,
+    "startTime": "2025-12-16T07:30:45+07:00",
+    "endTime": "2025-12-18T07:30:45+07:00"
+}
+
