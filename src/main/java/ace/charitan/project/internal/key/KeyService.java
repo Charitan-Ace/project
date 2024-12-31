@@ -8,13 +8,13 @@ import org.springframework.stereotype.Service;
 @Service
 class KeyService {
 
-    @Autowired
-    private JwtExternalService jwtService;
+    // @Autowired
+    // private JwtExternalService jwtService;
 
-    @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
+    // @Autowired
+    // private KafkaTemplate<String, String> kafkaTemplate;
 
 
-    private final SignatureAlgorithm encAlgorithm = Jwts
+    // private final SignatureAlgorithm encAlgorithm = Jwts
 
 }

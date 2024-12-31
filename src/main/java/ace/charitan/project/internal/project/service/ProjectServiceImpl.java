@@ -3,18 +3,18 @@ package ace.charitan.project.internal.project.service;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ace.charitan.common.dto.TestKafkaMessageDto;
+import ace.charitan.common.dto.country.GetCountryByIsoCode.GetCountryByIsoCodeRequestDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.CreateProjectDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.UpdateProjectDto;
 import ace.charitan.project.internal.project.dto.project.InternalProjectDto;
 import ace.charitan.project.internal.project.exception.ProjectException.InvalidProjectException;
 import ace.charitan.project.internal.project.exception.ProjectException.NotFoundProjectException;
 import ace.charitan.project.internal.project.service.ProjectEnum.StatusType;
-import ace.charitan.common.dto.country.GetCountryByIsoCode.GetCountryByIsoCodeRequestDto;
 
 @Service
 class ProjectServiceImpl implements InternalProjectService {
@@ -41,10 +41,12 @@ class ProjectServiceImpl implements InternalProjectService {
 
         // Check country existed or not
         GetCountryByIsoCodeRequestDto getCountryByIsoCodeRequestDto = new GetCountryByIsoCodeRequestDto(
-                UUID.randomUUID().toString(), project.getCountryIsoCode());
+                project.getCountryIsoCode());
 
-        projectProducerService
-                .sendAndReceive(getCountryByIsoCodeRequestDto);
+        // projectProducerService
+        // .sendAndReceive(getCountryByIsoCodeRequestDto);
+
+        projectProducerService.sendAndReceive(new TestKafkaMessageDto("fsdfs,", "fdsfd"));
 
         // Optional<CountryDto> optionalCountryDto =
         // getCountryDtoByCountryIsoCode(project.getCountryIsoCode());

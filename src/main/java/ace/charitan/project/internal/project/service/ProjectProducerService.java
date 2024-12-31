@@ -55,7 +55,7 @@ class ProjectProducerService {
     // return (GetCountryByIsoCodeResponseDto) response;
     // }
 
-    TestKafkaMessageDto sendAndReceive(GetCountryByIsoCodeRequestDto data) {
+    TestKafkaMessageDto sendAndReceive(TestKafkaMessageDto data) {
         TestKafkaMessageDto response = (TestKafkaMessageDto) sendAndReceive(
                 ProjectProducerTopic.PROJECT_GEOGRAPHY_GET_COUNTRY_BY_ISO_CODE, data);
         System.out.println(response.getName());

@@ -40,7 +40,6 @@ class ProjectController {
 
         InternalProjectDto projectDto = internalProjectService.getProjectById(projectId);
         return new ResponseEntity<>(projectDto, HttpStatus.OK);
-
     }
 
     @PutMapping("/update-details/{projectId}")
