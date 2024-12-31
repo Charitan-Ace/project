@@ -40,13 +40,15 @@ class ProjectServiceImpl implements InternalProjectService {
         }
 
         // Check country existed or not
-        GetCountryByIsoCodeRequestDto getCountryByIsoCodeRequestDto = new GetCountryByIsoCodeRequestDto(
-                project.getCountryIsoCode());
+        // GetCountryByIsoCodeRequestDto getCountryByIsoCodeRequestDto = new
+        // GetCountryByIsoCodeRequestDto(
+        // project.getCountryIsoCode());
 
         // projectProducerService
         // .sendAndReceive(getCountryByIsoCodeRequestDto);
 
-        projectProducerService.sendAndReceive(new TestKafkaMessageDto("fsdfs,", "fdsfd"));
+        // projectProducerService.sendAndReceive(new TestKafkaMessageDto("fsdfs,",
+        // "fdsfd"));
 
         // Optional<CountryDto> optionalCountryDto =
         // getCountryDtoByCountryIsoCode(project.getCountryIsoCode());
@@ -55,39 +57,6 @@ class ProjectServiceImpl implements InternalProjectService {
         // }
 
     }
-
-    // private Optional<CountryDto> getCountryDtoByCountryIsoCode(String
-    // countryIsoCode) {
-
-    // // Check country iso code valid
-    // String correlationId = UUID.randomUUID().toString();
-
-    // CompletableFuture<CountryDto> asyncCallToGeographyServer = new
-    // CompletableFuture<>();
-
-    // pendingCountryRequests.put(correlationId, asyncCallToGeographyServer);
-
-    // CountryCodeWithUuid countryIdWithUuidDto = new CountryCodeWithUuid(
-    // correlationId, countryIsoCode);
-
-    // try {
-
-    // countryKafkaProducer.sendMessage(KafkaConstant.COUNTRY_TOPIC,
-    // countryIdWithUuidDto);
-
-    // CountryDto countryDto = asyncCallToGeographyServer.get(200,
-    // TimeUnit.MILLISECONDS);
-
-    // System.out.println(countryDto.getRegionName());
-
-    // return Optional.of(countryDto);
-
-    // } catch (InterruptedException | ExecutionException | TimeoutException e) {
-    // System.err.println("Error in getting HabitatDescDto");
-    // e.printStackTrace();
-    // return Optional.empty();
-    // }
-    // }
 
     @Override
     public InternalProjectDto createProject(CreateProjectDto createProjectDto) {
