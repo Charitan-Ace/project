@@ -2,7 +2,7 @@ GET http://localhost:8080/project/actuator/health
 
 ### Valid project creation
 
-POST http://172.18.0.20:8080/create
+POST http://172.18.0.19:8080/create
 Content-Type: application/json
 
 {

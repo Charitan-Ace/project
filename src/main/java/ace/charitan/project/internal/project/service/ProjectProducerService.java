@@ -12,8 +12,6 @@ import org.springframework.kafka.requestreply.RequestReplyFuture;
 import org.springframework.stereotype.Component;
 
 import ace.charitan.common.dto.TestKafkaMessageDto;
-import ace.charitan.common.dto.country.GetCountryByIsoCode.GetCountryByIsoCodeRequestDto;
-import ace.charitan.common.dto.country.GetCountryByIsoCode.GetCountryByIsoCodeResponseDto;
 
 @Component
 class ProjectProducerService {
@@ -56,6 +54,7 @@ class ProjectProducerService {
     // }
 
     TestKafkaMessageDto sendAndReceive(TestKafkaMessageDto data) {
+        System.out.println("start to send");
         TestKafkaMessageDto response = (TestKafkaMessageDto) sendAndReceive(
                 ProjectProducerTopic.PROJECT_GEOGRAPHY_GET_COUNTRY_BY_ISO_CODE, data);
         System.out.println(response.getName());
