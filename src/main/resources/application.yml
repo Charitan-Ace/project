@@ -71,7 +71,7 @@ logging:
   level:
     org:
       hibernate: 
-        SQL: true 
+        SQL: DEBUG
         type:
           descriptior: 
             sql: 
