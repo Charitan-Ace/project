@@ -66,3 +66,13 @@ springdoc:
   api-docs:
     path: /v1/api-docs
 
+
+logging:
+  level:
+    org:
+      hibernate: 
+        SQL: true 
+        type:
+          descriptior: 
+            sql: 
+              BasicBinder: TRACE
