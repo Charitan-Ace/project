@@ -220,6 +220,6 @@ class ProjectServiceImpl implements InternalProjectService {
         // return projectCustomRepository.searchProjects(searchProjectsDto, pageable);
 
         return projectRepository.findByCountryIsoCode(searchProjectsDto.getCountryIsoCode(), pageable);
-t    }
+    }
 
 }
