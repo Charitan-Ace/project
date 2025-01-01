@@ -7,8 +7,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ace.charitan.common.dto.TestKafkaMessageDto;
-import ace.charitan.common.dto.country.GetCountryByIsoCode.GetCountryByIsoCodeRequestDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.CreateProjectDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.UpdateProjectDto;
 import ace.charitan.project.internal.project.dto.project.InternalProjectDto;
@@ -39,66 +37,20 @@ class ProjectServiceImpl implements InternalProjectService {
             throw new InvalidProjectException("Project must be last for at least 7 days");
         }
 
-        // Check country existed or not
-        GetCountryByIsoCodeRequestDto getCountryByIsoCodeRequestDto = new GetCountryByIsoCodeRequestDto(
-                project.getCountryIsoCode());
-
-        // projectProducerService
-        // .sendAndReceive(getCountryByIsoCodeRequestDto);
-
-        projectProducerService.sendAndReceive(new TestKafkaMessageDto("fsdfs,", "fdsfd"));
-
-        // Optional<CountryDto> optionalCountryDto =
-        // getCountryDtoByCountryIsoCode(project.getCountryIsoCode());
-        // if (optionalCountryDto.isEmpty()) {
-        // throw new InvalidProjectException("Country code is invalid");
-        // }
-
     }
-
-    // private Optional<CountryDto> getCountryDtoByCountryIsoCode(String
-    // countryIsoCode) {
-
-    // // Check country iso code valid
-    // String correlationId = UUID.randomUUID().toString();
-
-    // CompletableFuture<CountryDto> asyncCallToGeographyServer = new
-    // CompletableFuture<>();
-
-    // pendingCountryRequests.put(correlationId, asyncCallToGeographyServer);
-
-    // CountryCodeWithUuid countryIdWithUuidDto = new CountryCodeWithUuid(
-    // correlationId, countryIsoCode);
-
-    // try {
-
-    // countryKafkaProducer.sendMessage(KafkaConstant.COUNTRY_TOPIC,
-    // countryIdWithUuidDto);
-
-    // CountryDto countryDto = asyncCallToGeographyServer.get(200,
-    // TimeUnit.MILLISECONDS);
-
-    // System.out.println(countryDto.getRegionName());
-
-    // return Optional.of(countryDto);
-
-    // } catch (InterruptedException | ExecutionException | TimeoutException e) {
-    // System.err.println("Error in getting HabitatDescDto");
-    // e.printStackTrace();
-    // return Optional.empty();
-    // }
-    // }
 
     @Override
     public InternalProjectDto createProject(CreateProjectDto createProjectDto) {
 
         // TODO: Change to based on auth
-        Long charityId = 1L;
+        String charityId = "fdsfdasfs-fasfdfdsfadsfs-fsdafadsfsad";
 
         Project project = new Project(createProjectDto, charityId);
         validateProjectDetails(project);
 
         return projectRepository.save(project);
+        // return project.toInternalProjectDto();
+        // return project.
 
     }
 

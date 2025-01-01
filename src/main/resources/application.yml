@@ -20,6 +20,9 @@ spring:
         json:
           trusted:
             packages: "ace.charitan.*" 
+  sql:
+    init:
+      mode: always  # Ensures data.sql runs even with Hibernate ddl-auto
 #server:
 #  port: 8090
 

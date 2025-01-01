@@ -1,7 +1,6 @@
 package ace.charitan.project.internal.project.service;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.CreateProjectDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.UpdateProjectDto;
@@ -40,9 +39,9 @@ class Project extends AbstractEntity implements InternalProjectDto {
     @Enumerated(EnumType.STRING)
     private CategoryType categoryType;
 
-    private Long charityId;
-
     private String countryIsoCode;
+
+    private String charityId;
 
     // private List<Long> imageIdList;
 
@@ -57,7 +56,7 @@ class Project extends AbstractEntity implements InternalProjectDto {
 
     // private String videoUrls;
 
-    Project(CreateProjectDto createProjectDto, long charityId) {
+    Project(CreateProjectDto createProjectDto, String charityId) {
         this.title = createProjectDto.getTitle();
         this.description = createProjectDto.getDescription();
         this.goal = createProjectDto.getGoal();
@@ -69,12 +68,14 @@ class Project extends AbstractEntity implements InternalProjectDto {
         this.charityId = charityId;
     }
 
-    public void updateDetails(UpdateProjectDto updateProjectDto) {
-        this.title = updateProjectDto.getTitle();
-        this.description = updateProjectDto.getDescription();
-        this.goal = updateProjectDto.getGoal();
-        this.startTime = updateProjectDto.getStartTime();
-        this.endTime = updateProjectDto.getEndTime();
+    // InternalProjectDto toInternalProjectDto()
+
+    void updateDetails(UpdateProjectDto updateProjectDto) {
+        // this.title = updateProjectDto.getTitle();
+        // this.description = updateProjectDto.getDescription();
+        // this.goal = updateProjectDto.getGoal();
+        // this.startTime = updateProjectDto.getStartTime();
+        // this.endTime = updateProjectDto.getEndTime();
         // this.categoryType = createProjectDto.getCategoryType();
         // this.countryIsoCode = createProjectDto.getCountryIsoCode();
     }
