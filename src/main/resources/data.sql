@@ -18,6 +18,97 @@ CREATE TABLE project (
     -- created_at
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- updated_at
 );
+INSERT INTO project (
+        title,
+        description,
+        goal,
+        start_time,
+        end_time,
+        status_type,
+        category_type,
+        country_iso_code,
+        charity_id
+    )
+VALUES -- Global Crisis Charity Projects
+    (
+        'Middle East Crisis',
+        'Organized by the Israeli non-profit organization.',
+        50000.00,
+        '2025-01-01 00:00:00+00',
+        '2025-12-31 23:59:59+00',
+        'PENDING',
+        'HUMANITARIAN',
+        'IL',
+        'charity1'
+    ),
+    (
+        'Ukraine-Russia War',
+        'Organized by the Ukrainian non-profit organization.',
+        100000.00,
+        '2025-01-01 00:00:00+00',
+        '2025-12-31 23:59:59+00',
+        'APPROVED',
+        'HUMANITARIAN',
+        'UA',
+        'charity2'
+    ),
+    (
+        'Food Program in South Africa',
+        'Organized by various companies.',
+        75000.00,
+        '2025-01-01 00:00:00+00',
+        '2025-12-31 23:59:59+00',
+        'APPROVED',
+        'FOOD',
+        'ZA',
+        'charity3'
+    ),
+    -- Local Charity Projects
+    (
+        'Yagi Typhoon Support',
+        'Organized by an individual.',
+        20000.00,
+        '2025-01-01 00:00:00+00',
+        '2025-12-31 23:59:59+00',
+        'PENDING',
+        'HUMANITARIAN',
+        'VN',
+        'individual1'
+    ),
+    (
+        'Milton Hurricane Support',
+        'Organized by an individual.',
+        30000.00,
+        '2025-01-01 00:00:00+00',
+        '2025-12-31 23:59:59+00',
+        'PENDING',
+        'HUMANITARIAN',
+        'US',
+        'individual2'
+    ),
+    (
+        'Helping Ukrainian Refugee',
+        'Organized by various companies.',
+        40000.00,
+        '2025-01-01 00:00:00+00',
+        '2025-12-31 23:59:59+00',
+        'APPROVED',
+        'HUMANITARIAN',
+        'DE',
+        'charity4'
+    ),
+    (
+        'Supporting SOS Children Village',
+        'Organized by various companies.',
+        35000.00,
+        '2025-01-01 00:00:00+00',
+        '2025-12-31 23:59:59+00',
+        'APPROVED',
+        'HUMANITARIAN',
+        'CN',
+        'charity5'
+    );
+
 -- DROP TABLE IF EXISTS project CASCADE;
 -- CREATE TABLE project (
 --     id BIGSERIAL PRIMARY KEY,  -- assuming this is inherited from AbstractEntity, which likely has an id field
