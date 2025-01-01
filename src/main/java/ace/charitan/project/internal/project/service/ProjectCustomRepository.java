@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -59,6 +61,11 @@ class ProjectCustomRepository {
             // Combine all predicates using AND
             query.where(cb.and(predicates.toArray(new Predicate[0])));
 
+            // Unwrap the session and get the SQL string
+            Session session = entityManager.unwrap(Session.class);
+            Query<?> hibernateQuery = session.createQuery(query);
+            System.out.println("Generated SQL: " + hibernateQuery.getQueryString());
+
             // Apply pagination by setting first result and max results
             TypedQuery<Project> typedQuery = entityManager.createQuery(query);
             typedQuery.setFirstResult((int) pageable.getOffset()); // Set the offset for pagination
@@ -76,7 +83,7 @@ class ProjectCustomRepository {
             // Manually map entities to DTOs
             List<InternalProjectDto> results = projects.stream()
                     .map(projectEntity -> projectEntity) // Assuming a constructor in DTO for
-                                                                                 // mapping
+                                                         // mapping
                     .collect(Collectors.toList());
 
             return new PageImpl<>(results, pageable, totalCount);
