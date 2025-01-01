@@ -219,7 +219,7 @@ class ProjectServiceImpl implements InternalProjectService {
         // Get pageable result1
         // return projectCustomRepository.searchProjects(searchProjectsDto, pageable);
 
-        return projectRepository.findByCountryIsoCode("UK", pageable);
+        return projectRepository.findByCountryIsoCode("UA", pageable);
 
     }
 
