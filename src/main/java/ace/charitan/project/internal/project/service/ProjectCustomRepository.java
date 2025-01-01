@@ -72,8 +72,8 @@ class ProjectCustomRepository {
         // Create and return a Page object with the results and total count
         List<Project> results = typedQuery.getResultList();
         List<InternalProjectDto> internalProjectDtoList = results.stream()
-                .map(project -> project.toInternalProjectDto()).collect(Collectors.toList());
-        return new PageImpl<>(results, pageable, totalCount);
+                .map(p -> new InternalProjectDtoImpl(p)).collect(Collectors.toList());
+        return new PageImpl<>(internalProjectDtoList, pageable, totalCount);
     }
 
 }
