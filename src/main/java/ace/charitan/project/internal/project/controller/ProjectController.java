@@ -1,8 +1,11 @@
 package ace.charitan.project.internal.project.controller;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -44,11 +47,13 @@ class ProjectController {
     ResponseEntity<List<InternalProjectDto>> searchProjects(
             @RequestParam(value = "page", defaultValue = "1") Integer pageNo,
             @RequestParam(value = "size", defaultValue = "10") Integer pageSize,
-            @Validated @RequestBody SearchProjectsDto searchProjectsDto
-    ) {
-        List<InternalProjectDto> projectDtoList = internalProjectService.searchProjects(pageNo, pageSize,
+            @Validated @RequestBody SearchProjectsDto searchProjectsDto) {
+        Page<InternalProjectDto> page = internalProjectService.searchProjects(pageNo, pageSize,
                 searchProjectsDto);
-        return ResponseEntity.ok(List.of());
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Total-Pages", String.valueOf(page.getTotalPages()));
+        headers.setAccessControlExposeHeaders(Stream.of("Total-Pages").toList());
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     @GetMapping("/{projectId}")
