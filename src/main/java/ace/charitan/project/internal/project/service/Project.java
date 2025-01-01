@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-// @TableN("project")
+@Table(name = "project")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -69,7 +69,6 @@ class Project extends AbstractEntity implements InternalProjectDto {
         this.countryIsoCode = createProjectDto.getCountryIsoCode();
         this.charityId = charityId;
     }
-
 
     void updateDetails(UpdateProjectDto updateProjectDto) {
         // this.title = updateProjectDto.getTitle();
