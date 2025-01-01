@@ -19,7 +19,6 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
-
 @Repository
 class ProjectCustomRepository {
     @PersistenceContext
@@ -30,8 +29,8 @@ class ProjectCustomRepository {
 
             CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
+            // Query for the entity type (Project)
             CriteriaQuery<Project> query = cb.createQuery(Project.class);
-
             Root<Project> project = query.from(Project.class);
 
             List<Predicate> predicates = new ArrayList<>();
@@ -43,9 +42,8 @@ class ProjectCustomRepository {
 
             // Add condition for name if not null
             if (searchProjectsDto.getName() != null) {
-                predicates
-                        .add(cb.like(cb.lower(project.get("name")),
-                                "%" + searchProjectsDto.getName().toLowerCase() + "%"));
+                predicates.add(
+                        cb.like(cb.lower(project.get("name")), "%" + searchProjectsDto.getName().toLowerCase() + "%"));
             }
 
             // Add condition for startTime if not null
@@ -73,10 +71,15 @@ class ProjectCustomRepository {
             Long totalCount = entityManager.createQuery(countQuery).getSingleResult();
 
             // Create and return a Page object with the results and total count
-            List<Project> results = typedQuery.getResultList();
-            List<InternalProjectDto> internalProjectDtoList = results.stream()
-                    .map(p -> p).collect(Collectors.toList());
-            return new PageImpl<>(internalProjectDtoList, pageable, totalCount);
+            List<Project> projects = typedQuery.getResultList();
+
+            // Manually map entities to DTOs
+            List<InternalProjectDto> results = projects.stream()
+                    .map(projectEntity -> projectEntity) // Assuming a constructor in DTO for
+                                                                                 // mapping
+                    .collect(Collectors.toList());
+
+            return new PageImpl<>(results, pageable, totalCount);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
