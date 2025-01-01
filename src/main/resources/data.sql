@@ -1,5 +1,4 @@
 DROP TABLE IF EXISTS project CASCADE;
-
 CREATE TABLE project (
     id SERIAL PRIMARY KEY,
     -- Assuming an ID column for primary key
@@ -14,12 +13,11 @@ CREATE TABLE project (
     -- Updated enum values for CategoryType
     country_iso_code CHAR(2) NOT NULL,
     -- ISO 3166-1 alpha-3 format
-    charity_id BIGINT,
+    charity_id VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     -- created_at
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- updated_at
 );
-
 -- DROP TABLE IF EXISTS project CASCADE;
 -- CREATE TABLE project (
 --     id BIGSERIAL PRIMARY KEY,  -- assuming this is inherited from AbstractEntity, which likely has an id field

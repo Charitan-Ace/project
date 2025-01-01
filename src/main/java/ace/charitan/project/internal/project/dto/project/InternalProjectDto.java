@@ -2,6 +2,9 @@ package ace.charitan.project.internal.project.dto.project;
 
 import java.time.ZonedDateTime;
 
+import ace.charitan.project.internal.project.service.ProjectEnum.CategoryType;
+import ace.charitan.project.internal.project.service.ProjectEnum.StatusType;
+
 public interface InternalProjectDto {
     String getTitle();
 
@@ -12,5 +15,13 @@ public interface InternalProjectDto {
     ZonedDateTime getStartTime();
 
     ZonedDateTime getEndTime();
+
+    StatusType getStatusType();
+
+    CategoryType getCategoryType();
+
+    String getCountryIsoCode();
+
+    String getCharityId();
 
 }

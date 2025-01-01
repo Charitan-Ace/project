@@ -42,7 +42,7 @@ class Project extends AbstractEntity implements InternalProjectDto {
 
     private String countryIsoCode;
 
-    private Long charityId;
+    private String charityId;
 
     // private List<Long> imageIdList;
 
@@ -70,11 +70,11 @@ class Project extends AbstractEntity implements InternalProjectDto {
     }
 
     public void updateDetails(UpdateProjectDto updateProjectDto) {
-        this.title = updateProjectDto.getTitle();
-        this.description = updateProjectDto.getDescription();
-        this.goal = updateProjectDto.getGoal();
-        this.startTime = updateProjectDto.getStartTime();
-        this.endTime = updateProjectDto.getEndTime();
+        // this.title = updateProjectDto.getTitle();
+        // this.description = updateProjectDto.getDescription();
+        // this.goal = updateProjectDto.getGoal();
+        // this.startTime = updateProjectDto.getStartTime();
+        // this.endTime = updateProjectDto.getEndTime();
         // this.categoryType = createProjectDto.getCategoryType();
         // this.countryIsoCode = createProjectDto.getCountryIsoCode();
     }

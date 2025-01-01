@@ -37,23 +37,6 @@ class ProjectServiceImpl implements InternalProjectService {
             throw new InvalidProjectException("Project must be last for at least 7 days");
         }
 
-        // Check country existed or not
-        // GetCountryByIsoCodeRequestDto getCountryByIsoCodeRequestDto = new
-        // GetCountryByIsoCodeRequestDto(
-        // project.getCountryIsoCode());
-
-        // projectProducerService
-        // .sendAndReceive(getCountryByIsoCodeRequestDto);
-
-        // projectProducerService.sendAndReceive(new TestKafkaMessageDto("fsdfs,",
-        // "fdsfd"));
-
-        // Optional<CountryDto> optionalCountryDto =
-        // getCountryDtoByCountryIsoCode(project.getCountryIsoCode());
-        // if (optionalCountryDto.isEmpty()) {
-        // throw new InvalidProjectException("Country code is invalid");
-        // }
-
     }
 
     @Override
@@ -65,7 +48,8 @@ class ProjectServiceImpl implements InternalProjectService {
         Project project = new Project(createProjectDto, charityId);
         validateProjectDetails(project);
 
-        return projectRepository.save(project);
+        project = projectRepository.save(project);
+// return project.
 
     }
 
