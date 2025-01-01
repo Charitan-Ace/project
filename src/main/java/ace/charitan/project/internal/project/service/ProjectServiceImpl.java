@@ -2,12 +2,17 @@ package ace.charitan.project.internal.project.service;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.CreateProjectDto;
+import ace.charitan.project.internal.project.controller.ProjectRequestBody.SearchProjectsDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.UpdateProjectDto;
 import ace.charitan.project.internal.project.dto.project.InternalProjectDto;
 import ace.charitan.project.internal.project.exception.ProjectException.InvalidProjectException;
@@ -19,6 +24,9 @@ class ProjectServiceImpl implements InternalProjectService {
 
     @Autowired
     private ProjectRepository projectRepository;
+
+    @Autowired
+    private ProjectCustomRepository projectCustomRepository;
 
     @Autowired
     private ProjectProducerService projectProducerService;
@@ -200,6 +208,17 @@ class ProjectServiceImpl implements InternalProjectService {
         project = projectRepository.save(project);
 
         return project;
+    }
+
+    @Override
+    public Page<InternalProjectDto> searchProjects(Integer pageNo, Integer pageSize,
+            SearchProjectsDto searchProjectsDto) {
+
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+
+        // Get pageable result1
+        return projectCustomRepository.searchProjects(searchProjectsDto, pageable);
+
     }
 
 }

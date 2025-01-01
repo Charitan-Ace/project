@@ -1,12 +1,20 @@
 package ace.charitan.project.internal.project.service;
 
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.CreateProjectDto;
+import ace.charitan.project.internal.project.controller.ProjectRequestBody.SearchProjectsDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.UpdateProjectDto;
 import ace.charitan.project.internal.project.dto.project.InternalProjectDto;
 
 public interface InternalProjectService {
 
     InternalProjectDto createProject(CreateProjectDto createProjectDto);
+
+    Page<InternalProjectDto> searchProjects(Integer pageNo, Integer pageSize,
+            SearchProjectsDto searchProjectsDto);
 
     InternalProjectDto getProjectById(Long projectId);
 

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.CreateProjectDto;
+import ace.charitan.project.internal.project.controller.ProjectRequestBody.SearchProjectsDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.UpdateProjectDto;
 import ace.charitan.project.internal.project.dto.project.InternalProjectDto;
 import ace.charitan.project.internal.project.service.InternalProjectService;
@@ -39,14 +40,16 @@ class ProjectController {
 
     }
 
-    // @PostMapping("/search")
-    // ResponseEntity<List<InternalProjectDto>> searchProjects(@Validated
-    // @RequestBody SearchProjectsDto searchProjectsDto
-    // @RequestParam(value = "page", defaultValue = "1") Integer pageNo,
-    // @RequestParam(value = "size", defaultValue = "10") Integer pageSize
-
-    // ) {
-    // }
+    @PostMapping("/search")
+    ResponseEntity<List<InternalProjectDto>> searchProjects(
+            @RequestParam(value = "page", defaultValue = "1") Integer pageNo,
+            @RequestParam(value = "size", defaultValue = "10") Integer pageSize,
+            @Validated @RequestBody SearchProjectsDto searchProjectsDto
+    ) {
+        List<InternalProjectDto> projectDtoList = internalProjectService.searchProjects(pageNo, pageSize,
+                searchProjectsDto);
+        return ResponseEntity.ok(List.of());
+    }
 
     @GetMapping("/{projectId}")
     ResponseEntity<InternalProjectDto> getProjectById(@PathVariable Long projectId) {
