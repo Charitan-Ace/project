@@ -19,6 +19,10 @@ Content-Type: application/json
 POST http://172.18.0.19:8080/search
 Content-Type: application/json
 
+{
+    "countryIsoCode": "UK"
+}
+
 
 ### Get project
 

@@ -2,6 +2,7 @@ package ace.charitan.project.internal.project.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -27,7 +28,7 @@ class ProjectCustomRepository {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-        CriteriaQuery<InternalProjectDto> query = cb.createQuery(InternalProjectDto.class);
+        CriteriaQuery<Project> query = cb.createQuery(Project.class);
 
         Root<Project> project = query.from(Project.class);
 
@@ -58,7 +59,7 @@ class ProjectCustomRepository {
         query.where(cb.and(predicates.toArray(new Predicate[0])));
 
         // Apply pagination by setting first result and max results
-        TypedQuery<InternalProjectDto> typedQuery = entityManager.createQuery(query);
+        TypedQuery<Project> typedQuery = entityManager.createQuery(query);
         typedQuery.setFirstResult((int) pageable.getOffset()); // Set the offset for pagination
         typedQuery.setMaxResults(pageable.getPageSize()); // Set the page size
 
@@ -69,7 +70,9 @@ class ProjectCustomRepository {
         Long totalCount = entityManager.createQuery(countQuery).getSingleResult();
 
         // Create and return a Page object with the results and total count
-        List<InternalProjectDto> results = typedQuery.getResultList();
+        List<Project> results = typedQuery.getResultList();
+        List<InternalProjectDto> internalProjectDtoList = results.stream()
+                .map(project -> project.toInternalProjectDto()).collect(Collectors.toList());
         return new PageImpl<>(results, pageable, totalCount);
     }
 
