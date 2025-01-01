@@ -44,6 +44,20 @@ public class ProjectRequestBody {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class SearchProjectsDto {
+        private String countryIsoCode;
+
+        private String name;
+
+        private ZonedDateTime startTime;
+
+        private ZonedDateTime endTime;
+
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class UpdateProjectDto {
 
         @NotBlank(message = "Title must not be null or blank.")

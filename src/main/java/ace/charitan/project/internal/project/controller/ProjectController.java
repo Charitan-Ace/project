@@ -1,5 +1,7 @@
 package ace.charitan.project.internal.project.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,12 +11,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.CreateProjectDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.UpdateProjectDto;
 import ace.charitan.project.internal.project.dto.project.InternalProjectDto;
 import ace.charitan.project.internal.project.service.InternalProjectService;
+import jakarta.validation.Valid;
 
 @RestController
 class ProjectController {
@@ -34,6 +38,15 @@ class ProjectController {
         return new ResponseEntity<InternalProjectDto>(projectDto, HttpStatus.CREATED);
 
     }
+
+    // @PostMapping("/search")
+    // ResponseEntity<List<InternalProjectDto>> searchProjects(@Validated
+    // @RequestBody SearchProjectsDto searchProjectsDto
+    // @RequestParam(value = "page", defaultValue = "1") Integer pageNo,
+    // @RequestParam(value = "size", defaultValue = "10") Integer pageSize
+
+    // ) {
+    // }
 
     @GetMapping("/{projectId}")
     ResponseEntity<InternalProjectDto> getProjectById(@PathVariable Long projectId) {
