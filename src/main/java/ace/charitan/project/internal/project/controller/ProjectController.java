@@ -47,7 +47,7 @@ class ProjectController {
     ResponseEntity<List<InternalProjectDto>> searchProjects(
             @RequestParam(value = "page", defaultValue = "1") Integer pageNo,
             @RequestParam(value = "size", defaultValue = "10") Integer pageSize,
-            @Validated @RequestBody SearchProjectsDto searchProjectsDto) {
+            @RequestBody SearchProjectsDto searchProjectsDto) {
         Page<InternalProjectDto> page = internalProjectService.searchProjects(pageNo, pageSize,
                 searchProjectsDto);
         HttpHeaders headers = new HttpHeaders();
