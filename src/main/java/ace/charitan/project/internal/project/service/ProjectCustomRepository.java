@@ -25,55 +25,63 @@ class ProjectCustomRepository {
     private EntityManager entityManager;
 
     Page<InternalProjectDto> searchProjects(SearchProjectsDto searchProjectsDto, Pageable pageable) {
+        try {
 
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-        CriteriaQuery<Project> query = cb.createQuery(Project.class);
+            CriteriaQuery<Project> query = cb.createQuery(Project.class);
 
-        Root<Project> project = query.from(Project.class);
+            Root<Project> project = query.from(Project.class);
 
-        List<Predicate> predicates = new ArrayList<>();
+            List<Predicate> predicates = new ArrayList<>();
 
-        // Add condition for countryIsoCode if not null
-        if (searchProjectsDto.getCountryIsoCode() != null) {
-            predicates.add(cb.equal(project.get("countryIsoCode"), searchProjectsDto.getCountryIsoCode()));
+            // Add condition for countryIsoCode if not null
+            if (searchProjectsDto.getCountryIsoCode() != null) {
+                predicates.add(cb.equal(project.get("countryIsoCode"), searchProjectsDto.getCountryIsoCode()));
+            }
+
+            // Add condition for name if not null
+            if (searchProjectsDto.getName() != null) {
+                predicates
+                        .add(cb.like(cb.lower(project.get("name")),
+                                "%" + searchProjectsDto.getName().toLowerCase() + "%"));
+            }
+
+            // Add condition for startTime if not null
+            if (searchProjectsDto.getStartTime() != null) {
+                predicates.add(cb.greaterThanOrEqualTo(project.get("startTime"), searchProjectsDto.getStartTime()));
+            }
+
+            // Add condition for endTime if not null
+            if (searchProjectsDto.getEndTime() != null) {
+                predicates.add(cb.lessThanOrEqualTo(project.get("endTime"), searchProjectsDto.getEndTime()));
+            }
+
+            // Combine all predicates using AND
+            query.where(cb.and(predicates.toArray(new Predicate[0])));
+
+            // Apply pagination by setting first result and max results
+            TypedQuery<Project> typedQuery = entityManager.createQuery(query);
+            typedQuery.setFirstResult((int) pageable.getOffset()); // Set the offset for pagination
+            typedQuery.setMaxResults(pageable.getPageSize()); // Set the page size
+
+            // Get total count
+            CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+            Root<Project> countRoot = countQuery.from(Project.class);
+            countQuery.select(cb.count(countRoot)).where(cb.and(predicates.toArray(new Predicate[0])));
+            Long totalCount = entityManager.createQuery(countQuery).getSingleResult();
+
+            // Create and return a Page object with the results and total count
+            List<Project> results = typedQuery.getResultList();
+            List<InternalProjectDto> internalProjectDtoList = results.stream()
+                    .map(p -> p).collect(Collectors.toList());
+            return new PageImpl<>(internalProjectDtoList, pageable, totalCount);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
         }
 
-        // Add condition for name if not null
-        if (searchProjectsDto.getName() != null) {
-            predicates
-                    .add(cb.like(cb.lower(project.get("name")), "%" + searchProjectsDto.getName().toLowerCase() + "%"));
-        }
-
-        // Add condition for startTime if not null
-        if (searchProjectsDto.getStartTime() != null) {
-            predicates.add(cb.greaterThanOrEqualTo(project.get("startTime"), searchProjectsDto.getStartTime()));
-        }
-
-        // Add condition for endTime if not null
-        if (searchProjectsDto.getEndTime() != null) {
-            predicates.add(cb.lessThanOrEqualTo(project.get("endTime"), searchProjectsDto.getEndTime()));
-        }
-
-        // Combine all predicates using AND
-        query.where(cb.and(predicates.toArray(new Predicate[0])));
-
-        // Apply pagination by setting first result and max results
-        TypedQuery<Project> typedQuery = entityManager.createQuery(query);
-        typedQuery.setFirstResult((int) pageable.getOffset()); // Set the offset for pagination
-        typedQuery.setMaxResults(pageable.getPageSize()); // Set the page size
-
-        // Get total count
-        CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
-        Root<Project> countRoot = countQuery.from(Project.class);
-        countQuery.select(cb.count(countRoot)).where(cb.and(predicates.toArray(new Predicate[0])));
-        Long totalCount = entityManager.createQuery(countQuery).getSingleResult();
-
-        // Create and return a Page object with the results and total count
-        List<Project> results = typedQuery.getResultList();
-        List<InternalProjectDto> internalProjectDtoList = results.stream()
-                .map(p -> new InternalProjectDtoImpl(p)).collect(Collectors.toList());
-        return new PageImpl<>(internalProjectDtoList, pageable, totalCount);
+        // return new PageImpl<>();
     }
 
 }
