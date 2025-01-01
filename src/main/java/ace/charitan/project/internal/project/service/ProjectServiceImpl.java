@@ -43,13 +43,14 @@ class ProjectServiceImpl implements InternalProjectService {
     public InternalProjectDto createProject(CreateProjectDto createProjectDto) {
 
         // TODO: Change to based on auth
-        Long charityId = 1L;
+        String charityId = "fdsfdasfs-fasfdfdsfadsfs-fsdafadsfsad";
 
         Project project = new Project(createProjectDto, charityId);
         validateProjectDetails(project);
 
-        project = projectRepository.save(project);
-// return project.
+        return projectRepository.save(project);
+        // return project.toInternalProjectDto();
+        // return project.
 
     }
 
