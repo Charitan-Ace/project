@@ -1,8 +1,5 @@
-CREATE TABLE van(
-    id SERIAL PRIMARY KEY,
-);
-
 DROP TABLE IF EXISTS project CASCADE;
+
 CREATE TABLE project (
     id SERIAL PRIMARY KEY,
     -- Assuming an ID column for primary key
