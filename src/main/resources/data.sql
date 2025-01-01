@@ -1,3 +1,21 @@
+DROP TABLE IF EXISTS project CASCADE;
+
+CREATE TABLE project (
+    id SERIAL PRIMARY KEY, -- Assuming an ID column for primary key
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    goal DECIMAL(15, 2) NOT NULL, -- Supports monetary values
+    start_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    end_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    status_type ENUM('PENDING', 'APPROVED', 'HALTED', 'DELETED') NOT NULL, -- Updated enum values for StatusType
+    category_type ENUM('FOOD', 'HEALTH', 'EDUCATION', 'ENVIRONMENT', 'RELIGION', 'HUMANITARIAN', 'HOUSING', 'OTHER') NOT NULL, -- Updated enum values for CategoryType
+    country_iso_code CHAR(2) NOT NULL, -- ISO 3166-1 alpha-3 format
+    charity_id BIGINT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- created_at
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- updated_at
+);
+
+
 -- DROP TABLE IF EXISTS project CASCADE;
 -- CREATE TABLE project (
 --     id BIGSERIAL PRIMARY KEY,  -- assuming this is inherited from AbstractEntity, which likely has an id field
@@ -25,6 +43,8 @@
 -- FOR EACH ROW
 -- EXECUTE PROCEDURE update_project_timestamp();
 -- Insert Global Charity Projects
+
+
 INSERT INTO project (
     title,
     description,

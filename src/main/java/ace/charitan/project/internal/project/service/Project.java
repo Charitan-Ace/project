@@ -40,9 +40,9 @@ class Project extends AbstractEntity implements InternalProjectDto {
     @Enumerated(EnumType.STRING)
     private CategoryType categoryType;
 
-    private Long charityId;
-
     private String countryIsoCode;
+
+    private Long charityId;
 
     // private List<Long> imageIdList;
 
