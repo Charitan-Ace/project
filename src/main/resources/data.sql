@@ -46,7 +46,7 @@ VALUES -- Global Crisis Charity Projects
         'Organized by the Ukrainian non-profit organization.',
         100000.00,
         '2025-01-01 00:00:00+00',
-        '2025-12-31 23:59:59+00',
+        '2025-12-31 23:59:59+00', 
         'APPROVED',
         'HUMANITARIAN',
         'UA',
