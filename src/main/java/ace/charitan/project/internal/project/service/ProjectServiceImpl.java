@@ -217,10 +217,9 @@ class ProjectServiceImpl implements InternalProjectService {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
         // Get pageable result1
-        return projectCustomRepository.searchProjects(searchProjectsDto, pageable);
+        // return projectCustomRepository.searchProjects(searchProjectsDto, pageable);
 
-        // return projectRepository.findByCountryIsoCode("UA", pageable);
-
-    }
+        return projectRepository.findByCountryIsoCode(searchProjectsDto.getCountryIsoCode(), pageable);
+t    }
 
 }
