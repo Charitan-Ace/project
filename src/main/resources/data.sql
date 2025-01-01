@@ -32,7 +32,7 @@ INSERT INTO project (
 VALUES -- Global Crisis Charity Projects
     (
         'Middle East Crisis',
-        'Organized by the Israeli non-profit organization.',
+        'Providing humanitarian aid to those affected by ongoing conflicts in the Middle East, including shelter, medical supplies, and food.',
         50000.00,
         '2025-01-01 00:00:00+00',
         '2025-12-31 23:59:59+00',
@@ -43,10 +43,10 @@ VALUES -- Global Crisis Charity Projects
     ),
     (
         'Ukraine-Russia War',
-        'Organized by the Ukrainian non-profit organization.',
+        'Supporting displaced families and individuals affected by the war between Ukraine and Russia, including shelter, food, and psychological support.',
         100000.00,
         '2025-01-01 00:00:00+00',
-        '2025-12-31 23:59:59+00', 
+        '2025-12-31 23:59:59+00',
         'APPROVED',
         'HUMANITARIAN',
         'UA',
@@ -54,7 +54,7 @@ VALUES -- Global Crisis Charity Projects
     ),
     (
         'Food Program in South Africa',
-        'Organized by various companies.',
+        'Addressing hunger and malnutrition in South Africa by providing meals and nutritional support to communities in need.',
         75000.00,
         '2025-01-01 00:00:00+00',
         '2025-12-31 23:59:59+00',
@@ -66,7 +66,7 @@ VALUES -- Global Crisis Charity Projects
     -- Local Charity Projects
     (
         'Yagi Typhoon Support',
-        'Organized by an individual.',
+        'Helping communities in Vietnam recover from the devastating effects of the Yagi Typhoon by providing rebuilding assistance and emergency supplies.',
         20000.00,
         '2025-01-01 00:00:00+00',
         '2025-12-31 23:59:59+00',
@@ -77,7 +77,7 @@ VALUES -- Global Crisis Charity Projects
     ),
     (
         'Milton Hurricane Support',
-        'Organized by an individual.',
+        'Assisting residents in the USA affected by the Milton Hurricane with emergency relief, temporary housing, and recovery efforts.',
         30000.00,
         '2025-01-01 00:00:00+00',
         '2025-12-31 23:59:59+00',
@@ -88,7 +88,7 @@ VALUES -- Global Crisis Charity Projects
     ),
     (
         'Helping Ukrainian Refugee',
-        'Organized by various companies.',
+        'Providing essential services such as housing, education, and job assistance to Ukrainian refugees in Germany.',
         40000.00,
         '2025-01-01 00:00:00+00',
         '2025-12-31 23:59:59+00',
@@ -98,8 +98,8 @@ VALUES -- Global Crisis Charity Projects
         'charity4'
     ),
     (
-        'Supporting SOS Children Village',
-        'Organized by various companies.',
+        'Supporting SOS Children’s Village',
+        'Helping orphaned and abandoned children in China through educational programs and community support.',
         35000.00,
         '2025-01-01 00:00:00+00',
         '2025-12-31 23:59:59+00',
@@ -108,7 +108,6 @@ VALUES -- Global Crisis Charity Projects
         'CN',
         'charity5'
     );
-
 -- DROP TABLE IF EXISTS project CASCADE;
 -- CREATE TABLE project (
 --     id BIGSERIAL PRIMARY KEY,  -- assuming this is inherited from AbstractEntity, which likely has an id field
