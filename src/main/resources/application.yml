@@ -29,6 +29,8 @@ spring:
       hibernate:
         format-sql: true 
         use-sql-comments: true 
+    hibernate:
+      ddl-auto: validate
 
 
 eureka:
