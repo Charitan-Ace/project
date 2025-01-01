@@ -78,5 +78,12 @@ public class ProjectRequestBody {
 
         // @Future(message = "End time must be in the future.")
         private ZonedDateTime endTime;
+
+        @NotNull(message = "categoryType is invalid.")
+        private CategoryType categoryType;
+
+        @NotBlank(message = "Country ISO Code must not be null or blank.")
+        private String countryIsoCode;
+
     }
 }
