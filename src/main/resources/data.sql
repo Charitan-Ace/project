@@ -1,3 +1,7 @@
+CREATE TABLE van(
+    id SERIAL PRIMARY KEY,
+);
+
 DROP TABLE IF EXISTS project CASCADE;
 CREATE TABLE project (
     id SERIAL PRIMARY KEY,
@@ -18,6 +22,7 @@ CREATE TABLE project (
     -- created_at
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- updated_at
 );
+
 -- DROP TABLE IF EXISTS project CASCADE;
 -- CREATE TABLE project (
 --     id BIGSERIAL PRIMARY KEY,  -- assuming this is inherited from AbstractEntity, which likely has an id field
