@@ -40,7 +40,8 @@ spring:
             packages: "ace.charitan.*" 
   sql:
     init:
-      mode: always  # Ensures data.sql runs even with Hibernate ddl-auto
+      # mode: always  # Ensures data.sql runs even with Hibernate ddl-auto
+      mode: never
   jpa:
     show-sql: true 
     properties:
