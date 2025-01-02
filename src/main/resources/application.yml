@@ -29,6 +29,7 @@ spring:
       hibernate:
         format-sql: true 
         use-sql-comments: true 
+        dialect: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: validate
 

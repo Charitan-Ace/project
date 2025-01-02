@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.CreateProjectDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.SearchProjectsDto;
@@ -48,6 +49,7 @@ class ProjectServiceImpl implements InternalProjectService {
     }
 
     @Override
+    @Transactional
     public InternalProjectDto createProject(CreateProjectDto createProjectDto) {
 
         // TODO: Change to based on auth
@@ -63,6 +65,7 @@ class ProjectServiceImpl implements InternalProjectService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public InternalProjectDto getProjectById(Long projectId) {
         Optional<Project> optionalProject = projectRepository.findById(projectId);
 
