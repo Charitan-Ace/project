@@ -12,6 +12,7 @@ public class ProjectEnum {
         PENDING("PENDING"),
         APPROVED("APPROVED"),
         HALTED("HALTED"),
+        COMPLETED("COMPLETED"),
         DELETED("DELETED");
 
         private String value;

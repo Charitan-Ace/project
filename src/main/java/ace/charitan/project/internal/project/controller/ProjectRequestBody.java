@@ -84,6 +84,5 @@ public class ProjectRequestBody {
 
         @NotBlank(message = "Country ISO Code must not be null or blank.")
         private String countryIsoCode;
-
     }
 }
