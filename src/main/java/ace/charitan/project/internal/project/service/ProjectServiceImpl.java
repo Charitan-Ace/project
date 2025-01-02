@@ -48,7 +48,7 @@ class ProjectServiceImpl implements InternalProjectService {
     }
 
     @Override
-    // @Transactional
+    @Transactional
     public InternalProjectDto createProject(CreateProjectDto createProjectDto) {
 
         // TODO: Change to based on auth
@@ -88,6 +88,7 @@ class ProjectServiceImpl implements InternalProjectService {
     }
 
     @Override
+    @Transactional
     public InternalProjectDto updateProjectDetails(Long projectId, UpdateProjectDto updateProjectDto) {
         // If project not found
         Optional<Project> existedOptionalProject = projectRepository.findById(projectId);
@@ -116,6 +117,7 @@ class ProjectServiceImpl implements InternalProjectService {
     }
 
     @Override
+    @Transactional
     public InternalProjectDto approveProject(Long projectId) {
         // If project not found
         Optional<Project> existedOptionalProject = projectRepository.findById(projectId);
@@ -145,6 +147,7 @@ class ProjectServiceImpl implements InternalProjectService {
     }
 
     @Override
+    @Transactional
     public InternalProjectDto haltProject(Long projectId) {
         // If project not found
         Optional<Project> existedOptionalProject = projectRepository.findById(projectId);
@@ -174,6 +177,7 @@ class ProjectServiceImpl implements InternalProjectService {
     }
 
     @Override
+    @Transactional
     public InternalProjectDto resumeProject(Long projectId) {
         // If project not found
         Optional<Project> existedOptionalProject = projectRepository.findById(projectId);
@@ -203,6 +207,7 @@ class ProjectServiceImpl implements InternalProjectService {
     }
 
     @Override
+    @Transactional
     public InternalProjectDto deleteProject(Long projectId) {
         // If project not found
         Optional<Project> existedOptionalProject = projectRepository.findById(projectId);
@@ -225,6 +230,7 @@ class ProjectServiceImpl implements InternalProjectService {
     }
 
     @Override
+    @Transactional
     public InternalProjectDto completeProject(Long projectId) {
         // If project not found
         Optional<Project> existedOptionalProject = projectRepository.findById(projectId);
