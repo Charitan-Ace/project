@@ -2,7 +2,6 @@ package ace.charitan.project.internal.project.service;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +48,7 @@ class ProjectServiceImpl implements InternalProjectService {
     }
 
     @Override
-    @Transactional
+    // @Transactional
     public InternalProjectDto createProject(CreateProjectDto createProjectDto) {
 
         // TODO: Change to based on auth
@@ -65,7 +64,7 @@ class ProjectServiceImpl implements InternalProjectService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    // @Transactional(readOnly = true)
     public InternalProjectDto getProjectById(Long projectId) {
         Optional<Project> optionalProject = projectRepository.findById(projectId);
 
@@ -74,6 +73,18 @@ class ProjectServiceImpl implements InternalProjectService {
         }
 
         return optionalProject.get();
+    }
+
+    @Override
+    public Page<InternalProjectDto> searchProjects(Integer pageNo, Integer pageSize,
+            SearchProjectsDto searchProjectsDto) {
+
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+
+        // Get pageable result1
+        // return projectCustomRepository.searchProjects(searchProjectsDto, pageable);
+
+        return projectRepository.findByCountryIsoCode(searchProjectsDto.getCountryIsoCode(), pageable);
     }
 
     @Override
@@ -203,8 +214,8 @@ class ProjectServiceImpl implements InternalProjectService {
         Project project = existedOptionalProject.get();
 
         // If project status is not HALTED
-        if (!project.getStatusType().equals(StatusType.DELETED)) {
-            throw new InvalidProjectException("Project can be deleted if status is RESUMED");
+        if (!project.getStatusType().equals(StatusType.HALTED)) {
+            throw new InvalidProjectException("Project can be deleted if status is HALTED");
         }
 
         project.setStatusType(StatusType.DELETED);
@@ -214,15 +225,25 @@ class ProjectServiceImpl implements InternalProjectService {
     }
 
     @Override
-    public Page<InternalProjectDto> searchProjects(Integer pageNo, Integer pageSize,
-            SearchProjectsDto searchProjectsDto) {
+    public InternalProjectDto completeProject(Long projectId) {
+        // If project not found
+        Optional<Project> existedOptionalProject = projectRepository.findById(projectId);
 
-        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+        if (existedOptionalProject.isEmpty()) {
+            throw new NotFoundProjectException();
+        }
 
-        // Get pageable result1
-        // return projectCustomRepository.searchProjects(searchProjectsDto, pageable);
+        Project project = existedOptionalProject.get();
 
-        return projectRepository.findByCountryIsoCode(searchProjectsDto.getCountryIsoCode(), pageable);
+        // If project status is not HALTED
+        if (!project.getStatusType().equals(StatusType.APPROVED)) {
+            throw new InvalidProjectException("Project can be completed if status is APPROVED");
+        }
+
+        project.setStatusType(StatusType.COMPLETED);
+        project = projectRepository.save(project);
+
+        return project;
     }
 
 }

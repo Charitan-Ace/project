@@ -98,10 +98,10 @@ class ProjectController {
         return new ResponseEntity<>(projectDto, HttpStatus.OK);
     }
 
-    // @PostMapping("/complete/{projectId}")
-    // ResponseEntity<InternalProjectDto> completeProject(@PathVariable Long projectId) {
+    @PostMapping("/complete/{projectId}")
+    ResponseEntity<InternalProjectDto> completeProject(@PathVariable Long projectId) {
 
-    //     InternalProjectDto projectDto = internalProjectService.deleteProject(projectId);
-    //     return new ResponseEntity<>(projectDto, HttpStatus.OK);
-    // }
+        InternalProjectDto projectDto = internalProjectService.completeProject(projectId);
+        return new ResponseEntity<>(projectDto, HttpStatus.OK);
+    }
 }

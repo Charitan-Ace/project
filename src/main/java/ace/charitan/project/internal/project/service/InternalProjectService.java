@@ -27,4 +27,6 @@ public interface InternalProjectService {
     InternalProjectDto resumeProject(Long projectId);
 
     InternalProjectDto deleteProject(Long projectId);
+
+    InternalProjectDto completeProject(Long projectId);
 }
