@@ -7,15 +7,13 @@ spring:
     # username: postgres
     # password: secret
     project:
-      url: jdbc:postgresql://project:5432/project
-      username: postgre
-      password: pass
+      url: ${SPRING_DATASOURCE_PROJECT_URL:jdbc:postgresql://project:5432/project}
+      username: ${SPRING_DATASOURCE_PROJECT_USERNAME:ace}
+      password: ${SPRING_DATASOURCE_PROJECT_PASSWORD:charitan}
     deleted:
-      url: jdbc:postgresql://project-deleted-db:5432/project
-      username: user
-      password: pass
-
-
+      url: ${SPRING_DATASOURCE_DELETED_URL:jdbc:postgresql://project-deleted-db:5432/project}
+      username: ${SPRING_DATASOURCE_DELETED_USERNAME:ace}
+      password: ${SPRING_DATASOURCE_DELETED_PASSWORD:charitan}
     # completed:
     #   url: jdbc:postgresql://localhost:5432/completed_db
     #   username: user
