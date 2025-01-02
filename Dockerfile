@@ -25,7 +25,7 @@ RUN     --mount=type=cache,target=/root/.m2 \
 RUN mkdir -p /tmp/extracted && java -Djarmode=layertools -jar target/*jar extract --destination /tmp/extracted
 
 ## DISTROLESS IMAGE ##
-FROM gcr.io/distroless/java21-debian12:nonroot
+FROM gcr.io/distroless/java21-debian12:debug-nonroot
 WORKDIR /tmp/app
 
 COPY --from=build /tmp/extracted/dependencies /tmp/app/
