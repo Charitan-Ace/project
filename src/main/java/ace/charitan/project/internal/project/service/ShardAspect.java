@@ -11,7 +11,7 @@ import ace.charitan.project.internal.project.service.ProjectEnum.StatusType;
 @Component
 public class ShardAspect {
 
-    @Before("execution(* com.example.project.service.*.*(..)) && args(project,..)")
+    @Before("execution(* ace.charitan.project.internal.project.service.*.*(..)) && args(project,..)")
     public void setShardContext(Project project) {
         if (project.getStatusType() == StatusType.DELETED) {
             ShardRoutingDataSource.setCurrentShard("PROJECT_DELETED");
@@ -20,7 +20,7 @@ public class ShardAspect {
         }
     }
 
-    @After("execution(* com.example.project.service.*.*(..))")
+    @After("execution(* ace.charitan.project.internal.project.service.*.*(..))")
     public void clearShardContext() {
         ShardRoutingDataSource.clearCurrentShard();
     }
