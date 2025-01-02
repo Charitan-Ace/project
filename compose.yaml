@@ -1,0 +1,9 @@
+services:
+  postgres:
+    image: 'postgres:alpine'
+    environment:
+      POSTGRES_DB: project
+      POSTGRES_USER: project
+      POSTGRES_PASSWORD: project
+    ports:
+      - '5432'
