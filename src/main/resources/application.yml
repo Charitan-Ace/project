@@ -8,18 +8,19 @@ spring:
     password: secret
 
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer    
     consumer:
+      group-id: project-service
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer 
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
     properties:
       spring:
         json:
           trusted:
-            packages: "ace.charitan.*" 
+            packages: "ace.charitan.*"
   sql:
     init:
       mode: always  # Ensures data.sql runs even with Hibernate ddl-auto
@@ -41,7 +42,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: ${EUREKA_URI:http://eureka-server:8761/eureka}
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
     initial-instance-info-replication-interval-seconds: 40
   instance:
     lease-renewal-interval-in-seconds: 10
@@ -69,6 +70,8 @@ springdoc:
   api-docs:
     path: /v1/api-docs
 
+server:
+  port: 0
 
 logging:
   level:
