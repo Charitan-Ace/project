@@ -37,8 +37,8 @@ class DatabaseSourceConfig {
                 .build();
     }
 
-    @PostConstruct
-    void checkDataSource() {
-        System.out.println("Project DataSource URL: " + projectDataSourceProperties().toString());
-    }
+    // @PostConstruct
+    // void checkDataSource() {
+    //     System.out.println("Project DataSource URL: " + projectDataSourceProperties().toString());
+    // }
 }
