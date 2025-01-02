@@ -10,10 +10,14 @@ spring:
       url: ${SPRING_DATASOURCE_PROJECT_URL:jdbc:postgresql://project:5432/project}
       username: ${SPRING_DATASOURCE_PROJECT_USERNAME:ace}
       password: ${SPRING_DATASOURCE_PROJECT_PASSWORD:charitan}
+      hikari:
+        pool-name: project-pool
     deleted:
       url: ${SPRING_DATASOURCE_DELETED_URL:jdbc:postgresql://project-deleted-db:5432/project}
       username: ${SPRING_DATASOURCE_DELETED_USERNAME:ace}
       password: ${SPRING_DATASOURCE_DELETED_PASSWORD:charitan}
+      hikari:
+        pool-name: project-deleted-pool
     # completed:
     #   url: jdbc:postgresql://localhost:5432/completed_db
     #   username: user
