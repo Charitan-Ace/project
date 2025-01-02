@@ -23,7 +23,8 @@ class ProjectConsumer {
     @SendTo
     public ProjectHaltDto haltListener(ProjectHaltDto dto) {
         logger.info("Received halt request for project #{}", dto.getId());
-        projectService.haltProject(dto.getId());
+        // TODO: maps DTO as UUID
+        // projectService.haltProject(dto.getId());
         // TODO: improves return
         return dto;
     }
