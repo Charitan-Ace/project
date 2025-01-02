@@ -3,13 +3,13 @@ package ace.charitan.project.internal.project.service;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.CreateProjectDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.SearchProjectsDto;
@@ -65,8 +65,8 @@ class ProjectServiceImpl implements InternalProjectService {
 
     @Override
     // @Transactional(readOnly = true)
-    public InternalProjectDto getProjectById(Long projectId) {
-        Optional<Project> optionalProject = projectRepository.findById(projectId);
+    public InternalProjectDto getProjectById(String projectId) {
+        Optional<Project> optionalProject = projectRepository.findById(UUID.fromString(projectId));
 
         if (optionalProject.isEmpty()) {
             throw new NotFoundProjectException();
@@ -88,9 +88,9 @@ class ProjectServiceImpl implements InternalProjectService {
     }
 
     @Override
-    public InternalProjectDto updateProjectDetails(Long projectId, UpdateProjectDto updateProjectDto) {
+    public InternalProjectDto updateProjectDetails(String projectId, UpdateProjectDto updateProjectDto) {
         // If project not found
-        Optional<Project> existedOptionalProject = projectRepository.findById(projectId);
+        Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
 
         if (existedOptionalProject.isEmpty()) {
             throw new NotFoundProjectException();
@@ -116,9 +116,9 @@ class ProjectServiceImpl implements InternalProjectService {
     }
 
     @Override
-    public InternalProjectDto approveProject(Long projectId) {
+    public InternalProjectDto approveProject(String projectId) {
         // If project not found
-        Optional<Project> existedOptionalProject = projectRepository.findById(projectId);
+        Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
 
         if (existedOptionalProject.isEmpty()) {
             throw new NotFoundProjectException();
@@ -145,9 +145,9 @@ class ProjectServiceImpl implements InternalProjectService {
     }
 
     @Override
-    public InternalProjectDto haltProject(Long projectId) {
+    public InternalProjectDto haltProject(String projectId) {
         // If project not found
-        Optional<Project> existedOptionalProject = projectRepository.findById(projectId);
+        Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
 
         if (existedOptionalProject.isEmpty()) {
             throw new NotFoundProjectException();
@@ -174,9 +174,9 @@ class ProjectServiceImpl implements InternalProjectService {
     }
 
     @Override
-    public InternalProjectDto resumeProject(Long projectId) {
+    public InternalProjectDto resumeProject(String projectId) {
         // If project not found
-        Optional<Project> existedOptionalProject = projectRepository.findById(projectId);
+        Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
 
         if (existedOptionalProject.isEmpty()) {
             throw new NotFoundProjectException();
@@ -203,9 +203,9 @@ class ProjectServiceImpl implements InternalProjectService {
     }
 
     @Override
-    public InternalProjectDto deleteProject(Long projectId) {
+    public InternalProjectDto deleteProject(String projectId) {
         // If project not found
-        Optional<Project> existedOptionalProject = projectRepository.findById(projectId);
+        Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
 
         if (existedOptionalProject.isEmpty()) {
             throw new NotFoundProjectException();
@@ -225,9 +225,9 @@ class ProjectServiceImpl implements InternalProjectService {
     }
 
     @Override
-    public InternalProjectDto completeProject(Long projectId) {
+    public InternalProjectDto completeProject(String projectId) {
         // If project not found
-        Optional<Project> existedOptionalProject = projectRepository.findById(projectId);
+        Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
 
         if (existedOptionalProject.isEmpty()) {
             throw new NotFoundProjectException();
