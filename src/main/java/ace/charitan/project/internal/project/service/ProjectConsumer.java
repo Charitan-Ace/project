@@ -1,5 +1,6 @@
 package ace.charitan.project.internal.project.service;
 
+import ace.charitan.common.dto.project.ProjectApproveDto;
 import ace.charitan.common.dto.project.ProjectHaltDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,13 +20,21 @@ class ProjectConsumer {
         this.projectService = projectService;
     }
 
-    @KafkaListener(topics = "project.halt", id = "server")
+    @KafkaListener(topics = "project.halt")
     @SendTo
     public ProjectHaltDto haltListener(ProjectHaltDto dto) {
-        logger.info("Received halt request for project #{}", dto.getId());
-        // TODO: maps DTO as UUID
-        // projectService.haltProject(dto.getId());
-        // TODO: improves return
+        logger.info("Received halt request for project {}", dto.getId());
+        projectService.haltProject(dto.getId());
+        // TODO: improves return, error handling
+        return dto;
+    }
+
+    @KafkaListener(topics = "project.approve")
+    @SendTo
+    public ProjectApproveDto approveListener(ProjectApproveDto dto) {
+        logger.info("Received approve request for project {}", dto.getId());
+        projectService.approveProject(dto.getId());
+        // TODO: improves return, error handling
         return dto;
     }
 }
