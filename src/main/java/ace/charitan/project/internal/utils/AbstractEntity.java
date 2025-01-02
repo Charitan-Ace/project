@@ -2,6 +2,7 @@ package ace.charitan.project.internal.utils;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.UUID;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -29,8 +30,8 @@ public abstract class AbstractEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
@@ -42,7 +43,7 @@ public abstract class AbstractEntity implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
-    public AbstractEntity(Long id) {
+    public AbstractEntity(UUID id) {
         this.id = id;
     }
 }
