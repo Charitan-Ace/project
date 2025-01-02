@@ -3,9 +3,27 @@ spring:
     name: project
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: secret
+    # url: jdbc:postgresql://localhost:5432/postgres
+    # username: postgres
+    # password: secret
+    project:
+      url: jdbc:postgresql://project:5432/project
+      username: postgre
+      password: pass
+    deleted:
+      url: jdbc:postgresql://project-deleted-db:5432/project
+      username: user
+      password: pass
+
+
+    # completed:
+    #   url: jdbc:postgresql://localhost:5432/completed_db
+    #   username: user
+    #   password: pass
+    # pending:
+    #   url: jdbc:postgresql://localhost:5432/pending_db
+    #   username: user
+    #   password: pass
 
   kafka:
     bootstrap-servers: kafka:9092
