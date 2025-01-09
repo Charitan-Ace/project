@@ -2,6 +2,9 @@ package ace.charitan.project.internal.project.service;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import ace.charitan.common.dto.media.GetMediaByProjectIdRequestDto;
+import ace.charitan.common.dto.media.GetMediaByProjectIdResponseDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.CreateProjectDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.SearchProjectsDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.UpdateProjectDto;
@@ -74,10 +78,14 @@ class ProjectServiceImpl implements InternalProjectService {
             throw new NotFoundProjectException();
         }
 
-        // TODO: Add videos and images query
         Project projectDto = optionalProject.get();
-        projectProducerService.sendAndReceive(new GetMediaByProjectIdRequestDto(projectDto.getId().toString()));
 
+        // TODO: Add videos and images query
+        List<String> projectIdList = Arrays.asList(projectDto.getId().toString());
+        GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto = projectProducerService
+                .sendAndReceive(new GetMediaByProjectIdRequestDto(projectIdList));
+
+        System.out.println(getMediaByProjectIdResponseDto.getMediaListDtoList());
 
         return optionalProject.get();
     }
