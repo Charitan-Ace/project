@@ -64,6 +64,7 @@ class ProjectProducerService {
     }
 
     GetMediaByProjectIdResponseDto sendAndReceive(GetMediaByProjectIdRequestDto data) {
+        System.out.println("project id list" + data.getProjectIdList());
         GetMediaByProjectIdResponseDto response = (GetMediaByProjectIdResponseDto) sendAndReceive(
                 ProjectProducerTopic.PROJECT_MEDIA_GET_MEDIA_BY_PROJECT_ID, data);
         return response;

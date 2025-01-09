@@ -74,6 +74,8 @@ class ProjectServiceImpl implements InternalProjectService {
     public InternalProjectDto getProjectById(String projectId) {
         Optional<Project> optionalProject = projectRepository.findById(UUID.fromString(projectId));
 
+        System.out.println("vo day");
+
         if (optionalProject.isEmpty()) {
             throw new NotFoundProjectException();
         }
