@@ -14,9 +14,8 @@ class ProjectConsumer {
 
     private final InternalProjectService projectService;
 
-    private ProjectConsumer(
-            InternalProjectService projectService
-    ) {
+    ProjectConsumer(
+            InternalProjectService projectService) {
         this.projectService = projectService;
     }
 
