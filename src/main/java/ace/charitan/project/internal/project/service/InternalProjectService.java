@@ -14,17 +14,17 @@ public interface InternalProjectService {
     Page<InternalProjectDto> searchProjects(Integer pageNo, Integer pageSize,
             SearchProjectsDto searchProjectsDto);
 
-    InternalProjectDto getProjectById(Long projectId);
+    InternalProjectDto getProjectById(String projectId);
 
-    InternalProjectDto updateProjectDetails(Long projectId, UpdateProjectDto updateProjectDto);
+    InternalProjectDto updateProjectDetails(String projectId, UpdateProjectDto updateProjectDto);
 
-    InternalProjectDto approveProject(Long projectId);
+    InternalProjectDto approveProject(String projectId);
 
-    InternalProjectDto haltProject(Long projectId);
+    InternalProjectDto haltProject(String projectId);
 
-    InternalProjectDto resumeProject(Long projectId);
+    InternalProjectDto resumeProject(String projectId);
 
-    InternalProjectDto deleteProject(Long projectId);
+    InternalProjectDto deleteProject(String projectId);
 
-    InternalProjectDto completeProject(Long projectId);
+    InternalProjectDto completeProject(String projectId);
 }
