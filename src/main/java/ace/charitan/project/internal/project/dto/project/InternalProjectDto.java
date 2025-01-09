@@ -1,11 +1,13 @@
 package ace.charitan.project.internal.project.dto.project;
 
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 import ace.charitan.project.internal.project.service.ProjectEnum.CategoryType;
 import ace.charitan.project.internal.project.service.ProjectEnum.StatusType;
 
 public interface InternalProjectDto {
+
     String getTitle();
 
     String getDescription();

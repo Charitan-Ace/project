@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ace.charitan.common.dto.media.GetMediaByProjectIdRequestDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.CreateProjectDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.SearchProjectsDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.UpdateProjectDto;
@@ -71,6 +72,11 @@ class ProjectServiceImpl implements InternalProjectService {
         if (optionalProject.isEmpty()) {
             throw new NotFoundProjectException();
         }
+
+        // TODO: Add videos and images query
+        Project projectDto = optionalProject.get();
+        projectProducerService.sendAndReceive(new GetMediaByProjectIdRequestDto(projectDto.getId().toString()));
+
 
         return optionalProject.get();
     }

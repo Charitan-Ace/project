@@ -12,6 +12,8 @@ import org.springframework.kafka.requestreply.RequestReplyFuture;
 import org.springframework.stereotype.Component;
 
 import ace.charitan.common.dto.TestKafkaMessageDto;
+import ace.charitan.common.dto.media.GetMediaByProjectIdRequestDto;
+import ace.charitan.common.dto.media.GetMediaByProjectIdResponseDto;
 
 @Component
 class ProjectProducerService {
@@ -58,6 +60,12 @@ class ProjectProducerService {
         TestKafkaMessageDto response = (TestKafkaMessageDto) sendAndReceive(
                 ProjectProducerTopic.PROJECT_GEOGRAPHY_GET_COUNTRY_BY_ISO_CODE, data);
         System.out.println("Project receive" + response.getName());
+        return response;
+    }
+
+    GetMediaByProjectIdResponseDto sendAndReceive(GetMediaByProjectIdRequestDto data) {
+        GetMediaByProjectIdResponseDto response = (GetMediaByProjectIdResponseDto) sendAndReceive(
+                ProjectProducerTopic.PROJECT_MEDIA_GET_MEDIA_BY_PROJECT_ID, data);
         return response;
     }
 
