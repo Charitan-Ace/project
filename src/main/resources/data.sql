@@ -23,6 +23,7 @@ CREATE TABLE project (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- updated_at
 );
 INSERT INTO project (
+        id,
         title,
         description,
         goal,
@@ -35,6 +36,7 @@ INSERT INTO project (
     )
 VALUES -- Global Crisis Charity Projects
     (
+        '233a5ccf-3ed4-4c59-b0e6-3f07072f1a4a',
         'Middle East Crisis',
         'Providing humanitarian aid to those affected by ongoing conflicts in the Middle East, including shelter, medical supplies, and food.',
         50000.00,
@@ -46,6 +48,7 @@ VALUES -- Global Crisis Charity Projects
         'charity1'
     ),
     (
+        '0c112e0e-09a0-4c16-8d87-51e2847055cc',
         'Ukraine-Russia War',
         'Supporting displaced families and individuals affected by the war between Ukraine and Russia, including shelter, food, and psychological support.',
         100000.00,
@@ -57,6 +60,7 @@ VALUES -- Global Crisis Charity Projects
         'charity2'
     ),
     (
+        'cffedd29-972f-41c4-bbe6-54829087caf1',
         'Food Program in South Africa',
         'Addressing hunger and malnutrition in South Africa by providing meals and nutritional support to communities in need.',
         75000.00,
@@ -69,6 +73,7 @@ VALUES -- Global Crisis Charity Projects
     ),
     -- Local Charity Projects
     (
+        'dda59ffb-0ef5-4a8e-8457-04149f414825',
         'Yagi Typhoon Support',
         'Helping communities in Vietnam recover from the devastating effects of the Yagi Typhoon by providing rebuilding assistance and emergency supplies.',
         20000.00,
@@ -80,6 +85,7 @@ VALUES -- Global Crisis Charity Projects
         'individual1'
     ),
     (
+        'fb51bc08-5ffa-4444-b70a-3410b1bc91ca',
         'Milton Hurricane Support',
         'Assisting residents in the USA affected by the Milton Hurricane with emergency relief, temporary housing, and recovery efforts.',
         30000.00,
@@ -91,6 +97,7 @@ VALUES -- Global Crisis Charity Projects
         'individual2'
     ),
     (
+        '144a5377-2ccc-4efe-81e8-18a6da36450b',
         'Helping Ukrainian Refugee',
         'Providing essential services such as housing, education, and job assistance to Ukrainian refugees in Germany.',
         40000.00,
@@ -102,6 +109,7 @@ VALUES -- Global Crisis Charity Projects
         'charity4'
     ),
     (
+        '9284aa44-9bea-4647-80bd-55c413590404',
         'Supporting SOS Children’s Village',
         'Helping orphaned and abandoned children in China through educational programs and community support.',
         35000.00,

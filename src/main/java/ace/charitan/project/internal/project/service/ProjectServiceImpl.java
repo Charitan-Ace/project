@@ -87,7 +87,7 @@ class ProjectServiceImpl implements InternalProjectService {
 
         System.out.println(getMediaByProjectIdResponseDto.getMediaListDtoList());
 
-        return optionalProject.get();
+        return projectDto;
     }
 
     @Override
