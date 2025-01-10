@@ -1,4 +1,4 @@
-package ace.charitan.project.internal.utils;
+package ace.charitan.project.internal.common;
 
 import java.io.Serializable;
 import java.util.Date;

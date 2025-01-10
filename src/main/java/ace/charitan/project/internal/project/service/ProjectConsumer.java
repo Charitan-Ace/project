@@ -22,8 +22,8 @@ class ProjectConsumer {
     @KafkaListener(topics = "project.halt")
     @SendTo
     public ProjectHaltDto haltListener(ProjectHaltDto dto) {
-        logger.info("Received halt request for project {}", dto.getId());
-        projectService.haltProject(dto.getId());
+        logger.info("Received halt request for project {}", dto.id());
+        projectService.haltProject(dto.id());
         // TODO: improves return, error handling
         return dto;
     }

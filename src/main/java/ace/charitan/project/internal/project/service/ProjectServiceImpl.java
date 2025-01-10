@@ -2,7 +2,6 @@ package ace.charitan.project.internal.project.service;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import ace.charitan.common.dto.media.GetMediaByProjectIdRequestDto;
 import ace.charitan.common.dto.media.GetMediaByProjectIdResponseDto;
+import ace.charitan.common.dto.subscription.NewProjectSubscriptionDto.NewProjectSubscriptionRequestDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.CreateProjectDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.SearchProjectsDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.UpdateProjectDto;
@@ -63,9 +63,13 @@ class ProjectServiceImpl implements InternalProjectService {
         Project project = new Project(createProjectDto, charityId);
         validateProjectDetails(project);
 
-        return projectRepository.save(project);
+        project = projectRepository.save(project);
+
+        // Send topic to subscription service
+        projectProducerService.send(new NewProjectSubscriptionRequestDto(project.toExternalProjectDto()));
+
         // return project.toInternalProjectDto();
-        // return project.
+        return project;
 
     }
 

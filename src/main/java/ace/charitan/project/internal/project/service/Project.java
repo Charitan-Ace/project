@@ -2,12 +2,13 @@ package ace.charitan.project.internal.project.service;
 
 import java.time.ZonedDateTime;
 
+import ace.charitan.common.dto.project.ExternalProjectDto;
+import ace.charitan.project.internal.common.AbstractEntity;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.CreateProjectDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.UpdateProjectDto;
 import ace.charitan.project.internal.project.dto.project.InternalProjectDto;
 import ace.charitan.project.internal.project.service.ProjectEnum.CategoryType;
 import ace.charitan.project.internal.project.service.ProjectEnum.StatusType;
-import ace.charitan.project.internal.utils.AbstractEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -78,6 +79,11 @@ class Project extends AbstractEntity implements InternalProjectDto {
         // this.endTime = updateProjectDto.getEndTime();
         // this.categoryType = createProjectDto.getCategoryType();
         // this.countryIsoCode = createProjectDto.getCountryIsoCode();
+    }
+
+    ExternalProjectDto toExternalProjectDto() {
+        return new ExternalProjectDto(getId().toString(), title, description, goal, startTime, endTime,
+                statusType.toString(), categoryType.toString(), countryIsoCode, charityId);
     }
 
 }
