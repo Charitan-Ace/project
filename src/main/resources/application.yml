@@ -41,9 +41,9 @@ spring:
         json:
           trusted:
             packages: "ace.charitan.*"
-  sql:
-    init:
-      mode: always  # Ensures data.sql runs even with Hibernate ddl-auto
+  # sql:
+  #   init:
+  #     mode: always  # Ensures data.sql runs even with Hibernate ddl-auto
       # mode: never
   jpa:
     show-sql: true 
