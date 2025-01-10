@@ -1,18 +1,22 @@
 package ace.charitan.project.internal.project.service;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
+import ace.charitan.common.dto.media.ExternalMediaDto;
 import ace.charitan.common.dto.project.ExternalProjectDto;
 import ace.charitan.project.internal.common.AbstractEntity;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.CreateProjectDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.UpdateProjectDto;
 import ace.charitan.project.internal.project.dto.project.InternalProjectDto;
+import ace.charitan.project.internal.project.dto.project.InternalProjectDtoImpl;
 import ace.charitan.project.internal.project.service.ProjectEnum.CategoryType;
 import ace.charitan.project.internal.project.service.ProjectEnum.StatusType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,6 +49,9 @@ class Project extends AbstractEntity implements InternalProjectDto {
     private String countryIsoCode;
 
     private String charityId;
+
+    @Transient
+    private List<ExternalMediaDto> mediaDtoList;
 
     // private List<Long> imageIdList;
 
@@ -84,6 +91,12 @@ class Project extends AbstractEntity implements InternalProjectDto {
     ExternalProjectDto toExternalProjectDto() {
         return new ExternalProjectDto(getId().toString(), title, description, goal, startTime, endTime,
                 statusType.toString(), categoryType.toString(), countryIsoCode, charityId);
+    }
+
+    InternalProjectDtoImpl toInternalProjectDtoImpl() {
+        return new InternalProjectDtoImpl(
+                getId().toString(), title, description, goal, startTime, endTime, statusType, categoryType,
+                countryIsoCode, charityId, mediaDtoList);
     }
 
 }

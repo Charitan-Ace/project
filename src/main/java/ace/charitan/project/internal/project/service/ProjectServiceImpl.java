@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import ace.charitan.common.dto.media.ExternalMediaDto;
 import ace.charitan.common.dto.media.GetMediaByProjectIdRequestDto;
 import ace.charitan.common.dto.media.GetMediaByProjectIdResponseDto;
 import ace.charitan.common.dto.subscription.NewProjectSubscriptionDto.NewProjectSubscriptionRequestDto;
@@ -31,8 +32,8 @@ class ProjectServiceImpl implements InternalProjectService {
     @Autowired
     private ProjectRepository projectRepository;
 
-    @Autowired
-    private ProjectCustomRepository projectCustomRepository;
+    // @Autowired
+    // private ProjectCustomRepository projectCustomRepository;
 
     @Autowired
     private ProjectProducerService projectProducerService;
@@ -51,6 +52,10 @@ class ProjectServiceImpl implements InternalProjectService {
             throw new InvalidProjectException("Project must be last for at least 7 days");
         }
 
+    }
+
+    private void addMediaListToProject(Project project, List<ExternalMediaDto> mediaDtoList) {
+        project.setMediaDtoList(mediaDtoList);
     }
 
     @Override
@@ -74,11 +79,9 @@ class ProjectServiceImpl implements InternalProjectService {
     }
 
     @Override
-    // @Transactional(readOnly = true)
+    @Transactional
     public InternalProjectDto getProjectById(String projectId) {
         Optional<Project> optionalProject = projectRepository.findById(UUID.fromString(projectId));
-
-        System.out.println("vo day");
 
         if (optionalProject.isEmpty()) {
             throw new NotFoundProjectException();
@@ -91,9 +94,12 @@ class ProjectServiceImpl implements InternalProjectService {
         GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto = projectProducerService
                 .sendAndReceive(new GetMediaByProjectIdRequestDto(projectIdList));
 
-        System.out.println(getMediaByProjectIdResponseDto.getMediaListDtoList());
+        // Add media to project
+        addMediaListToProject(projectDto,
+                getMediaByProjectIdResponseDto.getMediaListDtoList().get(0).getMediaDtoList());
 
-        return projectDto;
+        // Convert to impl
+        return projectDto.toInternalProjectDtoImpl();
     }
 
     @Override

@@ -32,7 +32,6 @@ class ProjectProducerService {
 
     private void send(ProjectProducerTopic topic, Serializable data) {
         try {
-
             kafkaTemplate.send(topic.getTopic(), data);
         } catch (Exception e) {
             // TODO: handle exception
