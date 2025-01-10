@@ -17,7 +17,7 @@ import ace.charitan.project.internal.project.service.ShardRoutingDataSource;
 class RoutingDataSourceConfig {
 
     @Bean
-     DataSource routingDataSource(
+    DataSource routingDataSource(
             @Qualifier("projectDataSource") DataSource projectDataSource
     // @Qualifier("projectDeletedDataSource") DataSource projectDeletedDataSource
 
@@ -35,7 +35,9 @@ class RoutingDataSourceConfig {
 
     @Primary
     @Bean
-     DataSource dataSource(DataSource routingDataSource) {
+    DataSource dataSource(
+
+            DataSource routingDataSource) {
         return new LazyConnectionDataSourceProxy(routingDataSource);
     }
 }
