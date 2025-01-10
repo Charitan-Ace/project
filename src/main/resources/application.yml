@@ -7,17 +7,19 @@ spring:
     # username: postgres
     # password: secret
     project:
-      url: ${SPRING_DATASOURCE_PROJECT_URL:jdbc:postgresql://project:5432/project}
+      url: ${SPRING_DATASOURCE_PROJECT_URL:jdbc:postgresql://project-db:5432/project}
       username: ${SPRING_DATASOURCE_PROJECT_USERNAME:ace}
       password: ${SPRING_DATASOURCE_PROJECT_PASSWORD:charitan}
-      hikari:
-        pool-name: project-pool
-    deleted:
+      driver-class-name: org.postgresql.Driver
+      # hikari:
+      #   pool-name: project-pool
+    project-deleted:
       url: ${SPRING_DATASOURCE_DELETED_URL:jdbc:postgresql://project-deleted-db:5432/project}
       username: ${SPRING_DATASOURCE_DELETED_USERNAME:ace}
       password: ${SPRING_DATASOURCE_DELETED_PASSWORD:charitan}
-      hikari:
-        pool-name: project-deleted-pool
+      driver-class-name: org.postgresql.Driver
+    #   hikari:
+    #     pool-name: project-deleted-pool
     # completed:
     #   url: jdbc:postgresql://localhost:5432/completed_db
     #   username: user
@@ -43,17 +45,18 @@ spring:
             packages: "ace.charitan.*"
   sql:
     init:
-      mode: always  # Ensures data.sql runs even with Hibernate ddl-auto
-      # mode: never
+      # mode: always  # Ensures data.sql runs even with Hibernate ddl-auto
+      mode: never
   jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true 
     properties:
       hibernate:
         format-sql: true 
         use-sql-comments: true 
         dialect: org.hibernate.dialect.PostgreSQLDialect
-    hibernate:
-      ddl-auto: validate
+    # hibernate:
+    #   ddl-auto: validate
 
 
 eureka:
