@@ -58,7 +58,7 @@ class ProjectController {
 
     @GetMapping("/{projectId}")
     ResponseEntity<InternalProjectDto> getProjectById(@PathVariable String projectId) {
-
+        System.out.println("vo request");
         InternalProjectDto projectDto = internalProjectService.getProjectById(projectId);
         return new ResponseEntity<>(projectDto, HttpStatus.OK);
     }

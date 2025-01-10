@@ -2,7 +2,7 @@ GET http://localhost:8080/project/actuator/health
 
 ### Valid project creation
 
-POST http://172.18.0.19:8080/create
+POST http://localhost:8080/project/create
 Content-Type: application/json
 
 {
@@ -24,9 +24,9 @@ Content-Type: application/json
 }
 
 
-### Get project
+### Get project by id
 
-GET http://localhost:8090/8
+GET http://localhost:8080/project/0c112e0e-09a0-4c16-8d87-51e2847055cc
 
 
 ### Update project

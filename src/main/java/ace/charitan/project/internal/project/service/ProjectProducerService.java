@@ -12,6 +12,11 @@ import org.springframework.kafka.requestreply.RequestReplyFuture;
 import org.springframework.stereotype.Component;
 
 import ace.charitan.common.dto.TestKafkaMessageDto;
+import ace.charitan.common.dto.country.GetCountryByIsoCode.GetCountryByIsoCodeRequestDto;
+import ace.charitan.common.dto.media.ExternalMediaDto;
+import ace.charitan.common.dto.media.GetMediaByProjectIdRequestDto;
+import ace.charitan.common.dto.media.GetMediaByProjectIdResponseDto;
+import ace.charitan.common.dto.subscription.NewProjectSubscriptionDto.NewProjectSubscriptionRequestDto;
 
 @Component
 class ProjectProducerService {
@@ -26,7 +31,12 @@ class ProjectProducerService {
     private KafkaTemplate<String, Object> kafkaTemplate;
 
     private void send(ProjectProducerTopic topic, Serializable data) {
-        kafkaTemplate.send(topic.getTopic(), data);
+        try {
+
+            kafkaTemplate.send(topic.getTopic(), data);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
     }
 
     private Object sendAndReceive(
@@ -61,8 +71,14 @@ class ProjectProducerService {
         return response;
     }
 
-    // void send(GetCountryByIsoCodeRequestDto data) {
-    // send(ProjectProducerTopic.PROJECT_GEOGRAPHY_GET_COUNTRY_BY_ISO_CODE, data);
-    // }
+    GetMediaByProjectIdResponseDto sendAndReceive(GetMediaByProjectIdRequestDto data) {
+        GetMediaByProjectIdResponseDto response = (GetMediaByProjectIdResponseDto) sendAndReceive(
+                ProjectProducerTopic.PROJECT_MEDIA_GET_MEDIA_BY_PROJECT_ID, data);
+        return response;
+    }
+
+    void send(NewProjectSubscriptionRequestDto data) {
+        send(ProjectProducerTopic.PROJECT_SUBSCRIPTION_NEW_PROJECT, data);
+    }
 
 }

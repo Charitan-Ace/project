@@ -2,6 +2,8 @@ package ace.charitan.project.internal.project.service;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,6 +13,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import ace.charitan.common.dto.media.GetMediaByProjectIdRequestDto;
+import ace.charitan.common.dto.media.GetMediaByProjectIdResponseDto;
+import ace.charitan.common.dto.subscription.NewProjectSubscriptionDto.NewProjectSubscriptionRequestDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.CreateProjectDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.SearchProjectsDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.UpdateProjectDto;
@@ -18,6 +23,7 @@ import ace.charitan.project.internal.project.dto.project.InternalProjectDto;
 import ace.charitan.project.internal.project.exception.ProjectException.InvalidProjectException;
 import ace.charitan.project.internal.project.exception.ProjectException.NotFoundProjectException;
 import ace.charitan.project.internal.project.service.ProjectEnum.StatusType;
+import jakarta.transaction.Transactional;
 
 @Service
 class ProjectServiceImpl implements InternalProjectService {
@@ -48,7 +54,7 @@ class ProjectServiceImpl implements InternalProjectService {
     }
 
     @Override
-    // @Transactional
+    @Transactional
     public InternalProjectDto createProject(CreateProjectDto createProjectDto) {
 
         // TODO: Change to based on auth
@@ -57,9 +63,13 @@ class ProjectServiceImpl implements InternalProjectService {
         Project project = new Project(createProjectDto, charityId);
         validateProjectDetails(project);
 
-        return projectRepository.save(project);
+        project = projectRepository.save(project);
+
+        // Send topic to subscription service
+        projectProducerService.send(new NewProjectSubscriptionRequestDto(project.toExternalProjectDto()));
+
         // return project.toInternalProjectDto();
-        // return project.
+        return project;
 
     }
 
@@ -68,11 +78,22 @@ class ProjectServiceImpl implements InternalProjectService {
     public InternalProjectDto getProjectById(String projectId) {
         Optional<Project> optionalProject = projectRepository.findById(UUID.fromString(projectId));
 
+        System.out.println("vo day");
+
         if (optionalProject.isEmpty()) {
             throw new NotFoundProjectException();
         }
 
-        return optionalProject.get();
+        Project projectDto = optionalProject.get();
+
+        // TODO: Add videos and images query
+        List<String> projectIdList = Arrays.asList(projectDto.getId().toString());
+        GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto = projectProducerService
+                .sendAndReceive(new GetMediaByProjectIdRequestDto(projectIdList));
+
+        System.out.println(getMediaByProjectIdResponseDto.getMediaListDtoList());
+
+        return projectDto;
     }
 
     @Override
@@ -88,6 +109,7 @@ class ProjectServiceImpl implements InternalProjectService {
     }
 
     @Override
+    @Transactional
     public InternalProjectDto updateProjectDetails(String projectId, UpdateProjectDto updateProjectDto) {
         // If project not found
         Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
@@ -116,6 +138,7 @@ class ProjectServiceImpl implements InternalProjectService {
     }
 
     @Override
+    @Transactional
     public InternalProjectDto approveProject(String projectId) {
         // If project not found
         Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
@@ -145,6 +168,7 @@ class ProjectServiceImpl implements InternalProjectService {
     }
 
     @Override
+    @Transactional
     public InternalProjectDto haltProject(String projectId) {
         // If project not found
         Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
@@ -174,6 +198,7 @@ class ProjectServiceImpl implements InternalProjectService {
     }
 
     @Override
+    @Transactional
     public InternalProjectDto resumeProject(String projectId) {
         // If project not found
         Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
@@ -203,6 +228,7 @@ class ProjectServiceImpl implements InternalProjectService {
     }
 
     @Override
+    @Transactional
     public InternalProjectDto deleteProject(String projectId) {
         // If project not found
         Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
@@ -225,6 +251,7 @@ class ProjectServiceImpl implements InternalProjectService {
     }
 
     @Override
+    @Transactional
     public InternalProjectDto completeProject(String projectId) {
         // If project not found
         Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
