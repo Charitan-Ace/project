@@ -10,6 +10,7 @@ spring:
       url: ${SPRING_DATASOURCE_PROJECT_URL:jdbc:postgresql://project-db:5432/project}
       username: ${SPRING_DATASOURCE_PROJECT_USERNAME:ace}
       password: ${SPRING_DATASOURCE_PROJECT_PASSWORD:charitan}
+      driver-class-name: org.postgresql.Driver
       # hikari:
       #   pool-name: project-pool
     # deleted:
@@ -41,10 +42,10 @@ spring:
         json:
           trusted:
             packages: "ace.charitan.*"
-  # sql:
-  #   init:
-  #     mode: always  # Ensures data.sql runs even with Hibernate ddl-auto
-      # mode: never
+  sql:
+    init:
+      # mode: always  # Ensures data.sql runs even with Hibernate ddl-auto
+      mode: never
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true 
