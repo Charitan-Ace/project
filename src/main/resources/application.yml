@@ -46,6 +46,7 @@ spring:
   #     mode: always  # Ensures data.sql runs even with Hibernate ddl-auto
       # mode: never
   jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true 
     properties:
       hibernate:

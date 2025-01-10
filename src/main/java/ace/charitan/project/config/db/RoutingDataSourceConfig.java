@@ -14,15 +14,14 @@ import org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy;
 import ace.charitan.project.internal.project.service.ShardRoutingDataSource;
 
 @Configuration
- class RoutingDataSourceConfig {
+class RoutingDataSourceConfig {
 
     @Bean
-    public DataSource routingDataSource(
-    
+     DataSource routingDataSource(
             @Qualifier("projectDataSource") DataSource projectDataSource
-            // @Qualifier("projectDeletedDataSource") DataSource projectDeletedDataSource
-            
-            ) {
+    // @Qualifier("projectDeletedDataSource") DataSource projectDeletedDataSource
+
+    ) {
 
         Map<Object, Object> targetDataSources = new HashMap<>();
         targetDataSources.put("PROJECT", projectDataSource);
@@ -36,7 +35,7 @@ import ace.charitan.project.internal.project.service.ShardRoutingDataSource;
 
     @Primary
     @Bean
-    public DataSource dataSource(DataSource routingDataSource) {
+     DataSource dataSource(DataSource routingDataSource) {
         return new LazyConnectionDataSourceProxy(routingDataSource);
     }
 }
