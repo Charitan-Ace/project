@@ -7,7 +7,7 @@ spring:
     # username: postgres
     # password: secret
     project:
-      url: ${SPRING_DATASOURCE_PROJECT_URL:jdbc:postgresql://project:5432/project}
+      url: ${SPRING_DATASOURCE_PROJECT_URL:jdbc:postgresql://project-db:5432/project}
       username: ${SPRING_DATASOURCE_PROJECT_USERNAME:ace}
       password: ${SPRING_DATASOURCE_PROJECT_PASSWORD:charitan}
       # hikari:
