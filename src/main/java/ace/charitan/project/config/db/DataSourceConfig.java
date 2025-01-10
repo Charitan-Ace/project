@@ -36,9 +36,19 @@ class DataSourceConfig {
         return dataSource;
     }
 
-    // @Bean(name = "projectDeletedDataSource")
-    // @ConfigurationProperties(prefix = "spring.datasource.project-deleted")
-    // public DataSource projectDeletedDataSource() {
-    // return DataSourceBuilder.create().build();
-    // }
+    @Bean(name = "projectDeletedDataSource")
+    @ConfigurationProperties(prefix = "spring.datasource.project-deleted")
+    public DataSource projectDeletedDataSource() {
+
+        // System.out.println("URL " + url);
+        // return DataSourceBuilder.create().build();
+
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName(env.getProperty("spring.datasource.project-deleted.driver-class-name"));
+        dataSource.setUrl(env.getProperty("spring.datasource.project-deleted.url"));
+        dataSource.setUsername(env.getProperty("spring.datasource.project-deleted.username"));
+        dataSource.setPassword(env.getProperty("spring.datasource.project-deleted.password"));
+
+        return dataSource;
+    }
 }

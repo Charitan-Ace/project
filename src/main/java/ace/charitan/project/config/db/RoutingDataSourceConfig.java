@@ -18,14 +18,14 @@ class RoutingDataSourceConfig {
 
     @Bean
     DataSource routingDataSource(
-            @Qualifier("projectDataSource") DataSource projectDataSource
-    // @Qualifier("projectDeletedDataSource") DataSource projectDeletedDataSource
+            @Qualifier("projectDataSource") DataSource projectDataSource,
+            @Qualifier("projectDeletedDataSource") DataSource projectDeletedDataSource
 
     ) {
 
         Map<Object, Object> targetDataSources = new HashMap<>();
         targetDataSources.put("PROJECT", projectDataSource);
-        // targetDataSources.put("PROJECT_DELETED", projectDeletedDataSource);
+        targetDataSources.put("PROJECT_DELETED", projectDeletedDataSource);
 
         ShardRoutingDataSource routingDataSource = new ShardRoutingDataSource();
         routingDataSource.setTargetDataSources(targetDataSources);
