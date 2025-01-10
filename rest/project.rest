@@ -16,7 +16,7 @@ Content-Type: application/json
 }
 
 ### Search projects
-POST http://172.18.0.19:8080/search
+POST http://localhost:8080/search
 Content-Type: application/json
 
 {
@@ -26,7 +26,7 @@ Content-Type: application/json
 
 ### Get project by id
 
-GET http://localhost:8080/project/0c112e0e-09a0-4c16-8d87-51e2847055cc
+GET http://localhost:8080/project/9284aa44-9bea-4647-80bd-55c413590404
 
 
 ### Update project

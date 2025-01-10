@@ -12,8 +12,6 @@ import org.springframework.kafka.requestreply.RequestReplyFuture;
 import org.springframework.stereotype.Component;
 
 import ace.charitan.common.dto.TestKafkaMessageDto;
-import ace.charitan.common.dto.country.GetCountryByIsoCode.GetCountryByIsoCodeRequestDto;
-import ace.charitan.common.dto.media.ExternalMediaDto;
 import ace.charitan.common.dto.media.GetMediaByProjectIdRequestDto;
 import ace.charitan.common.dto.media.GetMediaByProjectIdResponseDto;
 import ace.charitan.common.dto.subscription.NewProjectSubscriptionDto.NewProjectSubscriptionRequestDto;
@@ -32,7 +30,6 @@ class ProjectProducerService {
 
     private void send(ProjectProducerTopic topic, Serializable data) {
         try {
-
             kafkaTemplate.send(topic.getTopic(), data);
         } catch (Exception e) {
             // TODO: handle exception
@@ -74,6 +71,7 @@ class ProjectProducerService {
     GetMediaByProjectIdResponseDto sendAndReceive(GetMediaByProjectIdRequestDto data) {
         GetMediaByProjectIdResponseDto response = (GetMediaByProjectIdResponseDto) sendAndReceive(
                 ProjectProducerTopic.PROJECT_MEDIA_GET_MEDIA_BY_PROJECT_ID, data);
+                System.out.println(response);
         return response;
     }
 
