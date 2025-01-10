@@ -3,14 +3,14 @@ spring:
     name: project
 
   datasource:
-    # url: jdbc:postgresql://localhost:5432/postgres
-    # username: postgres
-    # password: secret
-    project:
-      url: ${SPRING_DATASOURCE_PROJECT_URL:jdbc:postgresql://project-db:5432/project}
-      username: ${SPRING_DATASOURCE_PROJECT_USERNAME:ace}
-      password: ${SPRING_DATASOURCE_PROJECT_PASSWORD:charitan}
-      driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: secret
+    # project:
+    #   url: ${SPRING_DATASOURCE_PROJECT_URL:jdbc:postgresql://project-db:5432/project}
+    #   username: ${SPRING_DATASOURCE_PROJECT_USERNAME:ace}
+    #   password: ${SPRING_DATASOURCE_PROJECT_PASSWORD:charitan}
+    #   driver-class-name: org.postgresql.Driver
       # hikari:
       #   pool-name: project-pool
     # deleted:
