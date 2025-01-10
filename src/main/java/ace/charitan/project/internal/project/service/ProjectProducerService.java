@@ -12,8 +12,6 @@ import org.springframework.kafka.requestreply.RequestReplyFuture;
 import org.springframework.stereotype.Component;
 
 import ace.charitan.common.dto.TestKafkaMessageDto;
-import ace.charitan.common.dto.country.GetCountryByIsoCode.GetCountryByIsoCodeRequestDto;
-import ace.charitan.common.dto.media.ExternalMediaDto;
 import ace.charitan.common.dto.media.GetMediaByProjectIdRequestDto;
 import ace.charitan.common.dto.media.GetMediaByProjectIdResponseDto;
 import ace.charitan.common.dto.subscription.NewProjectSubscriptionDto.NewProjectSubscriptionRequestDto;
