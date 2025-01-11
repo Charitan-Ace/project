@@ -240,47 +240,54 @@ class ProjectServiceImpl implements InternalProjectService {
     @Override
     @Transactional
     public InternalProjectDto deleteProject(String projectId) {
-        // Set shard to PROJECT and retrieve the entity
-        ShardContextHolder.setCurrentShard(ShardContextConstant.PROJECT);
-        Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
-    
-        if (existedOptionalProject.isEmpty()) {
-            throw new NotFoundProjectException();
+        try {
+
+            // Set shard to PROJECT and retrieve the entity
+            ShardContextHolder.setCurrentShard(ShardContextConstant.PROJECT);
+            Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
+
+            if (existedOptionalProject.isEmpty()) {
+                throw new NotFoundProjectException();
+            }
+
+            Project project = existedOptionalProject.get();
+
+            // Ensure project status is HALTED before deletion
+            if (!project.getStatusType().equals(StatusType.HALTED)) {
+                throw new InvalidProjectException("Project can be deleted if status is HALTED");
+            }
+
+            // Set status to DELETED
+            project.setStatusType(StatusType.DELETED);
+
+            // Detach the project entity
+            entityManager.detach(project);
+
+            // Delete the project from the PROJECT shard
+            projectRepository.deleteById(project.getId());
+
+            // Clear the persistence context to avoid stale entity issues
+            entityManager.flush();
+            entityManager.clear();
+
+            // Switch to PROJECT_DELETED shard
+            ShardContextHolder.setCurrentShard(ShardContextConstant.PROJECT_DELETED);
+
+            // Create a new instance of the deleted project and save in PROJECT_DELETED
+            // shard
+            Project deletedProject = new Project(project);
+            deletedProject = projectRepository.save(deletedProject);
+
+            // Reset to the default shard (PROJECT)
+            ShardContextHolder.setCurrentShard(ShardContextConstant.PROJECT);
+
+            return deletedProject;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    
-        Project project = existedOptionalProject.get();
-    
-        // Ensure project status is HALTED before deletion
-        if (!project.getStatusType().equals(StatusType.HALTED)) {
-            throw new InvalidProjectException("Project can be deleted if status is HALTED");
-        }
-    
-        // Set status to DELETED
-        project.setStatusType(StatusType.DELETED);
-    
-        // Detach the project entity
-        entityManager.detach(project);
-    
-        // Delete the project from the PROJECT shard
-        projectRepository.deleteById(project.getId());
-    
-        // Clear the persistence context to avoid stale entity issues
-        entityManager.flush();
-        entityManager.clear();
-    
-        // Switch to PROJECT_DELETED shard
-        ShardContextHolder.setCurrentShard(ShardContextConstant.PROJECT_DELETED);
-    
-        // Create a new instance of the deleted project and save in PROJECT_DELETED shard
-        Project deletedProject = new Project(project);
-        deletedProject = projectRepository.save(deletedProject);
-    
-        // Reset to the default shard (PROJECT)
-        ShardContextHolder.setCurrentShard(ShardContextConstant.PROJECT);
-    
-        return deletedProject;
+
+        return null;
     }
-    
 
     @Override
     @Transactional
