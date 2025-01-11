@@ -240,6 +240,9 @@ class ProjectServiceImpl implements InternalProjectService {
     @Override
     @Transactional
     public InternalProjectDto deleteProject(String projectId) {
+        // Set the current shard to PROJECT and delete in PROJECT shard
+        ShardContextHolder.setCurrentShard(ShardContextConstant.PROJECT);
+
         // If project not found
         Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
 
@@ -254,15 +257,16 @@ class ProjectServiceImpl implements InternalProjectService {
             throw new InvalidProjectException("Project can be deleted if status is HALTED");
         }
 
+        // Set the project status to DELETED
         project.setStatusType(StatusType.DELETED);
+
+        // Detach the project entity to prevent conflicts
+        entityManager.detach(project);
 
         // Create deleted project
         Project deletedProject = new Project(project);
 
-        // Set the current shard to PROJECT and delete in PROJECT shard
-        ShardContextHolder.setCurrentShard(ShardContextConstant.PROJECT);
         projectRepository.deleteById(project.getId());
-        entityManager.detach(project); // Detach the project entity from the persistence context
 
         // Set the current shard to PROJECT_DELETED and delete in PROJECT shard
         ShardContextHolder.setCurrentShard(ShardContextConstant.PROJECT_DELETED);
