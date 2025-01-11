@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,9 @@ import org.springframework.stereotype.Service;
 import ace.charitan.common.dto.media.ExternalMediaDto;
 import ace.charitan.common.dto.media.GetMediaByProjectIdRequestDto;
 import ace.charitan.common.dto.media.GetMediaByProjectIdResponseDto;
+import ace.charitan.common.dto.project.ExternalProjectDto;
+import ace.charitan.common.dto.project.GetProjectByCharitanIdDto.GetProjectByCharitanIdRequestDto;
+import ace.charitan.common.dto.project.GetProjectByCharitanIdDto.GetProjectByCharitanIdResponseDto;
 import ace.charitan.common.dto.subscription.NewProjectSubscriptionDto.NewProjectSubscriptionRequestDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.CreateProjectDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.SearchProjectsDto;
@@ -312,6 +316,24 @@ class ProjectServiceImpl implements InternalProjectService {
         }
 
         return null;
+    }
+
+    @Override
+    public GetProjectByCharitanIdResponseDto getProjectByCharitanId(GetProjectByCharitanIdRequestDto requestDto) {
+        String charitanId = requestDto.getCharitanId();
+
+        // List<String> additionalProjectStatusList =
+        // requestDto.getAdditionalProjectStatusList();
+        List<String> shardList = requestDto.getShardList();
+
+        List<Project> projects = projectRepository.findAllByCharitanId(charitanId);
+
+        List<Project> otherShardProjects = projectShardService.findAllByCharitanId(shardList, charitanId);
+
+        List<ExternalProjectDto> externalProjectDtoList = Stream.concat(projects.stream(), otherShardProjects.stream())
+                .map(p -> p.toExternalProjectDto()).toList();
+
+        return new GetProjectByCharitanIdResponseDto(externalProjectDtoList);
     }
 
 }

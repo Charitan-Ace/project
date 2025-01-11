@@ -114,7 +114,7 @@
         <dependency>
             <groupId>ace.charitan</groupId>
             <artifactId>common</artifactId>
-            <version>0.0.34-SNAPSHOT</version>
+            <version>0.0.50-SNAPSHOT</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api -->
