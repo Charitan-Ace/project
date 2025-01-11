@@ -11,13 +11,17 @@ spring:
       username: ${SPRING_DATASOURCE_PROJECT_USERNAME:ace}
       password: ${SPRING_DATASOURCE_PROJECT_PASSWORD:charitan}
       driver-class-name: org.postgresql.Driver
-      # hikari:
-      #   pool-name: project-pool
     project-deleted:
       url: ${SPRING_DATASOURCE_DELETED_URL:jdbc:postgresql://project-deleted-db:5432/project}
       username: ${SPRING_DATASOURCE_DELETED_USERNAME:ace}
       password: ${SPRING_DATASOURCE_DELETED_PASSWORD:charitan}
       driver-class-name: org.postgresql.Driver
+    project-completed:
+      url: ${SPRING_DATASOURCE_DELETED_URL:jdbc:postgresql://project-completed-db:5432/project}
+      username: ${SPRING_DATASOURCE_DELETED_USERNAME:ace}
+      password: ${SPRING_DATASOURCE_DELETED_PASSWORD:charitan}
+      driver-class-name: org.postgresql.Driver
+
     #   hikari:
     #     pool-name: project-deleted-pool
     # completed:

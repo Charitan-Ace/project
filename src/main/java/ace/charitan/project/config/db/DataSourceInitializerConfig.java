@@ -30,4 +30,14 @@ class DataSourceInitializerConfig {
                 new ClassPathResource("db/project-deleted/data.sql")));
         return initializer;
     }
+
+    @Bean
+    public DataSourceInitializer projectCompletedDataSourceInitializer(
+            @Qualifier("projectCompletedDataSource") DataSource dataSource) {
+        DataSourceInitializer initializer = new DataSourceInitializer();
+        initializer.setDataSource(dataSource);
+        initializer.setDatabasePopulator(new ResourceDatabasePopulator(
+                new ClassPathResource("db/project-completed/data.sql")));
+        return initializer;
+    }
 }

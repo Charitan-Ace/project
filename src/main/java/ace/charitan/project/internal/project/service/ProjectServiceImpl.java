@@ -273,7 +273,7 @@ class ProjectServiceImpl implements InternalProjectService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } 
+        }
 
         return null;
     }
@@ -281,24 +281,38 @@ class ProjectServiceImpl implements InternalProjectService {
     @Override
     @Transactional
     public InternalProjectDto completeProject(String projectId) {
-        // If project not found
-        Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
+        // // If project not found
+        // Optional<Project> existedOptionalProject =
+        // projectRepository.findById(UUID.fromString(projectId));
 
-        if (existedOptionalProject.isEmpty()) {
-            throw new NotFoundProjectException();
+        // if (existedOptionalProject.isEmpty()) {
+        // throw new NotFoundProjectException();
+        // }
+
+        // Project project = existedOptionalProject.get();
+
+        // // If project status is not HALTED
+        // if (!project.getStatusType().equals(StatusType.APPROVED)) {
+        // throw new InvalidProjectException("Project can be completed if status is
+        // APPROVED");
+        // }
+
+        // project.setStatusType(StatusType.COMPLETED);
+        // project = projectRepository.save(project);
+
+        // return project;
+
+        try {
+
+            boolean result = projectShardService.moveProjectFromProjectShardToProjectCompletedShard(projectId);
+            if (result) {
+                System.out.println("ok");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        Project project = existedOptionalProject.get();
-
-        // If project status is not HALTED
-        if (!project.getStatusType().equals(StatusType.APPROVED)) {
-            throw new InvalidProjectException("Project can be completed if status is APPROVED");
-        }
-
-        project.setStatusType(StatusType.COMPLETED);
-        project = projectRepository.save(project);
-
-        return project;
+        return null;
     }
 
 }
