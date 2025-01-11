@@ -1,6 +1,7 @@
 package ace.charitan.project.internal.project.service;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import ace.charitan.common.dto.media.ExternalMediaDto;
@@ -51,7 +52,7 @@ class Project extends AbstractEntity implements InternalProjectDto {
     private String charityId;
 
     @Transient
-    private List<ExternalMediaDto> mediaDtoList;
+    private List<ExternalMediaDto> mediaDtoList = new ArrayList<>();
 
     // private List<Long> imageIdList;
 
@@ -65,6 +66,20 @@ class Project extends AbstractEntity implements InternalProjectDto {
     // private String thumbnailUrl ;
 
     // private String videoUrls;
+
+    Project(Project project) {
+        setId(project.getId());
+        this.title = project.getTitle();
+        this.description = project.getDescription();
+        this.goal = project.getGoal();
+        this.startTime = project.getStartTime();
+        this.endTime = project.getEndTime();
+        this.statusType = project.getStatusType();
+        this.categoryType = project.getCategoryType();
+        this.countryIsoCode = project.getCountryIsoCode();
+        this.charityId = project.getCharityId();
+        this.mediaDtoList = project.getMediaDtoList();
+    }
 
     Project(CreateProjectDto createProjectDto, String charityId) {
         this.title = createProjectDto.getTitle();
