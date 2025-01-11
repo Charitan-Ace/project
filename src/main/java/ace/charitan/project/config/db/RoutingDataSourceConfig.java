@@ -19,13 +19,12 @@ class RoutingDataSourceConfig {
     @Bean
     DataSource routingDataSource(
             @Qualifier("projectDataSource") DataSource projectDataSource,
-            @Qualifier("projectDeletedDataSource") DataSource projectDeletedDataSource
-
-    ) {
-
+            @Qualifier("projectDeletedDataSource") DataSource projectDeletedDataSource,
+            @Qualifier("projectCompletedDataSource") DataSource projectCompletedDataSource) {
         Map<Object, Object> targetDataSources = new HashMap<>();
         targetDataSources.put("PROJECT", projectDataSource);
         targetDataSources.put("PROJECT_DELETED", projectDeletedDataSource);
+        targetDataSources.put("PROJECT_COMPLETED", projectCompletedDataSource);
 
         ShardRoutingDataSource routingDataSource = new ShardRoutingDataSource();
         routingDataSource.setTargetDataSources(targetDataSources);
@@ -35,9 +34,7 @@ class RoutingDataSourceConfig {
 
     @Primary
     @Bean
-    DataSource dataSource(
-
-            DataSource routingDataSource) {
+    DataSource dataSource(DataSource routingDataSource) {
         return new LazyConnectionDataSourceProxy(routingDataSource);
     }
 }

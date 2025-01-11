@@ -24,9 +24,6 @@ class DataSourceConfig {
     @ConfigurationProperties(prefix = "spring.datasource.project")
     public DataSource projectDataSource() {
 
-        // System.out.println("URL " + url);
-        // return DataSourceBuilder.create().build();
-
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(env.getProperty("spring.datasource.project.driver-class-name"));
         dataSource.setUrl(env.getProperty("spring.datasource.project.url"));
@@ -40,9 +37,6 @@ class DataSourceConfig {
     @ConfigurationProperties(prefix = "spring.datasource.project-deleted")
     public DataSource projectDeletedDataSource() {
 
-        // System.out.println("URL " + url);
-        // return DataSourceBuilder.create().build();
-
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(env.getProperty("spring.datasource.project-deleted.driver-class-name"));
         dataSource.setUrl(env.getProperty("spring.datasource.project-deleted.url"));
@@ -51,4 +45,20 @@ class DataSourceConfig {
 
         return dataSource;
     }
+
+    @Bean(name = "projectCompletedDataSource")
+    @ConfigurationProperties(prefix = "spring.datasource.project-completed")
+    public DataSource projectCompletedDataSource() {
+
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName(env.getProperty("spring.datasource.project-completed.driver-class-name"));
+        dataSource.setUrl(env.getProperty("spring.datasource.project-completed.url"));
+        dataSource.setUsername(env.getProperty("spring.datasource.project-completed.username"));
+        dataSource.setPassword(env.getProperty("spring.datasource.project-completed.password"));
+
+        return dataSource;
+    }
+
+    
+
 }

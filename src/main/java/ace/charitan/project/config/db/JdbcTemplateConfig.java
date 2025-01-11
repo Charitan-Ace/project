@@ -23,5 +23,9 @@ class JdbcTemplateConfig {
         return new JdbcTemplate(dataSource);
     }
 
+    @Bean(name = "projectCompletedJdbcTemplate")
+    public JdbcTemplate projectCompletedJdbcTemplate(@Qualifier("projectCompletedDataSource") DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
+    }
 
 }
