@@ -1,5 +1,6 @@
 package ace.charitan.project.internal.project.service;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -12,4 +13,6 @@ import ace.charitan.project.internal.project.dto.project.InternalProjectDto;
 @Repository
 interface ProjectRepository extends JpaRepository<Project, UUID> {
     Page<InternalProjectDto> findByCountryIsoCode(String countryIsoCode, Pageable pageable);
+
+    List<Project> findAllByCharitanId(String charitanId);
 }
