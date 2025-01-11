@@ -1,5 +1,6 @@
 package ace.charitan.project.internal.project.controller;
 
+import ace.charitan.project.internal.project.service.ProjectEnum.StatusType;
 import java.time.ZonedDateTime;
 
 import ace.charitan.project.internal.project.service.ProjectEnum.CategoryType;
@@ -7,6 +8,7 @@ import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,15 +46,19 @@ public class ProjectRequestBody {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SearchProjectsDto {
-        private String countryIsoCode;
 
+    public static class SearchProjectsDto {
         private String name;
+
+        private List<StatusType> statuses;
+
+        private List<CategoryType> categoryTypes;
+
+        private List<String> countryIsoCodes;
 
         private ZonedDateTime startTime;
 
         private ZonedDateTime endTime;
-
     }
 
     @Getter

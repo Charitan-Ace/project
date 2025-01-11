@@ -1,15 +1,19 @@
+
 package ace.charitan.project.internal.project.service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
 import ace.charitan.project.internal.project.exception.ProjectException.InvalidProjectException;
@@ -30,6 +34,40 @@ class ProjectShardService {
     @Autowired
     @Qualifier("projectCompletedJdbcTemplate")
     private JdbcTemplate projectCompletedJdbcTemplate;
+
+    // Utility method for Optional query
+    private <T> Optional<T> queryForOptional(JdbcTemplate jdbcTemplate, String sql, RowMapper<T> rowMapper,
+            Object... args) {
+        try {
+
+            T result = jdbcTemplate.queryForObject(sql, args, rowMapper);
+            return Optional.of(result);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Transactional
+    public Optional<Project> getProjectById(String projectId) {
+        final String SQL = "SELECT * FROM project WHERE id = CAST(? AS UUID)";
+        // final String DELETE_SQL = "SELECT * FROM project WHERE id = ?";
+
+        // Create type-safe row mapper
+
+        RowMapper<Project> rowMapper = new ProjectRowMapper();
+
+        // Try completed projects first
+        Optional<Project> completedProject = queryForOptional(
+                projectCompletedJdbcTemplate,
+                SQL,
+                rowMapper,
+                projectId);
+
+        // If not found in completed, try deleted projects
+        return completedProject.isPresent()
+                ? completedProject
+                : queryForOptional(projectDeletedJdbcTemplate, SQL, rowMapper, projectId);
+    }
 
     List<Project> findAllByCharitanId(List<String> shardList, String charitanId) {
         List<Project> deletedProjectList = new ArrayList<>();
@@ -84,10 +122,9 @@ class ProjectShardService {
     }
 
     @Transactional
-    boolean moveProjectFromProjectShardToProjectCompletedShard(String id) {
-        Map<String, Object> project = projectJdbcTemplate.queryForMap(
-                "SELECT * FROM project where id = CAST(? AS UUID)",
-                id);
+    public boolean moveProjectFromProjectShardToProjectCompletedShard(String id) {
+        Map<String, Object> project = projectJdbcTemplate
+                .queryForMap("SELECT * FROM project where id = CAST(? AS UUID)", id);
 
         if (Objects.isNull(project)) {
             throw new NotFoundProjectException();
@@ -115,3 +152,5 @@ class ProjectShardService {
         return true;
     }
 }
+
+// <<<<<<< trungngo21/get-project-across-db
