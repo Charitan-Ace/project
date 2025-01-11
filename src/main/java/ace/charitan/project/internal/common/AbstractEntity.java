@@ -35,15 +35,15 @@ public abstract class AbstractEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    // @CreatedDate
+    // @Column(nullable = false, updatable = false)
+    // @Temporal(TemporalType.TIMESTAMP)
+    // private Date createdAt;
 
-    @LastModifiedDate
-    @Column(nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
+    // @LastModifiedDate
+    // @Column(nullable = false)
+    // @Temporal(TemporalType.TIMESTAMP)
+    // private Date updatedAt;
 
     public AbstractEntity(UUID id) {
         this.id = id;
