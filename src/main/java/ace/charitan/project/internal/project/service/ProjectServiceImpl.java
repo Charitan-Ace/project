@@ -24,6 +24,7 @@ import ace.charitan.project.internal.project.dto.project.InternalProjectDto;
 import ace.charitan.project.internal.project.exception.ProjectException.InvalidProjectException;
 import ace.charitan.project.internal.project.exception.ProjectException.NotFoundProjectException;
 import ace.charitan.project.internal.project.service.ProjectEnum.StatusType;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -31,6 +32,9 @@ class ProjectServiceImpl implements InternalProjectService {
 
     @Autowired
     private ProjectRepository projectRepository;
+
+    @Autowired
+    private EntityManager entityManager;
 
     // @Autowired
     // private ProjectCustomRepository projectCustomRepository;
@@ -256,15 +260,16 @@ class ProjectServiceImpl implements InternalProjectService {
         Project deletedProject = new Project(project);
 
         // Set the current shard to PROJECT and delete in PROJECT shard
-        ShardContextHolder.setCurrentShard(ShardContextEnum.PROJECT);
+        ShardContextHolder.setCurrentShard(ShardContextConstant.PROJECT);
         projectRepository.deleteById(project.getId());
+        entityManager.detach(project); // Detach the project entity from the persistence context
 
         // Set the current shard to PROJECT_DELETED and delete in PROJECT shard
-        ShardContextHolder.setCurrentShard(ShardContextEnum.PROJECT_DELETED);
+        ShardContextHolder.setCurrentShard(ShardContextConstant.PROJECT_DELETED);
         deletedProject = projectRepository.save(deletedProject);
 
         // Set back again to PROJECT shard
-        ShardContextHolder.setCurrentShard(ShardContextEnum.PROJECT);
+        ShardContextHolder.setCurrentShard(ShardContextConstant.PROJECT);
 
         return deletedProject;
     }
