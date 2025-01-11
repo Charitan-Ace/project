@@ -251,7 +251,17 @@ class ProjectServiceImpl implements InternalProjectService {
         }
 
         project.setStatusType(StatusType.DELETED);
+
+        // Set the current shard to PROJECT and delete in PROJECT shard
+        ShardContextHolder.setCurrentShard(ShardContextEnum.PROJECT);
+        projectRepository.deleteById(project.getId());
+
+        // Set the current shard to PROJECT_DELETED and delete in PROJECT shard
+        ShardContextHolder.setCurrentShard(ShardContextEnum.PROJECT_DELETED);
         project = projectRepository.save(project);
+
+        // Set back again to PROJECT shard
+        ShardContextHolder.setCurrentShard(ShardContextEnum.PROJECT);
 
         return project;
     }

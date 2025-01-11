@@ -45,7 +45,11 @@ Content-Type: application/json
 POST http://localhost:8090/approve/1
 
 ### Halt project
-POST http://localhost:8090/halt/1
+POST http://localhost:8080/project/halt/9284aa44-9bea-4647-80bd-55c413590404
+
+### Delete project
+POST http://localhost:8080/project/delete/9284aa44-9bea-4647-80bd-55c413590404
+
 
 
 
