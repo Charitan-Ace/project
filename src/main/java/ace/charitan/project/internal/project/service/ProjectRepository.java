@@ -1,6 +1,7 @@
 package ace.charitan.project.internal.project.service;
 
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.SearchProjectsDto;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -23,4 +24,8 @@ interface ProjectRepository extends JpaRepository<Project, UUID> {
         "(:#{#searchProjectsDto.startTime} IS NULL OR p.startTime >= :#{#searchProjectsDto.startTime}) AND " +
         "(:#{#searchProjectsDto.endTime} IS NULL OR p.startTime <= :#{#searchProjectsDto.endTime})")
     Page<InternalProjectDto> findProjectsByQuery(SearchProjectsDto searchProjectsDto, Pageable pageable);
+  
+    Page<InternalProjectDto> findByCountryIsoCode(String countryIsoCode, Pageable pageable);
+
+    List<Project> findAllByCharitanId(String charitanId);
 }
