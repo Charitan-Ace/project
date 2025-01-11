@@ -24,7 +24,6 @@ import ace.charitan.project.internal.project.dto.project.InternalProjectDto;
 import ace.charitan.project.internal.project.exception.ProjectException.InvalidProjectException;
 import ace.charitan.project.internal.project.exception.ProjectException.NotFoundProjectException;
 import ace.charitan.project.internal.project.service.ProjectEnum.StatusType;
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
 @Service
