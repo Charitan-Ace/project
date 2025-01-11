@@ -55,8 +55,8 @@ spring:
         format-sql: true 
         use-sql-comments: true 
         dialect: org.hibernate.dialect.PostgreSQLDialect
-    hibernate:
-      ddl-auto: validate
+    # hibernate:
+    #   ddl-auto: validate
 
 
 eureka:
