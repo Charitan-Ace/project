@@ -242,8 +242,6 @@ class ProjectServiceImpl implements InternalProjectService {
     public InternalProjectDto deleteProject(String projectId) {
         try {
 
-            // Set shard to PROJECT and retrieve the entity
-            ShardContextHolder.setCurrentShard(ShardContextConstant.PROJECT);
             Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
 
             if (existedOptionalProject.isEmpty()) {
@@ -259,29 +257,9 @@ class ProjectServiceImpl implements InternalProjectService {
 
             // Set status to DELETED
             project.setStatusType(StatusType.DELETED);
+            project = projectRepository.save(project);
 
-            // Detach the project entity
-            entityManager.detach(project);
-
-            // Delete the project from the PROJECT shard
-            projectRepository.deleteById(project.getId());
-
-            // Clear the persistence context to avoid stale entity issues
-            entityManager.flush();
-            entityManager.clear();
-
-            // Switch to PROJECT_DELETED shard
-            ShardContextHolder.setCurrentShard(ShardContextConstant.PROJECT_DELETED);
-
-            // Create a new instance of the deleted project and save in PROJECT_DELETED
-            // shard
-            Project deletedProject = new Project(project);
-            deletedProject = projectRepository.save(deletedProject);
-
-            // Reset to the default shard (PROJECT)
-            ShardContextHolder.setCurrentShard(ShardContextConstant.PROJECT);
-
-            return deletedProject;
+            return project;
         } catch (Exception e) {
             e.printStackTrace();
         }
