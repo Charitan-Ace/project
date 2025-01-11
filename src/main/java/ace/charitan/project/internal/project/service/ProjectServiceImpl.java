@@ -34,10 +34,7 @@ class ProjectServiceImpl implements InternalProjectService {
     private ProjectRepository projectRepository;
 
     @Autowired
-    private EntityManager entityManager;
-
-    // @Autowired
-    // private ProjectCustomRepository projectCustomRepository;
+    private ProjectShardService projectShardService;
 
     @Autowired
     private ProjectProducerService projectProducerService;
@@ -240,28 +237,37 @@ class ProjectServiceImpl implements InternalProjectService {
     @Override
     @Transactional
     public InternalProjectDto deleteProject(String projectId) {
-        try {
+        // try {
 
-            Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
+        // Optional<Project> existedOptionalProject =
+        // projectRepository.findById(UUID.fromString(projectId));
 
-            if (existedOptionalProject.isEmpty()) {
-                throw new NotFoundProjectException();
-            }
+        // if (existedOptionalProject.isEmpty()) {
+        // throw new NotFoundProjectException();
+        // }
 
-            Project project = existedOptionalProject.get();
+        // Project project = existedOptionalProject.get();
 
-            // Ensure project status is HALTED before deletion
-            if (!project.getStatusType().equals(StatusType.HALTED)) {
-                throw new InvalidProjectException("Project can be deleted if status is HALTED");
-            }
+        // // Ensure project status is HALTED before deletion
+        // if (!project.getStatusType().equals(StatusType.HALTED)) {
+        // throw new InvalidProjectException("Project can be deleted if status is
+        // HALTED");
+        // }
 
-            // Set status to DELETED
-            project.setStatusType(StatusType.DELETED);
-            project = projectRepository.save(project);
+        // // Set status to DELETED
+        // project.setStatusType(StatusType.DELETED);
+        // project = projectRepository.save(project);
 
-            return project;
-        } catch (Exception e) {
-            e.printStackTrace();
+        // return project;
+        // } catch (Exception e) {
+        // e.printStackTrace();
+        // }
+
+        // return null;
+
+        boolean result = projectShardService.moveProjectFromProjectShardToProjectDeletedShard(projectId);
+        if (result) {
+            System.out.println("ok");
         }
 
         return null;
