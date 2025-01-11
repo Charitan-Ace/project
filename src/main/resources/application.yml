@@ -45,8 +45,8 @@ spring:
             packages: "ace.charitan.*"
   sql:
     init:
-      # mode: always  # Ensures data.sql runs even with Hibernate ddl-auto
-      mode: never
+      mode: always  # Ensures data.sql runs even with Hibernate ddl-auto
+      # mode: never
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true 
@@ -55,8 +55,8 @@ spring:
         format-sql: true 
         use-sql-comments: true 
         dialect: org.hibernate.dialect.PostgreSQLDialect
-    # hibernate:
-    #   ddl-auto: validate
+    hibernate:
+      ddl-auto: validate
 
 
 eureka:

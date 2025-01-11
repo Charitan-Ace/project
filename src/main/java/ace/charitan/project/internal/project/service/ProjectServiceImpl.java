@@ -24,6 +24,7 @@ import ace.charitan.project.internal.project.dto.project.InternalProjectDto;
 import ace.charitan.project.internal.project.exception.ProjectException.InvalidProjectException;
 import ace.charitan.project.internal.project.exception.ProjectException.NotFoundProjectException;
 import ace.charitan.project.internal.project.service.ProjectEnum.StatusType;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -31,6 +32,9 @@ class ProjectServiceImpl implements InternalProjectService {
 
     @Autowired
     private ProjectRepository projectRepository;
+
+    @Autowired
+    private EntityManager entityManager;
 
     // @Autowired
     // private ProjectCustomRepository projectCustomRepository;
@@ -236,24 +240,31 @@ class ProjectServiceImpl implements InternalProjectService {
     @Override
     @Transactional
     public InternalProjectDto deleteProject(String projectId) {
-        // If project not found
-        Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
+        try {
 
-        if (existedOptionalProject.isEmpty()) {
-            throw new NotFoundProjectException();
+            Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
+
+            if (existedOptionalProject.isEmpty()) {
+                throw new NotFoundProjectException();
+            }
+
+            Project project = existedOptionalProject.get();
+
+            // Ensure project status is HALTED before deletion
+            if (!project.getStatusType().equals(StatusType.HALTED)) {
+                throw new InvalidProjectException("Project can be deleted if status is HALTED");
+            }
+
+            // Set status to DELETED
+            project.setStatusType(StatusType.DELETED);
+            project = projectRepository.save(project);
+
+            return project;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        Project project = existedOptionalProject.get();
-
-        // If project status is not HALTED
-        if (!project.getStatusType().equals(StatusType.HALTED)) {
-            throw new InvalidProjectException("Project can be deleted if status is HALTED");
-        }
-
-        project.setStatusType(StatusType.DELETED);
-        project = projectRepository.save(project);
-
-        return project;
+        return null;
     }
 
     @Override
