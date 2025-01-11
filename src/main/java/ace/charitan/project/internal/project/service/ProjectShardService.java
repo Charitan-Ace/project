@@ -1,8 +1,11 @@
 package ace.charitan.project.internal.project.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,6 +30,26 @@ class ProjectShardService {
     @Autowired
     @Qualifier("projectCompletedJdbcTemplate")
     private JdbcTemplate projectCompletedJdbcTemplate;
+
+    List<Project> findAllByCharitanId(List<String> shardList, String charitanId) {
+        List<Project> deletedProjectList = new ArrayList<>();
+        List<Project> completedProjectList = new ArrayList<>();
+
+        if (shardList.contains("PROJECT_DELETED")) {
+            deletedProjectList = projectDeletedJdbcTemplate.query(
+                    "SELECT * FROM project where charitan_id = ?",
+                    new ProjectRowMapper(), charitanId);
+        }
+
+        if (shardList.contains("PROJECT_COMPLETED")) {
+            completedProjectList = projectCompletedJdbcTemplate.query(
+                    "SELECT * FROM project where charitan_id = ?",
+                    new ProjectRowMapper(), charitanId);
+        }
+
+        return Stream.concat(deletedProjectList.stream(), completedProjectList.stream()).toList();
+
+    }
 
     @Transactional
     boolean moveProjectFromProjectShardToProjectDeletedShard(String id) {
