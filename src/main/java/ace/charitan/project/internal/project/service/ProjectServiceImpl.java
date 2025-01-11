@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import ace.charitan.common.dto.media.ExternalMediaDto;
@@ -29,289 +30,298 @@ import jakarta.transaction.Transactional;
 @Service
 class ProjectServiceImpl implements InternalProjectService {
 
-    @Autowired
-    private ProjectRepository projectRepository;
+  @Autowired private ProjectRepository projectRepository;
 
-    @Autowired
-    private ProjectShardService projectShardService;
+  @Autowired private ProjectShardService projectShardService;
 
-    @Autowired
-    private ProjectProducerService projectProducerService;
+  @Autowired private ProjectProducerService projectProducerService;
 
-    // Validate endTime - startTime >= 1 week
-    private boolean validateStartEndTime(Project project) {
+  // Validate endTime - startTime >= 1 week
+  private boolean validateStartEndTime(Project project) {
 
-        Duration timeDifference = Duration.between(project.getStartTime(), project.getEndTime());
-        return timeDifference.toDays() >= 7;
+    Duration timeDifference = Duration.between(project.getStartTime(), project.getEndTime());
+    return timeDifference.toDays() >= 7;
+  }
 
+  private void validateProjectDetails(Project project) {
+    // Check start end time constraint
+    if (!validateStartEndTime(project)) {
+      throw new InvalidProjectException("Project must be last for at least 7 days");
+    }
+  }
+
+  private void addMediaListToProject(Project project, List<ExternalMediaDto> mediaDtoList) {
+    project.setMediaDtoList(mediaDtoList);
+  }
+
+  @Override
+  @Transactional
+  public InternalProjectDto createProject(CreateProjectDto createProjectDto) {
+
+    // TODO: Change to based on auth
+    String charityId = "fdsfdasfs-fasfdfdsfadsfs-fsdafadsfsad";
+
+    Project project = new Project(createProjectDto, charityId);
+    validateProjectDetails(project);
+
+    project = projectRepository.save(project);
+
+    // Send topic to subscription service
+    projectProducerService.send(
+        new NewProjectSubscriptionRequestDto(project.toExternalProjectDto()));
+
+    // return project.toInternalProjectDto();
+    return project;
+  }
+
+  @Override
+  @Transactional
+  public InternalProjectDto getProjectById(String projectId) {
+    Optional<Project> optionalProject = projectRepository.findById(UUID.fromString(projectId));
+    Optional<Project> optionalShardedProject = projectShardService.getProjectById(projectId);
+    Project projectDto = new Project();
+
+
+    if (optionalProject.isEmpty() && optionalShardedProject.isEmpty()) {
+      throw new NotFoundProjectException();
     }
 
-    private void validateProjectDetails(Project project) {
-        // Check start end time constraint
-        if (!validateStartEndTime(project)) {
-            throw new InvalidProjectException("Project must be last for at least 7 days");
-        }
-
+    if(optionalShardedProject.isEmpty()){
+      projectDto = optionalProject.get();
     }
 
-    private void addMediaListToProject(Project project, List<ExternalMediaDto> mediaDtoList) {
-        project.setMediaDtoList(mediaDtoList);
+    if(optionalProject.isEmpty()){
+      projectDto = optionalShardedProject.get();
     }
 
-    @Override
-    @Transactional
-    public InternalProjectDto createProject(CreateProjectDto createProjectDto) {
+    // TODO: Add videos and images query
+    List<String> projectIdList = Arrays.asList(projectDto.getId().toString());
+    GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto =
+        projectProducerService.sendAndReceive(new GetMediaByProjectIdRequestDto(projectIdList));
 
-        // TODO: Change to based on auth
-        String charityId = "fdsfdasfs-fasfdfdsfadsfs-fsdafadsfsad";
+    // Add media to project
+    addMediaListToProject(
+        projectDto, getMediaByProjectIdResponseDto.getMediaListDtoList().get(0).getMediaDtoList());
 
-        Project project = new Project(createProjectDto, charityId);
-        validateProjectDetails(project);
+    // Convert to impl
+    return projectDto.toInternalProjectDtoImpl();
+  }
 
-        project = projectRepository.save(project);
+  @Override
+  public Page<InternalProjectDto> searchProjects(
+      Integer pageNo, Integer pageSize, SearchProjectsDto searchProjectsDto) {
 
-        // Send topic to subscription service
-        projectProducerService.send(new NewProjectSubscriptionRequestDto(project.toExternalProjectDto()));
+    Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-        // return project.toInternalProjectDto();
-        return project;
+    return projectRepository.findProjectsByQuery(searchProjectsDto, pageable);
+  }
 
+  @Override
+  @Transactional
+  public InternalProjectDto updateProjectDetails(
+      String projectId, UpdateProjectDto updateProjectDto) {
+    // If project not found
+    Optional<Project> existedOptionalProject =
+        projectRepository.findById(UUID.fromString(projectId));
+
+    if (existedOptionalProject.isEmpty()) {
+      throw new NotFoundProjectException();
     }
 
-    @Override
-    @Transactional
-    public InternalProjectDto getProjectById(String projectId) {
-        Optional<Project> optionalProject = projectRepository.findById(UUID.fromString(projectId));
+    Project project = existedOptionalProject.get();
 
-        if (optionalProject.isEmpty()) {
-            throw new NotFoundProjectException();
-        }
-
-        Project projectDto = optionalProject.get();
-
-        // TODO: Add videos and images query
-        List<String> projectIdList = Arrays.asList(projectDto.getId().toString());
-        GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto = projectProducerService
-                .sendAndReceive(new GetMediaByProjectIdRequestDto(projectIdList));
-
-        // Add media to project
-        addMediaListToProject(projectDto,
-                getMediaByProjectIdResponseDto.getMediaListDtoList().get(0).getMediaDtoList());
-
-        // Convert to impl
-        return projectDto.toInternalProjectDtoImpl();
+    // Check date time is pass or not
+    ZonedDateTime currentDateTime = ZonedDateTime.now();
+    if (currentDateTime.isAfter(project.getStartTime())
+        || currentDateTime.isAfter(project.getEndTime())) {
+      throw new InvalidProjectException(
+          "Start time and end time must not before the current date time");
     }
 
-    @Override
-    public Page<InternalProjectDto> searchProjects(Integer pageNo, Integer pageSize,
-            SearchProjectsDto searchProjectsDto) {
+    project.updateDetails(updateProjectDto);
 
-        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
-
-        // Get pageable result1
-        // return projectCustomRepository.searchProjects(searchProjectsDto, pageable);
-
-        return projectRepository.findByCountryIsoCode(searchProjectsDto.getCountryIsoCode(), pageable);
+    if (!validateStartEndTime(project)) {
+      throw new InvalidProjectException("Project must be last for at least 7 days");
     }
 
-    @Override
-    @Transactional
-    public InternalProjectDto updateProjectDetails(String projectId, UpdateProjectDto updateProjectDto) {
-        // If project not found
-        Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
+    project = projectRepository.save(project);
 
-        if (existedOptionalProject.isEmpty()) {
-            throw new NotFoundProjectException();
-        }
+    return project;
+  }
 
-        Project project = existedOptionalProject.get();
+  @Override
+  @Transactional
+  public InternalProjectDto approveProject(String projectId) {
+    // If project not found
+    Optional<Project> existedOptionalProject =
+        projectRepository.findById(UUID.fromString(projectId));
 
-        // Check date time is pass or not
-        ZonedDateTime currentDateTime = ZonedDateTime.now();
-        if (currentDateTime.isAfter(project.getStartTime()) || currentDateTime.isAfter(project.getEndTime())) {
-            throw new InvalidProjectException("Start time and end time must not before the current date time");
-        }
-
-        project.updateDetails(updateProjectDto);
-
-        if (!validateStartEndTime(project)) {
-            throw new InvalidProjectException("Project must be last for at least 7 days");
-        }
-
-        project = projectRepository.save(project);
-
-        return project;
+    if (existedOptionalProject.isEmpty()) {
+      throw new NotFoundProjectException();
     }
 
-    @Override
-    @Transactional
-    public InternalProjectDto approveProject(String projectId) {
-        // If project not found
-        Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
+    Project project = existedOptionalProject.get();
 
-        if (existedOptionalProject.isEmpty()) {
-            throw new NotFoundProjectException();
-        }
-
-        Project project = existedOptionalProject.get();
-
-        // If project status is not PENDING
-        if (!project.getStatusType().equals(StatusType.PENDING)) {
-            throw new InvalidProjectException("Project can be approved if status is PENDING");
-        }
-
-        // If project is approved after endTime
-        ZonedDateTime currentDateTime = ZonedDateTime.now();
-        if (currentDateTime.isAfter(project.getEndTime())) {
-            throw new InvalidProjectException(
-                    "Project can not be approved if end time is before the current date time");
-        }
-
-        project.setStatusType(StatusType.APPROVED);
-        project = projectRepository.save(project);
-
-        return project;
+    // If project status is not PENDING
+    if (!project.getStatusType().equals(StatusType.PENDING)) {
+      throw new InvalidProjectException("Project can be approved if status is PENDING");
     }
 
-    @Override
-    @Transactional
-    public InternalProjectDto haltProject(String projectId) {
-        // If project not found
-        Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
-
-        if (existedOptionalProject.isEmpty()) {
-            throw new NotFoundProjectException();
-        }
-
-        Project project = existedOptionalProject.get();
-
-        // If project status is not APPROVED
-        if (!project.getStatusType().equals(StatusType.APPROVED)) {
-            throw new InvalidProjectException("Project can be halted if status is APPROVED");
-        }
-
-        // If project is halted after endTime
-        ZonedDateTime currentDateTime = ZonedDateTime.now();
-        if (currentDateTime.isAfter(project.getEndTime())) {
-            throw new InvalidProjectException(
-                    "Project can not be halted if end time is before the current date time");
-        }
-
-        project.setStatusType(StatusType.HALTED);
-        project = projectRepository.save(project);
-
-        return project;
+    // If project is approved after endTime
+    ZonedDateTime currentDateTime = ZonedDateTime.now();
+    if (currentDateTime.isAfter(project.getEndTime())) {
+      throw new InvalidProjectException(
+          "Project can not be approved if end time is before the current date time");
     }
 
-    @Override
-    @Transactional
-    public InternalProjectDto resumeProject(String projectId) {
-        // If project not found
-        Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
+    project.setStatusType(StatusType.APPROVED);
+    project = projectRepository.save(project);
 
-        if (existedOptionalProject.isEmpty()) {
-            throw new NotFoundProjectException();
-        }
+    return project;
+  }
 
-        Project project = existedOptionalProject.get();
+  @Override
+  @Transactional
+  public InternalProjectDto haltProject(String projectId) {
+    // If project not found
+    Optional<Project> existedOptionalProject =
+        projectRepository.findById(UUID.fromString(projectId));
 
-        // If project status is not HALTED
-        if (!project.getStatusType().equals(StatusType.HALTED)) {
-            throw new InvalidProjectException("Project can be resumed if status is HALTED");
-        }
-
-        // If project is resumed after endTime
-        ZonedDateTime currentDateTime = ZonedDateTime.now();
-        if (currentDateTime.isAfter(project.getEndTime())) {
-            throw new InvalidProjectException(
-                    "Project can not be resumed if end time is before the current date time");
-        }
-
-        project.setStatusType(StatusType.APPROVED);
-        project = projectRepository.save(project);
-
-        return project;
+    if (existedOptionalProject.isEmpty()) {
+      throw new NotFoundProjectException();
     }
 
-    @Override
-    @Transactional
-    public InternalProjectDto deleteProject(String projectId) {
-        // try {
+    Project project = existedOptionalProject.get();
 
-        // Optional<Project> existedOptionalProject =
-        // projectRepository.findById(UUID.fromString(projectId));
-
-        // if (existedOptionalProject.isEmpty()) {
-        // throw new NotFoundProjectException();
-        // }
-
-        // Project project = existedOptionalProject.get();
-
-        // // Ensure project status is HALTED before deletion
-        // if (!project.getStatusType().equals(StatusType.HALTED)) {
-        // throw new InvalidProjectException("Project can be deleted if status is
-        // HALTED");
-        // }
-
-        // // Set status to DELETED
-        // project.setStatusType(StatusType.DELETED);
-        // project = projectRepository.save(project);
-
-        // return project;
-        // } catch (Exception e) {
-        // e.printStackTrace();
-        // }
-
-        // return null;
-
-        try {
-
-            boolean result = projectShardService.moveProjectFromProjectShardToProjectDeletedShard(projectId);
-            if (result) {
-                System.out.println("ok");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
+    // If project status is not APPROVED
+    if (!project.getStatusType().equals(StatusType.APPROVED)) {
+      throw new InvalidProjectException("Project can be halted if status is APPROVED");
     }
 
-    @Override
-    @Transactional
-    public InternalProjectDto completeProject(String projectId) {
-        // // If project not found
-        // Optional<Project> existedOptionalProject =
-        // projectRepository.findById(UUID.fromString(projectId));
-
-        // if (existedOptionalProject.isEmpty()) {
-        // throw new NotFoundProjectException();
-        // }
-
-        // Project project = existedOptionalProject.get();
-
-        // // If project status is not HALTED
-        // if (!project.getStatusType().equals(StatusType.APPROVED)) {
-        // throw new InvalidProjectException("Project can be completed if status is
-        // APPROVED");
-        // }
-
-        // project.setStatusType(StatusType.COMPLETED);
-        // project = projectRepository.save(project);
-
-        // return project;
-
-        try {
-
-            boolean result = projectShardService.moveProjectFromProjectShardToProjectCompletedShard(projectId);
-            if (result) {
-                System.out.println("ok");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
+    // If project is halted after endTime
+    ZonedDateTime currentDateTime = ZonedDateTime.now();
+    if (currentDateTime.isAfter(project.getEndTime())) {
+      throw new InvalidProjectException(
+          "Project can not be halted if end time is before the current date time");
     }
 
+    project.setStatusType(StatusType.HALTED);
+    project = projectRepository.save(project);
+
+    return project;
+  }
+
+  @Override
+  @Transactional
+  public InternalProjectDto resumeProject(String projectId) {
+    // If project not found
+    Optional<Project> existedOptionalProject =
+        projectRepository.findById(UUID.fromString(projectId));
+
+    if (existedOptionalProject.isEmpty()) {
+      throw new NotFoundProjectException();
+    }
+
+    Project project = existedOptionalProject.get();
+
+    // If project status is not HALTED
+    if (!project.getStatusType().equals(StatusType.HALTED)) {
+      throw new InvalidProjectException("Project can be resumed if status is HALTED");
+    }
+
+    // If project is resumed after endTime
+    ZonedDateTime currentDateTime = ZonedDateTime.now();
+    if (currentDateTime.isAfter(project.getEndTime())) {
+      throw new InvalidProjectException(
+          "Project can not be resumed if end time is before the current date time");
+    }
+
+    project.setStatusType(StatusType.APPROVED);
+    project = projectRepository.save(project);
+
+    return project;
+  }
+
+  @Override
+  @Transactional
+  public InternalProjectDto deleteProject(String projectId) {
+    // try {
+
+    // Optional<Project> existedOptionalProject =
+    // projectRepository.findById(UUID.fromString(projectId));
+
+    // if (existedOptionalProject.isEmpty()) {
+    // throw new NotFoundProjectException();
+    // }
+
+    // Project project = existedOptionalProject.get();
+
+    // // Ensure project status is HALTED before deletion
+    // if (!project.getStatusType().equals(StatusType.HALTED)) {
+    // throw new InvalidProjectException("Project can be deleted if status is
+    // HALTED");
+    // }
+
+    // // Set status to DELETED
+    // project.setStatusType(StatusType.DELETED);
+    // project = projectRepository.save(project);
+
+    // return project;
+    // } catch (Exception e) {
+    // e.printStackTrace();
+    // }
+
+    // return null;
+
+    try {
+
+      boolean result =
+          projectShardService.moveProjectFromProjectShardToProjectDeletedShard(projectId);
+      if (result) {
+        System.out.println("ok");
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    return null;
+  }
+
+  @Override
+  @Transactional
+  public InternalProjectDto completeProject(String projectId) {
+    // // If project not found
+    // Optional<Project> existedOptionalProject =
+    // projectRepository.findById(UUID.fromString(projectId));
+
+    // if (existedOptionalProject.isEmpty()) {
+    // throw new NotFoundProjectException();
+    // }
+
+    // Project project = existedOptionalProject.get();
+
+    // // If project status is not HALTED
+    // if (!project.getStatusType().equals(StatusType.APPROVED)) {
+    // throw new InvalidProjectException("Project can be completed if status is
+    // APPROVED");
+    // }
+
+    // project.setStatusType(StatusType.COMPLETED);
+    // project = projectRepository.save(project);
+
+    // return project;
+
+    try {
+
+      boolean result =
+          projectShardService.moveProjectFromProjectShardToProjectCompletedShard(projectId);
+      if (result) {
+        System.out.println("ok");
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    return null;
+  }
 }
