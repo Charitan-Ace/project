@@ -25,7 +25,7 @@ class ProjectShardService {
 
     @Transactional
     boolean moveProjectFromProjectShardToProjectDeletedShard(String id) {
-        Map<String, Object> project = projectJdbcTemplate.queryForMap("SELECT * FROM project where id = ?",
+        Map<String, Object> project = projectJdbcTemplate.queryForMap("SELECT * FROM project where id = CAST(? AS UUID)",
                 id);
 
         if (Objects.isNull(project)) {
@@ -33,8 +33,8 @@ class ProjectShardService {
         }
 
         projectDeletedJdbcTemplate.update(
-                "INSERT INTO project (id, title, description, goal, start_time, end_time, status_type, category_type, country_iso_code, charity_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                id,
+                "INSERT INTO project (id, title, description, goal, start_time, end_time, status_type, category_type, country_iso_code, charity_id) VALUES (CAST(? AS UUID), ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                UUID.fromString(id),
                 project.get("title"),
                 project.get("description"),
                 project.get("goal"),
@@ -43,10 +43,9 @@ class ProjectShardService {
                 "DELETED",
                 project.get("category_type"),
                 project.get("country_iso_code"),
-                project.get("charity_id")
-        );
+                project.get("charity_id"));
 
-        projectJdbcTemplate.update("DELETE FROM project WHERE id = ?", id);
+        projectJdbcTemplate.update("DELETE FROM project WHERE id = CAST(? AS UUID)", id);
 
         return true;
     }

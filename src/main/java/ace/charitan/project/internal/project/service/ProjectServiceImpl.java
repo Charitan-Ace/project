@@ -265,10 +265,15 @@ class ProjectServiceImpl implements InternalProjectService {
 
         // return null;
 
-        boolean result = projectShardService.moveProjectFromProjectShardToProjectDeletedShard(projectId);
-        if (result) {
-            System.out.println("ok");
-        }
+        try {
+
+            boolean result = projectShardService.moveProjectFromProjectShardToProjectDeletedShard(projectId);
+            if (result) {
+                System.out.println("ok");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } 
 
         return null;
     }
