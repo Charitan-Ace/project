@@ -9,11 +9,13 @@ import jakarta.transaction.Transactional;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,6 +25,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -39,8 +42,6 @@ class ProjectShardService {
   @Autowired
   @Qualifier("projectCompletedJdbcTemplate")
   private JdbcTemplate projectCompletedJdbcTemplate;
-
-
 
   // Utility method for Optional query
   private <T> Optional<T> queryForOptional(
@@ -73,8 +74,42 @@ class ProjectShardService {
         : queryForOptional(projectDeletedJdbcTemplate, SQL, rowMapper, projectId);
   }
 
+  private void appendQueryConditions(
+      SearchProjectsDto searchProjectsDto,
+      StringBuilder rowCountSql,
+      StringBuilder sqlQuery,
+      List<Object> params) {
+
+    if (searchProjectsDto.getCategoryTypes() != null
+        && !searchProjectsDto.getCategoryTypes().isEmpty()) {
+
+      String inClause =
+          String.join(",", Collections.nCopies(searchProjectsDto.getCategoryTypes().size(), "?"));
+      rowCountSql.append(String.format(" AND category_type IN (%s)", inClause));
+      sqlQuery.append(String.format(" AND category_type IN (%s)", inClause));
+      params.addAll(searchProjectsDto.getCategoryTypes().stream().map(Enum::toString).toList());
+    }
+
+    if (searchProjectsDto.getCountryIsoCodes() != null
+        && !searchProjectsDto.getCountryIsoCodes().isEmpty()) {
+
+      String inClause =
+          String.join(",", Collections.nCopies(searchProjectsDto.getCountryIsoCodes().size(), "?"));
+      rowCountSql.append(String.format(" AND country_iso_code IN (%s)", inClause));
+      sqlQuery.append(String.format(" AND country_iso_code IN (%s)", inClause));
+      params.addAll(searchProjectsDto.getCountryIsoCodes());
+    }
+
+    if (searchProjectsDto.getName() != null && !searchProjectsDto.getName().isEmpty()) {
+      rowCountSql.append(" AND LOWER(title) LIKE LOWER(CONCAT('%', ?, '%'))");
+      sqlQuery.append(" AND LOWER(title) LIKE LOWER(CONCAT('%', ?, '%'))");
+      params.add(searchProjectsDto.getName());
+    }
+  }
+
   Page<Project> findAllByQuery(SearchProjectsDto searchProjectsDto, Pageable pageable) {
-    StringBuilder rowCountSql = new StringBuilder("SELECT count(1) AS row_count FROM project WHERE 1=1");
+    StringBuilder rowCountSql =
+        new StringBuilder("SELECT count(1) AS row_count FROM project WHERE 1=1");
     StringBuilder sqlQuery = new StringBuilder("SELECT * FROM project WHERE 1=1");
     List<Object> params = new ArrayList<>();
 
@@ -82,53 +117,31 @@ class ProjectShardService {
     appendQueryConditions(searchProjectsDto, rowCountSql, sqlQuery, params);
 
     // Add pagination
-    sqlQuery.append(" LIMIT ").append(pageable.getPageSize())
-        .append(" OFFSET ").append(pageable.getOffset());
+    sqlQuery
+        .append(" LIMIT ")
+        .append(pageable.getPageSize())
+        .append(" OFFSET ")
+        .append(pageable.getOffset());
 
     // Choose template based on status
-    JdbcTemplate jdbcTemplate = searchProjectsDto.getStatus() == StatusType.COMPLETED ?
-        projectCompletedJdbcTemplate : projectDeletedJdbcTemplate;
+    JdbcTemplate jdbcTemplate =
+        searchProjectsDto.getStatus() == StatusType.COMPLETED
+            ? projectCompletedJdbcTemplate
+            : projectDeletedJdbcTemplate;
 
+    System.out.println(params);
     // Execute count query
-    int total = jdbcTemplate.queryForObject(
-        rowCountSql.toString(),
-        params.toArray(),
-        (rs, rowNum) -> rs.getInt(1)
-    );
+    int total =
+        jdbcTemplate.queryForObject(
+            rowCountSql.toString(), params.toArray(), (rs, rowNum) -> rs.getInt(1));
+
+    System.out.println(total);
 
     // Execute main query
-    List<Project> projects = jdbcTemplate.query(
-        sqlQuery.toString(),
-        params.toArray(),
-        new ProjectRowMapper()
-    );
+    List<Project> projects =
+        jdbcTemplate.query(sqlQuery.toString(), params.toArray(), new ProjectRowMapper());
 
     return new PageImpl<>(projects, pageable, total);
-  }
-
-  private void appendQueryConditions(
-      SearchProjectsDto searchProjectsDto,
-      StringBuilder rowCountSql,
-      StringBuilder sqlQuery,
-      List<Object> params) {
-
-    if (searchProjectsDto.getCategoryTypes() != null) {
-      rowCountSql.append(" AND category_type IN ?");
-      sqlQuery.append(" AND category_type IN ?");
-      params.add(searchProjectsDto.getCategoryTypes());
-    }
-
-    if (searchProjectsDto.getCountryIsoCodes() != null) {
-      rowCountSql.append(" AND country_iso_code IN ?");
-      sqlQuery.append(" AND country_iso_code IN ?");
-      params.add(searchProjectsDto.getCountryIsoCodes());
-    }
-
-    if (!searchProjectsDto.getName().isEmpty()) {
-      rowCountSql.append(" AND LOWER(title) LIKE LOWER(CONCAT('%', ?, '%'))");
-      sqlQuery.append(" AND LOWER(title) LIKE LOWER(CONCAT('%', ?, '%'))");
-      params.add(searchProjectsDto.getName());
-    }
   }
 
   List<Project> findAllByCharitanId(List<String> shardList, String charitanId) {
