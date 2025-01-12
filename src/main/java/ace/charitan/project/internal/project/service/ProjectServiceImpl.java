@@ -339,7 +339,7 @@ class ProjectServiceImpl implements InternalProjectService {
     List<ExternalProjectDto> externalProjectDtoList = Stream.concat(projects.stream(), otherShardProjects.stream())
         .map(p -> p.toExternalProjectDto()).toList();
 
-    new GetProjectByCharityIdResponseDto(externalProjectDtoList);
+    return new GetProjectByCharityIdResponseDto(externalProjectDtoList);
   }
 
 }
