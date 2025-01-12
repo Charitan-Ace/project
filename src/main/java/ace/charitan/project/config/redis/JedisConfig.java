@@ -1,5 +1,6 @@
 package ace.charitan.project.config.redis;
 
+import org.hibernate.annotations.Bag;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,17 +41,38 @@ public class JedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, InternalProjectDtoImpl> redisTemplate(
-            ObjectMapper objectMapper) {
+    RedisTemplate<String, InternalProjectDtoImpl> redisProjectTemplate(ObjectMapper objectMapper) {
         RedisTemplate<String, InternalProjectDtoImpl> template = new RedisTemplate<String, InternalProjectDtoImpl>();
-        Jackson2JsonRedisSerializer<InternalProjectDtoImpl> jsonSerializer = new Jackson2JsonRedisSerializer<>(objectMapper,
-                InternalProjectDtoImpl.class);
+
+        Jackson2JsonRedisSerializer<InternalProjectDtoImpl> jsonSerializer =
+                new Jackson2JsonRedisSerializer<>(objectMapper, InternalProjectDtoImpl.class);
+
         template.setConnectionFactory(jedisConnectionFactory());
+
         template.setKeySerializer(new StringRedisSerializer());
         template.setHashKeySerializer(new StringRedisSerializer());
+
         template.setHashValueSerializer(jsonSerializer);
         template.setValueSerializer(jsonSerializer);
+
         return template;
     }
 
+    @Bean
+    public RedisTemplate<String, String> redisProjectZSetTemplate(ObjectMapper objectMapper) {
+        RedisTemplate<String, String> template = new RedisTemplate<String, String>();
+
+        Jackson2JsonRedisSerializer<String> jsonSerializer =
+                new Jackson2JsonRedisSerializer<>(objectMapper, String.class);
+
+        template.setConnectionFactory(jedisConnectionFactory());
+
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setHashKeySerializer(new StringRedisSerializer());
+
+        template.setHashValueSerializer(jsonSerializer);
+        template.setValueSerializer(jsonSerializer);
+
+        return template;
+    }
 }
