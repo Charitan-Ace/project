@@ -326,7 +326,7 @@ class ProjectServiceImpl implements InternalProjectService {
 
   @Override
   public GetProjectByCharityIdResponseDto getProjectByCharityId(GetProjectByCharityIdRequestDto requestDto) {
-    String charitanId = requestDto.getCharitanId();
+    String charitanId = requestDto.getCharityId();
 
     // List<String> additionalProjectStatusList =
     // requestDto.getAdditionalProjectStatusList();
@@ -339,7 +339,7 @@ class ProjectServiceImpl implements InternalProjectService {
     List<ExternalProjectDto> externalProjectDtoList = Stream.concat(projects.stream(), otherShardProjects.stream())
         .map(p -> p.toExternalProjectDto()).toList();
 
-    return new GetProjectByCharityIdResponseDto(externalProjectDtoList);
+    new GetProjectByCharityIdResponseDto(externalProjectDtoList);
   }
 
 }

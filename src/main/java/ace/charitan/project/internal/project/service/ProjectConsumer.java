@@ -3,6 +3,7 @@ package ace.charitan.project.internal.project.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Component;
 
@@ -41,8 +42,11 @@ class ProjectConsumer {
     }
 
     @KafkaListener(topics = "project.get-all-projects-by-charitan-id")
-    @SendTo 
+    @SendTo(KafkaHeaders.REPLY_TOPIC)
     GetProjectByCharityIdResponseDto handleGetProjectByCharitanId(GetProjectByCharityIdRequestDto requestDto) {
-        return projectService.getProjectByCharityId(requestDto);
+        System.out.println(requestDto.getCharityId());
+        GetProjectByCharityIdResponseDto responseDto = projectService.getProjectByCharityId(requestDto);
+        System.out.println(responseDto);
+        return responseDto;
     }
 }
