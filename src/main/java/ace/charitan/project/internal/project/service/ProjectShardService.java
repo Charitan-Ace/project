@@ -75,13 +75,13 @@ class ProjectShardService {
 
         if (shardList.contains("PROJECT_DELETED")) {
             deletedProjectList = projectDeletedJdbcTemplate.query(
-                    "SELECT * FROM project where charitan_id = ?",
+                    "SELECT * FROM project where project.charity_id = ?",
                     new ProjectRowMapper(), charitanId);
         }
 
         if (shardList.contains("PROJECT_COMPLETED")) {
             completedProjectList = projectCompletedJdbcTemplate.query(
-                    "SELECT * FROM project where charitan_id = ?",
+                    "SELECT * FROM project where project.charity_id = ?",
                     new ProjectRowMapper(), charitanId);
         }
 

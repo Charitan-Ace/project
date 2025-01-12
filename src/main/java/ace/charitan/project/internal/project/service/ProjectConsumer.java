@@ -42,7 +42,7 @@ class ProjectConsumer {
     }
 
     @KafkaListener(topics = "project.get-all-projects-by-charitan-id")
-    @SendTo(KafkaHeaders.REPLY_TOPIC)
+    @SendTo
     GetProjectByCharityIdResponseDto handleGetProjectByCharitanId(GetProjectByCharityIdRequestDto requestDto) {
         System.out.println(requestDto.getCharityId());
         GetProjectByCharityIdResponseDto responseDto = projectService.getProjectByCharityId(requestDto);
