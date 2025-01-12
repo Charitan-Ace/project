@@ -18,7 +18,7 @@ import ace.charitan.project.internal.project.dto.project.InternalProjectDto;
 interface ProjectRepository extends JpaRepository<Project, UUID> {
     @Query("select p from Project p where" +
         "(:#{#searchProjectsDto.categoryTypes} IS NULL OR p.categoryType IN :#{#searchProjectsDto.categoryTypes}) AND " +
-        "(:#{#searchProjectsDto.statuses} IS NULL OR p.statusType IN :#{#searchProjectsDto.statuses}) AND " +
+        "(:#{#searchProjectsDto.status} IS NULL OR p.statusType IN :#{#searchProjectsDto.status}) AND " +
         "(:#{#searchProjectsDto.name} IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :#{#searchProjectsDto.name}, '%'))) AND " +
         "(:#{#searchProjectsDto.countryIsoCodes} IS NULL OR p.countryIsoCode IN :#{#searchProjectsDto.countryIsoCodes}) AND " +
         "(:#{#searchProjectsDto.startTime} IS NULL OR p.startTime >= :#{#searchProjectsDto.startTime}) AND " +

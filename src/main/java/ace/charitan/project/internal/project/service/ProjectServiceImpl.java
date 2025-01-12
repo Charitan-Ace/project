@@ -1,19 +1,5 @@
 package ace.charitan.project.internal.project.service;
 
-import java.time.Duration;
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Stream;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
 import ace.charitan.common.dto.media.ExternalMediaDto;
 import ace.charitan.common.dto.media.GetMediaByProjectIdRequestDto;
 import ace.charitan.common.dto.media.GetMediaByProjectIdResponseDto;
@@ -29,18 +15,29 @@ import ace.charitan.project.internal.project.exception.ProjectException.InvalidP
 import ace.charitan.project.internal.project.exception.ProjectException.NotFoundProjectException;
 import ace.charitan.project.internal.project.service.ProjectEnum.StatusType;
 import jakarta.transaction.Transactional;
+import java.time.Duration;
+import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 @Service
 class ProjectServiceImpl implements InternalProjectService {
 
-  @Autowired
-  private ProjectRepository projectRepository;
+  @Autowired private ProjectRepository projectRepository;
 
-  @Autowired
-  private ProjectShardService projectShardService;
+  @Autowired private ProjectShardService projectShardService;
 
-  @Autowired
-  private ProjectProducerService projectProducerService;
+  @Autowired private ProjectProducerService projectProducerService;
 
   // Validate endTime - startTime >= 1 week
   private boolean validateStartEndTime(Project project) {
@@ -101,8 +98,8 @@ class ProjectServiceImpl implements InternalProjectService {
 
     // TODO: Add videos and images query
     List<String> projectIdList = Arrays.asList(projectDto.getId().toString());
-    GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto = projectProducerService
-        .sendAndReceive(new GetMediaByProjectIdRequestDto(projectIdList));
+    GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto =
+        projectProducerService.sendAndReceive(new GetMediaByProjectIdRequestDto(projectIdList));
 
     // Add media to project
     addMediaListToProject(
@@ -118,7 +115,33 @@ class ProjectServiceImpl implements InternalProjectService {
 
     Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
 
-    return projectRepository.findProjectsByQuery(searchProjectsDto, pageable);
+    if (searchProjectsDto.getStatus() != StatusType.COMPLETED
+        && searchProjectsDto.getStatus() != StatusType.DELETED) {
+      return projectRepository.findProjectsByQuery(searchProjectsDto, pageable);
+    }
+
+    Page<Project> projects = projectShardService.findAllByQuery(searchProjectsDto, pageable);
+    return new PageImpl<>(
+        projects.stream()
+            .map(
+                project -> {
+                  List<String> projectIdList = Arrays.asList(project.getId().toString());
+                  GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto =
+                      projectProducerService.sendAndReceive(
+                          new GetMediaByProjectIdRequestDto(projectIdList));
+
+                  // Add media to project
+                  addMediaListToProject(
+                      project,
+                      getMediaByProjectIdResponseDto
+                          .getMediaListDtoList()
+                          .get(0)
+                          .getMediaDtoList());
+                  return project.toInternalProjectDtoImpl();
+                })
+            .collect(Collectors.toList()),
+        pageable,
+        projects.getTotalPages());
   }
 
   @Override
@@ -126,7 +149,8 @@ class ProjectServiceImpl implements InternalProjectService {
   public InternalProjectDto updateProjectDetails(
       String projectId, UpdateProjectDto updateProjectDto) {
     // If project not found
-    Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
+    Optional<Project> existedOptionalProject =
+        projectRepository.findById(UUID.fromString(projectId));
 
     if (existedOptionalProject.isEmpty()) {
       throw new NotFoundProjectException();
@@ -157,7 +181,8 @@ class ProjectServiceImpl implements InternalProjectService {
   @Transactional
   public InternalProjectDto approveProject(String projectId) {
     // If project not found
-    Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
+    Optional<Project> existedOptionalProject =
+        projectRepository.findById(UUID.fromString(projectId));
 
     if (existedOptionalProject.isEmpty()) {
       throw new NotFoundProjectException();
@@ -187,7 +212,8 @@ class ProjectServiceImpl implements InternalProjectService {
   @Transactional
   public InternalProjectDto haltProject(String projectId) {
     // If project not found
-    Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
+    Optional<Project> existedOptionalProject =
+        projectRepository.findById(UUID.fromString(projectId));
 
     if (existedOptionalProject.isEmpty()) {
       throw new NotFoundProjectException();
@@ -217,7 +243,8 @@ class ProjectServiceImpl implements InternalProjectService {
   @Transactional
   public InternalProjectDto resumeProject(String projectId) {
     // If project not found
-    Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
+    Optional<Project> existedOptionalProject =
+        projectRepository.findById(UUID.fromString(projectId));
 
     if (existedOptionalProject.isEmpty()) {
       throw new NotFoundProjectException();
@@ -276,7 +303,8 @@ class ProjectServiceImpl implements InternalProjectService {
 
     try {
 
-      boolean result = projectShardService.moveProjectFromProjectShardToProjectDeletedShard(projectId);
+      boolean result =
+          projectShardService.moveProjectFromProjectShardToProjectDeletedShard(projectId);
       if (result) {
         System.out.println("ok");
       }
@@ -313,7 +341,8 @@ class ProjectServiceImpl implements InternalProjectService {
 
     try {
 
-      boolean result = projectShardService.moveProjectFromProjectShardToProjectCompletedShard(projectId);
+      boolean result =
+          projectShardService.moveProjectFromProjectShardToProjectCompletedShard(projectId);
       if (result) {
         System.out.println("ok");
       }
@@ -325,7 +354,8 @@ class ProjectServiceImpl implements InternalProjectService {
   }
 
   @Override
-  public GetProjectByCharityIdResponseDto getProjectByCharityId(GetProjectByCharityIdRequestDto requestDto) {
+  public GetProjectByCharityIdResponseDto getProjectByCharityId(
+      GetProjectByCharityIdRequestDto requestDto) {
     String charitanId = requestDto.getCharityId();
 
     // List<String> additionalProjectStatusList =
@@ -334,12 +364,14 @@ class ProjectServiceImpl implements InternalProjectService {
 
     List<Project> projects = projectRepository.findAllByCharityId(charitanId);
 
-    List<Project> otherShardProjects = projectShardService.findAllByCharitanId(shardList, charitanId);
+    List<Project> otherShardProjects =
+        projectShardService.findAllByCharitanId(shardList, charitanId);
 
-    List<ExternalProjectDto> externalProjectDtoList = Stream.concat(projects.stream(), otherShardProjects.stream())
-        .map(p -> p.toExternalProjectDto()).toList();
+    List<ExternalProjectDto> externalProjectDtoList =
+        Stream.concat(projects.stream(), otherShardProjects.stream())
+            .map(Project::toExternalProjectDto)
+            .toList();
 
     return new GetProjectByCharityIdResponseDto(externalProjectDtoList);
   }
-
 }
