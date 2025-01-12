@@ -114,13 +114,23 @@
         <dependency>
             <groupId>ace.charitan</groupId>
             <artifactId>common</artifactId>
-            <version>0.0.52-SNAPSHOT</version>
+            <version>0.0.60-SNAPSHOT</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
+            <version>0.12.6</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.12.6</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
             <version>0.12.6</version>
         </dependency>
 

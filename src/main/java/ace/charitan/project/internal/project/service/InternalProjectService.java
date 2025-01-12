@@ -2,8 +2,8 @@ package ace.charitan.project.internal.project.service;
 
 import org.springframework.data.domain.Page;
 
-import ace.charitan.common.dto.project.GetProjectByCharitanIdDto.GetProjectByCharitanIdRequestDto;
-import ace.charitan.common.dto.project.GetProjectByCharitanIdDto.GetProjectByCharitanIdResponseDto;
+import ace.charitan.common.dto.project.GetProjectByCharityIdDto.GetProjectByCharityIdRequestDto;
+import ace.charitan.common.dto.project.GetProjectByCharityIdDto.GetProjectByCharityIdResponseDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.CreateProjectDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.SearchProjectsDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.UpdateProjectDto;
@@ -30,5 +30,5 @@ public interface InternalProjectService {
 
     InternalProjectDto completeProject(String projectId);
 
-    GetProjectByCharitanIdResponseDto getProjectByCharitanId(GetProjectByCharitanIdRequestDto requestDto);
+    GetProjectByCharityIdResponseDto getProjectByCharityId(GetProjectByCharityIdRequestDto requestDto);
 }
