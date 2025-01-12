@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 
 import ace.charitan.common.dto.project.ProjectApproveDto;
 import ace.charitan.common.dto.project.ProjectHaltDto;
-import ace.charitan.common.dto.project.GetProjectByCharitanIdDto.GetProjectByCharitanIdRequestDto;
-import ace.charitan.common.dto.project.GetProjectByCharitanIdDto.GetProjectByCharitanIdResponseDto;
+import ace.charitan.common.dto.project.GetProjectByCharityIdDto.GetProjectByCharityIdRequestDto;
+import ace.charitan.common.dto.project.GetProjectByCharityIdDto.GetProjectByCharityIdResponseDto;
 
 @Component
 class ProjectConsumer {
@@ -42,7 +42,7 @@ class ProjectConsumer {
 
     @KafkaListener(topics = "project.get-all-projects-by-charitan-id")
     @SendTo 
-    GetProjectByCharitanIdResponseDto handleGetProjectByCharitanId(GetProjectByCharitanIdRequestDto requestDto) {
-        return projectService.getProjectByCharitanId(requestDto);
+    GetProjectByCharityIdResponseDto handleGetProjectByCharitanId(GetProjectByCharityIdRequestDto requestDto) {
+        return projectService.getProjectByCharityId(requestDto);
     }
 }

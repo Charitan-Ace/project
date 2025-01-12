@@ -12,15 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import ace.charitan.common.dto.media.ExternalMediaDto;
 import ace.charitan.common.dto.media.GetMediaByProjectIdRequestDto;
 import ace.charitan.common.dto.media.GetMediaByProjectIdResponseDto;
 import ace.charitan.common.dto.project.ExternalProjectDto;
-import ace.charitan.common.dto.project.GetProjectByCharitanIdDto.GetProjectByCharitanIdRequestDto;
-import ace.charitan.common.dto.project.GetProjectByCharitanIdDto.GetProjectByCharitanIdResponseDto;
+import ace.charitan.common.dto.project.GetProjectByCharityIdDto.GetProjectByCharityIdRequestDto;
+import ace.charitan.common.dto.project.GetProjectByCharityIdDto.GetProjectByCharityIdResponseDto;
 import ace.charitan.common.dto.subscription.NewProjectSubscriptionDto.NewProjectSubscriptionRequestDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.CreateProjectDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.SearchProjectsDto;
@@ -34,11 +33,14 @@ import jakarta.transaction.Transactional;
 @Service
 class ProjectServiceImpl implements InternalProjectService {
 
-  @Autowired private ProjectRepository projectRepository;
+  @Autowired
+  private ProjectRepository projectRepository;
 
-  @Autowired private ProjectShardService projectShardService;
+  @Autowired
+  private ProjectShardService projectShardService;
 
-  @Autowired private ProjectProducerService projectProducerService;
+  @Autowired
+  private ProjectProducerService projectProducerService;
 
   // Validate endTime - startTime >= 1 week
   private boolean validateStartEndTime(Project project) {
@@ -85,23 +87,22 @@ class ProjectServiceImpl implements InternalProjectService {
     Optional<Project> optionalShardedProject = projectShardService.getProjectById(projectId);
     Project projectDto = new Project();
 
-
     if (optionalProject.isEmpty() && optionalShardedProject.isEmpty()) {
       throw new NotFoundProjectException();
     }
 
-    if(optionalShardedProject.isEmpty()){
+    if (optionalShardedProject.isEmpty()) {
       projectDto = optionalProject.get();
     }
 
-    if(optionalProject.isEmpty()){
+    if (optionalProject.isEmpty()) {
       projectDto = optionalShardedProject.get();
     }
 
     // TODO: Add videos and images query
     List<String> projectIdList = Arrays.asList(projectDto.getId().toString());
-    GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto =
-        projectProducerService.sendAndReceive(new GetMediaByProjectIdRequestDto(projectIdList));
+    GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto = projectProducerService
+        .sendAndReceive(new GetMediaByProjectIdRequestDto(projectIdList));
 
     // Add media to project
     addMediaListToProject(
@@ -125,8 +126,7 @@ class ProjectServiceImpl implements InternalProjectService {
   public InternalProjectDto updateProjectDetails(
       String projectId, UpdateProjectDto updateProjectDto) {
     // If project not found
-    Optional<Project> existedOptionalProject =
-        projectRepository.findById(UUID.fromString(projectId));
+    Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
 
     if (existedOptionalProject.isEmpty()) {
       throw new NotFoundProjectException();
@@ -157,8 +157,7 @@ class ProjectServiceImpl implements InternalProjectService {
   @Transactional
   public InternalProjectDto approveProject(String projectId) {
     // If project not found
-    Optional<Project> existedOptionalProject =
-        projectRepository.findById(UUID.fromString(projectId));
+    Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
 
     if (existedOptionalProject.isEmpty()) {
       throw new NotFoundProjectException();
@@ -188,8 +187,7 @@ class ProjectServiceImpl implements InternalProjectService {
   @Transactional
   public InternalProjectDto haltProject(String projectId) {
     // If project not found
-    Optional<Project> existedOptionalProject =
-        projectRepository.findById(UUID.fromString(projectId));
+    Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
 
     if (existedOptionalProject.isEmpty()) {
       throw new NotFoundProjectException();
@@ -219,8 +217,7 @@ class ProjectServiceImpl implements InternalProjectService {
   @Transactional
   public InternalProjectDto resumeProject(String projectId) {
     // If project not found
-    Optional<Project> existedOptionalProject =
-        projectRepository.findById(UUID.fromString(projectId));
+    Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
 
     if (existedOptionalProject.isEmpty()) {
       throw new NotFoundProjectException();
@@ -279,8 +276,7 @@ class ProjectServiceImpl implements InternalProjectService {
 
     try {
 
-      boolean result =
-          projectShardService.moveProjectFromProjectShardToProjectDeletedShard(projectId);
+      boolean result = projectShardService.moveProjectFromProjectShardToProjectDeletedShard(projectId);
       if (result) {
         System.out.println("ok");
       }
@@ -317,8 +313,7 @@ class ProjectServiceImpl implements InternalProjectService {
 
     try {
 
-      boolean result =
-          projectShardService.moveProjectFromProjectShardToProjectCompletedShard(projectId);
+      boolean result = projectShardService.moveProjectFromProjectShardToProjectCompletedShard(projectId);
       if (result) {
         System.out.println("ok");
       }
@@ -328,23 +323,23 @@ class ProjectServiceImpl implements InternalProjectService {
 
     return null;
   }
-  
-    @Override
-    public GetProjectByCharitanIdResponseDto getProjectByCharitanId(GetProjectByCharitanIdRequestDto requestDto) {
-        String charitanId = requestDto.getCharitanId();
 
-        // List<String> additionalProjectStatusList =
-        // requestDto.getAdditionalProjectStatusList();
-        List<String> shardList = requestDto.getShardList();
+  @Override
+  public GetProjectByCharityIdResponseDto getProjectByCharityId(GetProjectByCharityIdRequestDto requestDto) {
+    String charitanId = requestDto.getCharitanId();
 
-        List<Project> projects = projectRepository.findAllByCharitanId(charitanId);
+    // List<String> additionalProjectStatusList =
+    // requestDto.getAdditionalProjectStatusList();
+    List<String> shardList = requestDto.getShardList();
 
-        List<Project> otherShardProjects = projectShardService.findAllByCharitanId(shardList, charitanId);
+    List<Project> projects = projectRepository.findAllByCharityId(charitanId);
 
-        List<ExternalProjectDto> externalProjectDtoList = Stream.concat(projects.stream(), otherShardProjects.stream())
-                .map(p -> p.toExternalProjectDto()).toList();
+    List<Project> otherShardProjects = projectShardService.findAllByCharitanId(shardList, charitanId);
 
-        return new GetProjectByCharitanIdResponseDto(externalProjectDtoList);
-    }
+    List<ExternalProjectDto> externalProjectDtoList = Stream.concat(projects.stream(), otherShardProjects.stream())
+        .map(p -> p.toExternalProjectDto()).toList();
+
+    return new GetProjectByCharityIdResponseDto(externalProjectDtoList);
+  }
 
 }
