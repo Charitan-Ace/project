@@ -1,4 +1,4 @@
-package ace.charitan.project.config;
+package ace.charitan.project.config.kafka;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +22,7 @@ class KafkaProducerConfig {
         factory.setConsumerFactory(consumerFactory);
 
         ConcurrentMessageListenerContainer<String, Object> container = factory
-                .createContainer(KafkaHeaders.REPLY_TOPIC);
+                .createContainer("project.reply");
         container.setAutoStartup(true);
         return container;
     }

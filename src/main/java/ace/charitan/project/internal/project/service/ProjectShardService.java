@@ -107,6 +107,7 @@ class ProjectShardService {
     }
   }
 
+  @Transactional
   Page<Project> findAllByQuery(SearchProjectsDto searchProjectsDto, Pageable pageable) {
     StringBuilder rowCountSql =
         new StringBuilder("SELECT count(1) AS row_count FROM project WHERE 1=1");
@@ -144,6 +145,20 @@ class ProjectShardService {
     return new PageImpl<>(projects, pageable, total);
   }
 
+  Page<Project> findByCharityId(String charityId, StatusType statusType, Pageable pageable) {
+    List<Project> projectList = List.of();
+    JdbcTemplate jdbcTemplate = (statusType == StatusType.DELETED) ? projectDeletedJdbcTemplate : projectCompletedJdbcTemplate;
+
+    String sql = "SELECT * FROM project WHERE charityId = ? LIMIT ? OFFSET ?";
+    String countSql = "COUNT * FROM project WHERE charityId = ?";
+
+    projectList = jdbcTemplate.query(sql, new ProjectRowMapper(), charityId, pageable.getPageSize(), pageable.getPageNumber());
+    Integer total = jdbcTemplate.queryForObject(countSql, Integer.class, charityId);
+
+    return new PageImpl<>(projectList, pageable, total);
+  }
+
+  @Transactional
   List<Project> findAllByCharitanId(List<String> shardList, String charitanId) {
     List<Project> deletedProjectList = new ArrayList<>();
     List<Project> completedProjectList = new ArrayList<>();
@@ -151,13 +166,13 @@ class ProjectShardService {
     if (shardList.contains("PROJECT_DELETED")) {
       deletedProjectList =
           projectDeletedJdbcTemplate.query(
-              "SELECT * FROM project where charitan_id = ?", new ProjectRowMapper(), charitanId);
+              "SELECT * FROM project where charity_id = ?", new ProjectRowMapper(), charitanId);
     }
 
     if (shardList.contains("PROJECT_COMPLETED")) {
       completedProjectList =
           projectCompletedJdbcTemplate.query(
-              "SELECT * FROM project where charitan_id = ?", new ProjectRowMapper(), charitanId);
+              "SELECT * FROM project where charity_id = ?", new ProjectRowMapper(), charitanId);
     }
 
     return Stream.concat(deletedProjectList.stream(), completedProjectList.stream()).toList();
@@ -226,4 +241,3 @@ class ProjectShardService {
   }
 }
 
-// <<<<<<< trungngo21/get-project-across-db

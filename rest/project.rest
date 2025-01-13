@@ -16,17 +16,16 @@ Content-Type: application/json
 }
 
 ### Search projects
-POST http://localhost:8080/search
+POST http://localhost:8080/project/search
 Content-Type: application/json
 
 {
-    "countryIsoCode": "UK"
+    
 }
-
 
 ### Get project by id
 
-GET http://localhost:8080/project/9284aa44-9bea-4647-80bd-55c413590404
+GET http://localhost:8080/project/de5d937d-dd75-4968-ae77-dbb1264a270d
 
 
 ### Update project

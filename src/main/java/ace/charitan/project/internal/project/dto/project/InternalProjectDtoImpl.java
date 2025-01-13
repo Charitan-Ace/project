@@ -1,5 +1,6 @@
 package ace.charitan.project.internal.project.dto.project;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -9,11 +10,12 @@ import ace.charitan.project.internal.project.service.ProjectEnum.StatusType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class InternalProjectDtoImpl implements InternalProjectDto {
+public class InternalProjectDtoImpl implements InternalProjectDto, Serializable {
 
     private String id;
 
@@ -35,6 +37,7 @@ public class InternalProjectDtoImpl implements InternalProjectDto {
 
     private String charityId;
 
+    @Setter
     private List<ExternalMediaDto> mediaDtoList;
 
     private Double currentDonation;

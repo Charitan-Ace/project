@@ -1,7 +1,10 @@
 package ace.charitan.project.internal.auth;
 
-import java.util.Arrays;
-
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,11 +13,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import io.jsonwebtoken.Claims;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 
 @Component
 public class AuthCookieFilter extends OncePerRequestFilter {
@@ -27,6 +26,17 @@ public class AuthCookieFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtService jwtService;
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return path.contains("/ws/") ||
+               path.contains("/websocket") ||
+               path.contains("/info") ||
+               path.contains("/xhr_streaming") ||
+               path.contains("/xhr_send");
+    }
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws java.io.IOException, jakarta.servlet.ServletException {

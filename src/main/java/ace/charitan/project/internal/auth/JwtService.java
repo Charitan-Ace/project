@@ -12,17 +12,17 @@ import java.security.PublicKey;
 @Setter
 @Getter
 @Service
-class JwtService {
+ class JwtService {
     private PublicKey encPublicKey;
     private PrivateKey sigPrivateKey;
     private PublicKey sigPublicKey;
 
     public Claims parseJwsPayload(String jws) {
         return Jwts.parser()
-                .verifyWith(sigPublicKey)
-                .build()
-                .parseSignedClaims(jws)
-                .getPayload();
+                   .verifyWith(sigPublicKey)
+                   .build()
+                   .parseSignedClaims(jws)
+                   .getPayload();
     }
 
 }
