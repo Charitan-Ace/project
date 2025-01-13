@@ -61,6 +61,10 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     # hibernate:
     #   ddl-auto: validate
+  cache:
+    type: redis
+    redis:
+      time-to-live: 6000000
   data:
     redis:
       sentinel:
