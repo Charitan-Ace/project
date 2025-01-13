@@ -114,3 +114,6 @@ logging:
 redis:
   host-name: project-master
   port: '6379'
+
+data:
+  charitan-id: ed6f7fe9-9f2d-4b85-b189-31b38cf8122b
