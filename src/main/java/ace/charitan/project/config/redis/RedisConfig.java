@@ -19,14 +19,15 @@ import ace.charitan.project.internal.project.dto.project.InternalProjectDtoImpl;
 @Configuration
 public class RedisConfig {
 
-    @Value("redis.host-name")
+    @Value("${redis.host-name}")
     private String redisHostName;
 
-    @Value("redis.port")
+    @Value("${redis.port}")
     private Integer redisPort;
 
     @Bean
     JedisConnectionFactory jedisConnectionFactory() {
+        System.out.println("Redis poirt is " + redisPort);
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
         redisStandaloneConfiguration.setHostName(redisHostName);
         redisStandaloneConfiguration.setPort(redisPort);
