@@ -8,6 +8,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -41,6 +43,8 @@ class ProjectServiceImpl implements InternalProjectService {
 
   @Autowired
   private ProjectProducerService projectProducerService;
+
+  final private Logger logger = LoggerFactory.getLogger(this.getClass());
 
   // Validate endTime - startTime >= 1 week
   private boolean validateStartEndTime(Project project) {
@@ -101,12 +105,17 @@ class ProjectServiceImpl implements InternalProjectService {
 
     // TODO: Add videos and images query
     List<String> projectIdList = Arrays.asList(projectDto.getId().toString());
-    GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto = projectProducerService
-        .sendAndReceive(new GetMediaByProjectIdRequestDto(projectIdList));
 
-    // Add media to project
-    addMediaListToProject(
-        projectDto, getMediaByProjectIdResponseDto.getMediaListDtoList().get(0).getMediaDtoList());
+    try {
+      GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto = projectProducerService
+              .sendAndReceive(new GetMediaByProjectIdRequestDto(projectIdList));
+
+      // Add media to project
+      addMediaListToProject(
+              projectDto, getMediaByProjectIdResponseDto.getMediaListDtoList().getFirst().getMediaDtoList());
+    } catch(Exception e) {
+      logger.error("Cannot get media for project #{}, details:", projectId, e);
+    }
 
     // Convert to impl
     return projectDto.toInternalProjectDtoImpl();
