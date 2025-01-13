@@ -94,13 +94,13 @@ class Project extends AbstractEntity implements InternalProjectDto {
     }
 
     void updateDetails(UpdateProjectDto updateProjectDto) {
-        // this.title = updateProjectDto.getTitle();
-        // this.description = updateProjectDto.getDescription();
-        // this.goal = updateProjectDto.getGoal();
-        // this.startTime = updateProjectDto.getStartTime();
-        // this.endTime = updateProjectDto.getEndTime();
-        // this.categoryType = createProjectDto.getCategoryType();
-        // this.countryIsoCode = createProjectDto.getCountryIsoCode();
+        this.title = updateProjectDto.getTitle();
+        this.description = updateProjectDto.getDescription();
+        this.goal = updateProjectDto.getGoal();
+        this.startTime = updateProjectDto.getStartTime();
+        this.endTime = updateProjectDto.getEndTime();
+        this.categoryType = updateProjectDto.getCategoryType();
+        this.countryIsoCode = updateProjectDto.getCountryIsoCode();
     }
 
     ExternalProjectDto toExternalProjectDto() {
