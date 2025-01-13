@@ -135,14 +135,12 @@ class ProjectServiceImpl implements InternalProjectService {
     GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto = projectProducerService
         .sendAndReceive(new GetMediaByProjectIdRequestDto(projectIdList));
 
-
     InternalProjectDtoImpl internalProjectDtoImpl = projectDto.toInternalProjectDtoImpl();
 
     // Add media to project
     addMediaListToProject(
-            internalProjectDtoImpl,
-            getMediaByProjectIdResponseDto.getMediaListDtoList().getFirst().getMediaDtoList()
-    );
+        internalProjectDtoImpl,
+        getMediaByProjectIdResponseDto.getMediaListDtoList().getFirst().getMediaDtoList());
 
     // Cache project to redis
     projectRedisService.cacheById(internalProjectDtoImpl);
@@ -450,10 +448,11 @@ class ProjectServiceImpl implements InternalProjectService {
     System.out.println("Role: " + role);
 
     // Find by userId in redis
-//    List<InternalProjectDtoImpl> existingProjectDtoList = projectRedisService.findListByUserId(userId);
-//    if (!existingProjectDtoList.isEmpty()) {
-//      return existingProjectDtoList;
-//    }
+    // List<InternalProjectDtoImpl> existingProjectDtoList =
+    // projectRedisService.findListByUserId(userId);
+    // if (!existingProjectDtoList.isEmpty()) {
+    // return existingProjectDtoList;
+    // }
 
     List<Project> projectList = new ArrayList<>();
     Pageable pageable = PageRequest.of(page, limit);
@@ -463,24 +462,24 @@ class ProjectServiceImpl implements InternalProjectService {
     if (role.equals("CHARITY")) {
       StatusType statusType = StatusType.fromValue(status);
 
-
       if (statusType != StatusType.DELETED && statusType != StatusType.COMPLETED) {
         // Search in main shard
         projectDtoPage = projectRepository.findByCharityId(userId, pageable)
-                .map(Project::toInternalProjectDtoImpl);
+            .map(Project::toInternalProjectDtoImpl);
       } else {
         // Search in other shards
         projectDtoPage = projectShardService.findByCharityId(userId, statusType, pageable)
-                .map(Project::toInternalProjectDtoImpl);
+            .map(Project::toInternalProjectDtoImpl);
       }
 
       return projectDtoPage;
     }
 
     // Add donor later
+
+    
+
     return new PageImpl<>(new ArrayList<>(), pageable, 0);
-
-
 
   }
 
