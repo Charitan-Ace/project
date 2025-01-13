@@ -2,12 +2,12 @@ package ace.charitan.project.internal.auth;
 
 import io.jsonwebtoken.security.Jwks;
 import org.apache.kafka.common.TopicPartition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.listener.ConsumerSeekAware;
 import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.security.Key;
 import java.security.PrivateKey;
@@ -20,7 +20,8 @@ class JwtConsumer implements ConsumerSeekAware {
     private static final Logger logger = LoggerFactory.getLogger(JwtConsumer.class);
 
     @Autowired
-    private JwtService jwtService;
+    private  JwtService jwtService;
+
 
     @KafkaListener(topics = "key.encryption.public.change")
     public void encPublicKeyConsumer(String jwkString) {

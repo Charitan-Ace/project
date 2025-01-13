@@ -2,15 +2,12 @@ package ace.charitan.project.internal.project.service;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import ace.charitan.common.dto.project.UpdateProjectMediaDto;
+import org.apache.kafka.common.metrics.Stat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -437,6 +434,54 @@ class ProjectServiceImpl implements InternalProjectService {
 
     // Cache new object to redis
     projectRedisService.cacheById(internalProjectDto);
+  }
+
+  @Override
+  public Page<InternalProjectDtoImpl> getMyProjects(String status, int page, int limit) throws Exception {
+    AuthModel authModel = AuthUtils.getUserDetails();
+
+    if (Objects.isNull(authModel)) {
+      throw new Exception("Cannot get authModel");
+    }
+
+    String userId = authModel.getUsername();
+    String role = authModel.getAuthorities().stream().toList().getFirst().getAuthority();
+
+    System.out.println("Role: " + role);
+
+    // Find by userId in redis
+//    List<InternalProjectDtoImpl> existingProjectDtoList = projectRedisService.findListByUserId(userId);
+//    if (!existingProjectDtoList.isEmpty()) {
+//      return existingProjectDtoList;
+//    }
+
+    List<Project> projectList = new ArrayList<>();
+    Pageable pageable = PageRequest.of(page, limit);
+    Page<InternalProjectDtoImpl> projectDtoPage;
+
+    // If role is charity
+    if (role.equals("CHARITY")) {
+      StatusType statusType = StatusType.fromValue(status);
+
+
+      if (statusType != StatusType.DELETED && statusType != StatusType.COMPLETED) {
+        // Search in main shard
+        projectDtoPage = projectRepository.findByCharityId(userId, pageable)
+                .map(Project::toInternalProjectDtoImpl);
+      } else {
+        // Search in other shards
+        projectDtoPage = projectShardService.findByCharityId(userId, statusType, pageable)
+                .map(Project::toInternalProjectDtoImpl);
+      }
+
+      return projectDtoPage;
+    }
+
+    // Add donor later
+    return new PageImpl<>(new ArrayList<>(), pageable, 0);
+
+
+
   }
 
 }
