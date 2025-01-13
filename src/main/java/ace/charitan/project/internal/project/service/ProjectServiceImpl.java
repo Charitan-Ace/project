@@ -11,9 +11,11 @@ import ace.charitan.project.internal.project.controller.ProjectRequestBody.Creat
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.SearchProjectsDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.UpdateProjectDto;
 import ace.charitan.project.internal.project.dto.project.InternalProjectDto;
+import ace.charitan.project.internal.project.dto.project.InternalProjectDtoImpl;
 import ace.charitan.project.internal.project.exception.ProjectException.InvalidProjectException;
 import ace.charitan.project.internal.project.exception.ProjectException.NotFoundProjectException;
 import ace.charitan.project.internal.project.service.ProjectEnum.StatusType;
+import com.netflix.discovery.converters.Auto;
 import jakarta.transaction.Transactional;
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -23,12 +25,18 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.hibernate.Internal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+
+import static ace.charitan.project.config.redis.RedisConstant.*;
 
 @Service
 class ProjectServiceImpl implements InternalProjectService {
@@ -38,6 +46,14 @@ class ProjectServiceImpl implements InternalProjectService {
   @Autowired private ProjectShardService projectShardService;
 
   @Autowired private ProjectProducerService projectProducerService;
+
+  @Autowired
+  @Qualifier("redisProjectTemplate")
+  private RedisTemplate<String, InternalProjectDtoImpl> redisProjectTemplate;
+
+  @Autowired
+  @Qualifier("redisProjectZSetTemplate")
+  private RedisTemplate<String, String> redisProjectZSetTemplate;
 
   // Validate endTime - startTime >= 1 week
   private boolean validateStartEndTime(Project project) {
@@ -57,6 +73,17 @@ class ProjectServiceImpl implements InternalProjectService {
     project.setMediaDtoList(mediaDtoList);
   }
 
+  private void addToRedisZSet(InternalProjectDtoImpl internalProjectDto) {
+    // Add to sorted set with a lexicographical member key
+//    String compositeKey = donor.getLastName().trim().toLowerCase() + ":" + donor.getUserId();
+//    redisZSetTemplate.opsForZSet().add(DONOR_LIST_CACHE_KEY_LAST_NAME, compositeKey, 0);
+//
+//    compositeKey = donor.getFirstName().trim().toLowerCase() + ":" + donor.getUserId();
+//    redisZSetTemplate.opsForZSet().add(DONOR_LIST_CACHE_KEY_FIRST_NAME, compositeKey, 0);
+
+    
+  }
+
   @Override
   @Transactional
   public InternalProjectDto createProject(CreateProjectDto createProjectDto) {
@@ -69,11 +96,21 @@ class ProjectServiceImpl implements InternalProjectService {
 
     project = projectRepository.save(project);
 
+    InternalProjectDtoImpl internalProjectDto = project.toInternalProjectDtoImpl();
+
     // Send topic to subscription service
     projectProducerService.send(
         new NewProjectSubscriptionRequestDto(project.toExternalProjectDto()));
 
+    // Cache to redis
+    redisProjectTemplate.opsForValue().set(PROJECT_CACHE_PREFIX + project.getId(), internalProjectDto);
+    addToRedisZSet(internalProjectDto);
+
     // return project.toInternalProjectDto();
+
+//    redisTemplate.opsForValue().set(DONOR_CACHE_PREFIX + request.getUserId(), new DonorDTO(donor));
+//
+//    addToRedisZSet(donor);
     return project;
   }
 

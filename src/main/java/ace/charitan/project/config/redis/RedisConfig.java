@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import ace.charitan.project.internal.project.dto.project.InternalProjectDtoImpl;
 
 @Configuration
-public class JedisConfig {
+public class RedisConfig {
 
     @Value("redis.host-name")
     private String redisHostName;
