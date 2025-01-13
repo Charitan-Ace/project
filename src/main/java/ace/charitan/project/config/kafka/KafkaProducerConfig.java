@@ -22,7 +22,7 @@ class KafkaProducerConfig {
         factory.setConsumerFactory(consumerFactory);
 
         ConcurrentMessageListenerContainer<String, Object> container = factory
-                .createContainer(KafkaHeaders.REPLY_TOPIC);
+                .createContainer("project.reply");
         container.setAutoStartup(true);
         return container;
     }
