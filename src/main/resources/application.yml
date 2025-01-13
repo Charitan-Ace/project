@@ -68,14 +68,14 @@ spring:
   data:
     redis:
       sentinel:
-        nodes: ${SENTINEL_NODES:profile-sentinel-one:26379,profile-sentinel-two:26379,profile-sentinel-three:26379}
-        master: ${SENTINEL_MASTER:mymaster}
+        nodes: profile-sentinel-one:26379,profile-sentinel-two:26379,profile-sentinel-three:26379
+#        nodes: 100.88.41.30:10001,100.88.41.30:10002,100.88.41.30:10003
+        master: mymaster
       pool:
         max-active: 128
         max-idle: 20
         min-idle: 1
-        max-wait-time: 6000000
-
+        max-wait-time: 600000
 
 eureka:
   client:

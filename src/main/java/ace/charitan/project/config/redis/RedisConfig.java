@@ -40,14 +40,14 @@ public class RedisConfig {
     @Value("${spring.data.redis.pool.max-wait-time}")
     private long maxWaitTime;
 
-    @Bean(name="jedisConnectionFactory")
+    @Bean(name = "jedisConnectionFactory")
     public JedisConnectionFactory jedisConnectionFactory() {
         return new JedisConnectionFactory(
                 redisSentinelConfiguration(),
                 poolConfig());
     }
 
-    @Bean(name="poolConfig")
+    @Bean(name = "poolConfig")
     public JedisPoolConfig poolConfig() {
         final JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
         jedisPoolConfig.setTestOnBorrow(true);
@@ -65,6 +65,7 @@ public class RedisConfig {
         return new RedisSentinelConfiguration(sentinelMasterName,
                 new HashSet<String>(sentinelNodes));
     }
+
     @Bean
     public ObjectMapper objectMapper() {
         return JsonMapper.builder()
@@ -72,6 +73,7 @@ public class RedisConfig {
                 .build();
     }
 
+    // Caching single project object
     @Bean
     RedisTemplate<String, InternalProjectDtoImpl> redisProjectTemplate(ObjectMapper objectMapper) {
         RedisTemplate<String, InternalProjectDtoImpl> template = new RedisTemplate<String, InternalProjectDtoImpl>();
@@ -90,8 +92,10 @@ public class RedisConfig {
         return template;
     }
 
+
+    // Caching list of project objects
     @Bean
-    public RedisTemplate<String, String> redisProjectZSetTemplate(ObjectMapper objectMapper) {
+    RedisTemplate<String, String> redisProjectZSetTemplate(ObjectMapper objectMapper) {
         RedisTemplate<String, String> template = new RedisTemplate<String, String>();
 
         Jackson2JsonRedisSerializer<String> jsonSerializer = new Jackson2JsonRedisSerializer<>(objectMapper,

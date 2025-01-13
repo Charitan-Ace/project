@@ -46,7 +46,6 @@ public class ProjectRequestBody {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-
     public static class SearchProjectsDto {
         private String name;
 
