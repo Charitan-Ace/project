@@ -22,3 +22,53 @@ CREATE TABLE project (
     -- -- created_at
     -- updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- updated_at
 );
+
+INSERT INTO project (
+    id,
+    title,
+    description,
+    goal,
+    start_time,
+    end_time,
+    status_type,
+    category_type,
+    country_iso_code,
+    charity_id
+)
+VALUES -- Global Crisis Charity Projects
+       (
+           'c5cb1459-9118-4697-a499-ec94c8648338',
+           'Middle East Crisis',
+           'Providing humanitarian aid to those affected by ongoing conflicts in the Middle East, including shelter, medical supplies, and food.',
+           50000.00,
+           '2024-01-01T00:00:00+00:00',
+           '2024-12-31T23:59:59+00:00',
+           'COMPLETED',
+           'HUMANITARIAN',
+           'IL',
+           'charity1'
+       ),
+       (
+           'a5fc3b19-cb3d-461a-87db-c2ef8111bab1',
+           'Ukraine-Russia War',
+           'Supporting displaced families and individuals affected by the war between Ukraine and Russia, including shelter, food, and psychological support.',
+           100000.00,
+           '2024-01-01T00:00:00+00:00',
+           '2024-12-10T23:59:59+00:00',
+           'COMPLETED',
+           'EDUCATION',
+           'UA',
+           'charity2'
+       ),
+       (
+           'f3fd724b-bc67-480e-a6f1-58ae9f1f2998',
+           'Food Program in South Africa',
+           'Addressing hunger and malnutrition in South Africa by providing meals and nutritional support to communities in need.',
+           75000.00,
+           '2025-01-01T00:00:00+00:00',
+           '2025-01-10T23:59:59+00:00',
+           'COMPLETED',
+           'FOOD',
+           'ZA',
+           'charity3'
+       );
