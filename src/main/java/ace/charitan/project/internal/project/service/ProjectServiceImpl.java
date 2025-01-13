@@ -110,6 +110,10 @@ class ProjectServiceImpl implements InternalProjectService {
   public InternalProjectDto getProjectById(String projectId) {
 
     // Check existed in redis first
+    InternalProjectDtoImpl redisInternalProjectDtoImpl = projectRedisService.findOneById(projectId);
+    if (!Objects.isNull(redisInternalProjectDtoImpl)) {
+      return redisInternalProjectDtoImpl;
+    }
 
     Optional<Project> optionalProject = projectRepository.findById(UUID.fromString(projectId));
     Optional<Project> optionalShardedProject = projectShardService.getProjectById(projectId);
@@ -136,8 +140,13 @@ class ProjectServiceImpl implements InternalProjectService {
     addMediaListToProject(
         projectDto, getMediaByProjectIdResponseDto.getMediaListDtoList().get(0).getMediaDtoList());
 
+        InternalProjectDtoImpl internalProjectDtoImpl = projectDto.toInternalProjectDtoImpl();
+
+    // Cache project to redis
+    projectRedisService.cacheById(internalProjectDtoImpl);
+
     // Convert to impl
-    return projectDto.toInternalProjectDtoImpl();
+    return internalProjectDtoImpl;
   }
 
   @Override

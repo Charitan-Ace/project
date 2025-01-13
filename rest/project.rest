@@ -26,7 +26,7 @@ Content-Type: application/json
 
 ### Get project by id
 
-GET http://localhost:8080/project/9284aa44-9bea-4647-80bd-55c413590404
+GET http://localhost:8080/project/0de9df6f-dafd-465f-af8b-96b8425b4301
 
 
 ### Update project

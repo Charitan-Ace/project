@@ -61,6 +61,16 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     # hibernate:
     #   ddl-auto: validate
+  data:
+    redis:
+      sentinel:
+        nodes: ${SENTINEL_NODES:profile-sentinel-one:26379,profile-sentinel-two:26379,profile-sentinel-three:26379}
+        master: ${SENTINEL_MASTER:mymaster}
+      pool:
+        max-active: 128
+        max-idle: 20
+        min-idle: 1
+        max-wait-time: 6000000
 
 
 eureka:
