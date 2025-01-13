@@ -3,11 +3,15 @@ package ace.charitan.project.internal.project.controller;
 import java.util.List;
 import java.util.stream.Stream;
 
+import ace.charitan.project.internal.auth.AuthModel;
+import ace.charitan.project.internal.project.dto.project.InternalProjectDtoImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -105,6 +109,15 @@ class ProjectController {
         return new ResponseEntity<>(projectDto, HttpStatus.OK);
     }
 
-//    @PostMapping("/my")
-//    ResponseEntity
+    @GetMapping("/my-projects/status/{statusType}")
+    ResponseEntity<Page<InternalProjectDtoImpl>> getMyProjects(
+            @PathVariable String statusType,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int limit,
+            @AuthenticationPrincipal AuthModel authModel
+            ) throws Exception {
+        Page<InternalProjectDtoImpl> projectDtos = internalProjectService.getMyProjects(statusType, page, limit);
+        return new ResponseEntity<>(projectDtos, HttpStatus.OK);
+
+    }
 }

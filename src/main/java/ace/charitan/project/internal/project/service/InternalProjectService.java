@@ -1,6 +1,7 @@
 package ace.charitan.project.internal.project.service;
 
 import ace.charitan.common.dto.project.UpdateProjectMediaDto;
+import ace.charitan.project.internal.project.dto.project.InternalProjectDtoImpl;
 import org.springframework.data.domain.Page;
 
 import ace.charitan.common.dto.project.GetProjectByCharityIdDto.GetProjectByCharityIdRequestDto;
@@ -9,6 +10,9 @@ import ace.charitan.project.internal.project.controller.ProjectRequestBody.Creat
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.SearchProjectsDto;
 import ace.charitan.project.internal.project.controller.ProjectRequestBody.UpdateProjectDto;
 import ace.charitan.project.internal.project.dto.project.InternalProjectDto;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 public interface InternalProjectService {
 
@@ -34,4 +38,6 @@ public interface InternalProjectService {
     GetProjectByCharityIdResponseDto getProjectByCharityId(GetProjectByCharityIdRequestDto requestDto);
 
     void handleUpdateProjectMedia(UpdateProjectMediaDto.UpdateProjectMediaRequestDto requestDto);
+
+    Page<InternalProjectDtoImpl> getMyProjects(String statusType, int page, int limit) throws Exception;
 }

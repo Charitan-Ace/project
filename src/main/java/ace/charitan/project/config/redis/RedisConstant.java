@@ -6,7 +6,9 @@ public class RedisConstant {
 
     public static final String PROJECT_LIST_CACHE_PREFIX = "projects:list";
 
-    public static final String PROJECT_LIST_CACHE_KEY_CHARITY_ID = PROJECT_LIST_CACHE_PREFIX + ":charityId";
+    public static final String PROJECT_LIST_CACHE_KEY_USER_ID = PROJECT_LIST_CACHE_PREFIX + ":userId";
+
+
 
 
 

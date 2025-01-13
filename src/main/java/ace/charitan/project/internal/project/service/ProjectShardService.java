@@ -107,6 +107,7 @@ class ProjectShardService {
     }
   }
 
+  @Transactional
   Page<Project> findAllByQuery(SearchProjectsDto searchProjectsDto, Pageable pageable) {
     StringBuilder rowCountSql =
         new StringBuilder("SELECT count(1) AS row_count FROM project WHERE 1=1");
@@ -144,6 +145,20 @@ class ProjectShardService {
     return new PageImpl<>(projects, pageable, total);
   }
 
+  Page<Project> findByCharityId(String charityId, StatusType statusType, Pageable pageable) {
+    List<Project> projectList = List.of();
+    JdbcTemplate jdbcTemplate = (statusType == StatusType.DELETED) ? projectDeletedJdbcTemplate : projectCompletedJdbcTemplate;
+
+    String sql = "SELECT * FROM project WHERE charityId = ? LIMIT ? OFFSET ?";
+    String countSql = "COUNT * FROM project WHERE charityId = ?";
+
+    projectList = jdbcTemplate.query(sql, new ProjectRowMapper(), charityId, pageable.getPageSize(), pageable.getPageNumber());
+    Integer total = jdbcTemplate.queryForObject(countSql, Integer.class, charityId);
+
+    return new PageImpl<>(projectList, pageable, total);
+  }
+
+  @Transactional
   List<Project> findAllByCharitanId(List<String> shardList, String charitanId) {
     List<Project> deletedProjectList = new ArrayList<>();
     List<Project> completedProjectList = new ArrayList<>();
