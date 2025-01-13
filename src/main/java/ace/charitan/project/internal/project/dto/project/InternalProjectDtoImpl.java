@@ -1,5 +1,6 @@
 package ace.charitan.project.internal.project.dto.project;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class InternalProjectDtoImpl implements InternalProjectDto {
+public class InternalProjectDtoImpl implements InternalProjectDto, Serializable {
 
     private String id;
 

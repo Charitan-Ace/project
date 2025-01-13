@@ -1,4 +1,4 @@
-package ace.charitan.project.config;
+package ace.charitan.project.config.kafka;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

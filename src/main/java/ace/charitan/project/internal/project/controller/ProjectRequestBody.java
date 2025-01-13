@@ -46,11 +46,10 @@ public class ProjectRequestBody {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-
     public static class SearchProjectsDto {
         private String name;
 
-        private List<StatusType> statuses;
+        private StatusType status;
 
         private List<CategoryType> categoryTypes;
 
