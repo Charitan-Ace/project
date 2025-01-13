@@ -14,12 +14,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 public interface InternalProjectService {
 
     InternalProjectDto createProject(CreateProjectDto createProjectDto);
 
     Page<InternalProjectDto> searchProjects(Integer pageNo, Integer pageSize,
             SearchProjectsDto searchProjectsDto);
+
+    List<String> searchProjectsId(SearchProjectsDto searchProjectsDto);
 
     InternalProjectDto getProjectById(String projectId);
 

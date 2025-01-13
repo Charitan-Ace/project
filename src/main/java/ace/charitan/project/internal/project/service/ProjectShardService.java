@@ -239,5 +239,47 @@ class ProjectShardService {
 
     return true;
   }
+
+    List<String> findAllFilteredCompletedProject(List<ProjectEnum.CategoryType> categoryType, List<String> isoCode) {
+
+        System.out.println("Start");
+        // Prepare the base query
+        StringBuilder query = new StringBuilder("SELECT * FROM project WHERE");
+        List<Object> params = new ArrayList<>();
+
+        // Add categoryType filter if not null or empty
+        if (categoryType != null && !categoryType.isEmpty()) {
+            query.append(" category_type IN (");
+            query.append(categoryType.stream().map(ct -> "?").collect(Collectors.joining(",")));
+            params.addAll(categoryType.stream().map(Enum::name).toList()); // Convert enums to their string names
+            query.append(") ");
+        }
+
+        // Add isoCode filter if not null or empty
+        if (isoCode != null && !isoCode.isEmpty()) {
+            if (!params.isEmpty()) {
+                query.append("AND");
+            }
+            query.append(" country_iso_code IN (");
+            query.append(isoCode.stream().map(code -> "?").collect(Collectors.joining(",")));
+            query.append(")");
+            params.addAll(isoCode);
+        }
+
+        System.out.println("Final Query: " + query);
+        System.out.println("Parameters: " + params);
+
+        // Execute the query
+        List<Project> completedProjectList = projectCompletedJdbcTemplate.query(
+                query.toString(),
+                new ProjectRowMapper(),
+                params.toArray()
+        );
+
+        // Map the list of projects to a list of project IDs
+        return completedProjectList.stream()
+                .map(project -> project.getId().toString()) // Convert UUID to String
+                .collect(Collectors.toList());
+    }
 }
 

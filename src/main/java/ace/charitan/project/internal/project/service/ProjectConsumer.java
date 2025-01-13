@@ -10,6 +10,13 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Component;
 
+import ace.charitan.common.dto.project.GetProjectByCharityIdDto.GetProjectByCharityIdRequestDto;
+import ace.charitan.common.dto.project.GetProjectByCharityIdDto.GetProjectByCharityIdResponseDto;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 @Component
 class ProjectConsumer {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -91,4 +98,37 @@ class ProjectConsumer {
     void handleUpdateProjectMedia(UpdateProjectMediaDto.UpdateProjectMediaRequestDto requestDto) {
         projectService.handleUpdateProjectMedia(requestDto);
     }
+
+    @KafkaListener(topics = "project.get-all-projects-by-filter")
+    @SendTo
+    GetProjectsByFilterResponseDto handleGetProjectByFilter(GetProjectsByFilterRequestDto requestDto) {
+        System.out.println("category: " + requestDto.category());
+        System.out.println("iso code: " + requestDto.isoCode());
+        System.out.println("continent: " + requestDto.continent());
+        System.out.println("status: " + requestDto.status());
+
+        ProjectEnum.CategoryType categoryType = !requestDto.category().isEmpty()
+                ? ProjectEnum.CategoryType.valueOf(requestDto.category())
+                : null;
+        ProjectEnum.StatusType statusType = !requestDto.status().isEmpty()
+                ? ProjectEnum.StatusType.valueOf(requestDto.status())
+                : null;
+
+        // Convert the single values into lists
+        List<ProjectEnum.CategoryType> categoryTypes = categoryType == null
+                ? null
+                : Collections.singletonList(categoryType);
+        List<ProjectEnum.StatusType> statuses = statusType == null
+                ? null
+                : Collections.singletonList(statusType);
+        List<String> countryIsoCodes = requestDto.isoCode().isEmpty()
+                ? null
+                : Collections.singletonList(requestDto.isoCode());
+
+        ProjectRequestBody.SearchProjectsDto searchProjectsDto = new ProjectRequestBody.SearchProjectsDto("", statuses, categoryTypes, countryIsoCodes, null, null);
+        GetProjectsByFilterResponseDto responseDto = new GetProjectsByFilterResponseDto(new ProjectIdListWrapperDto(projectService.searchProjectsId(searchProjectsDto)));
+        System.out.println(Arrays.toString(responseDto.projectListWrapperDto().projectIdList().toArray()));
+        return responseDto;
+    }
+
 }
