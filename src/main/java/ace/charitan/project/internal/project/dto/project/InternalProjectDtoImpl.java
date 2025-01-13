@@ -10,6 +10,7 @@ import ace.charitan.project.internal.project.service.ProjectEnum.StatusType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @NoArgsConstructor
@@ -36,6 +37,7 @@ public class InternalProjectDtoImpl implements InternalProjectDto, Serializable 
 
     private String charityId;
 
+    @Setter
     private List<ExternalMediaDto> mediaDtoList;
 
 }

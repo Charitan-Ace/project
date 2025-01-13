@@ -1,5 +1,6 @@
 package ace.charitan.project.internal.project.service;
 
+import ace.charitan.common.dto.project.UpdateProjectMediaDto;
 import org.springframework.data.domain.Page;
 
 import ace.charitan.common.dto.project.GetProjectByCharityIdDto.GetProjectByCharityIdRequestDto;
@@ -31,4 +32,6 @@ public interface InternalProjectService {
     InternalProjectDto completeProject(String projectId);
 
     GetProjectByCharityIdResponseDto getProjectByCharityId(GetProjectByCharityIdRequestDto requestDto);
+
+    void handleUpdateProjectMedia(UpdateProjectMediaDto.UpdateProjectMediaRequestDto requestDto);
 }
