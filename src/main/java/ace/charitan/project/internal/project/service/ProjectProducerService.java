@@ -20,9 +20,11 @@ class ProjectProducerService {
   // @Autowired
   // private KafkaTemplate<String, Object> kafkaTemplate;
 
-  @Autowired private ReplyingKafkaTemplate<String, Object, Object> replyingKafkaTemplate;
+  @Autowired
+  private ReplyingKafkaTemplate<String, Object, Object> replyingKafkaTemplate;
 
-  @Autowired private KafkaTemplate<String, Object> kafkaTemplate;
+  @Autowired
+  private KafkaTemplate<String, Object> kafkaTemplate;
 
   private void send(ProjectProducerTopic topic, Serializable data) {
     try {
@@ -36,8 +38,7 @@ class ProjectProducerService {
     try {
 
       ProducerRecord<String, Object> record = new ProducerRecord<>(topic.getTopic(), data);
-      RequestReplyFuture<String, Object, Object> replyFuture =
-          replyingKafkaTemplate.sendAndReceive(record);
+      RequestReplyFuture<String, Object, Object> replyFuture = replyingKafkaTemplate.sendAndReceive(record);
       // SendResult<String, Object> sendResult = replyFuture.getSendFuture().get(10,
       // TimeUnit.SECONDS);
       ConsumerRecord<String, Object> consumerRecord = replyFuture.get(10, TimeUnit.SECONDS);
@@ -48,28 +49,28 @@ class ProjectProducerService {
     }
   }
 
-//  GetCountryByIsoCodeResponseDto sendAndReceive(GetCountryByIsoCodeRequestDto data) {
-//    GetCountryByIsoCodeResponseDto response =
-//        (GetCountryByIsoCodeResponseDto)
-//            sendAndReceive(ProjectProducerTopic.PROJECT_GEOGRAPHY_GET_COUNTRY_BY_ISO_CODE, data);
-//    System.out.println(response);
-//
-//    return (GetCountryByIsoCodeResponseDto) response;
-//  }
+  // GetCountryByIsoCodeResponseDto sendAndReceive(GetCountryByIsoCodeRequestDto
+  // data) {
+  // GetCountryByIsoCodeResponseDto response =
+  // (GetCountryByIsoCodeResponseDto)
+  // sendAndReceive(ProjectProducerTopic.PROJECT_GEOGRAPHY_GET_COUNTRY_BY_ISO_CODE,
+  // data);
+  // System.out.println(response);
+  //
+  // return (GetCountryByIsoCodeResponseDto) response;
+  // }
 
   TestKafkaMessageDto sendAndReceive(TestKafkaMessageDto data) {
     System.out.println("start to send");
-    TestKafkaMessageDto response =
-        (TestKafkaMessageDto)
-            sendAndReceive(ProjectProducerTopic.PROJECT_GEOGRAPHY_GET_COUNTRY_BY_ISO_CODE, data);
+    TestKafkaMessageDto response = (TestKafkaMessageDto) sendAndReceive(
+        ProjectProducerTopic.PROJECT_GEOGRAPHY_GET_COUNTRY_BY_ISO_CODE, data);
     System.out.println("Project receive" + response.getName());
     return response;
   }
 
   GetMediaByProjectIdResponseDto sendAndReceive(GetMediaByProjectIdRequestDto data) {
-    GetMediaByProjectIdResponseDto response =
-        (GetMediaByProjectIdResponseDto)
-            sendAndReceive(ProjectProducerTopic.PROJECT_MEDIA_GET_MEDIA_BY_PROJECT_ID, data);
+    GetMediaByProjectIdResponseDto response = (GetMediaByProjectIdResponseDto) sendAndReceive(
+        ProjectProducerTopic.PROJECT_MEDIA_GET_MEDIA_BY_PROJECT_ID, data);
     System.out.println(response);
     return response;
   }

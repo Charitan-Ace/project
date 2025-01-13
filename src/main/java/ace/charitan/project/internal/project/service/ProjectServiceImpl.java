@@ -10,6 +10,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import ace.charitan.common.dto.project.UpdateProjectMediaDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -69,7 +70,7 @@ class ProjectServiceImpl implements InternalProjectService {
     }
   }
 
-  private void addMediaListToProject(Project project, List<ExternalMediaDto> mediaDtoList) {
+  private void addMediaListToProject(InternalProjectDtoImpl project, List<ExternalMediaDto> mediaDtoList) {
     project.setMediaDtoList(mediaDtoList);
   }
 
@@ -137,11 +138,14 @@ class ProjectServiceImpl implements InternalProjectService {
     GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto = projectProducerService
         .sendAndReceive(new GetMediaByProjectIdRequestDto(projectIdList));
 
-    // Add media to project
-    addMediaListToProject(
-        projectDto, getMediaByProjectIdResponseDto.getMediaListDtoList().get(0).getMediaDtoList());
 
     InternalProjectDtoImpl internalProjectDtoImpl = projectDto.toInternalProjectDtoImpl();
+
+    // Add media to project
+    addMediaListToProject(
+            internalProjectDtoImpl,
+            getMediaByProjectIdResponseDto.getMediaListDtoList().getFirst().getMediaDtoList()
+    );
 
     // Cache project to redis
     projectRedisService.cacheById(internalProjectDtoImpl);
@@ -172,14 +176,17 @@ class ProjectServiceImpl implements InternalProjectService {
                   GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto = projectProducerService.sendAndReceive(
                       new GetMediaByProjectIdRequestDto(projectIdList));
 
+                  InternalProjectDtoImpl internalProjectDto = project.toInternalProjectDtoImpl();
+
                   // Add media to project
                   addMediaListToProject(
-                      project,
+                      internalProjectDto,
                       getMediaByProjectIdResponseDto
                           .getMediaListDtoList()
                           .get(0)
                           .getMediaDtoList());
-                  return project.toInternalProjectDtoImpl();
+
+                  return internalProjectDto;
                 })
             .collect(Collectors.toList()),
         pageable,
@@ -409,6 +416,27 @@ class ProjectServiceImpl implements InternalProjectService {
     return new GetProjectByCharityIdResponseDto(externalProjectDtoList);
   }
 
-  
+  @Override
+  public void handleUpdateProjectMedia(UpdateProjectMediaDto.UpdateProjectMediaRequestDto requestDto) {
+    // Get from cache redis
+    InternalProjectDtoImpl internalProjectDto = projectRedisService.findOneById(requestDto.getProjectId());
+
+    if (Objects.isNull(internalProjectDto)) {
+      // Query from db again
+      Optional<Project> optionalProject = projectRepository.findById(UUID.fromString(requestDto.getProjectId()));
+      if (optionalProject.isEmpty()) {
+        return;
+      }
+
+      // Get project
+      internalProjectDto = optionalProject.get().toInternalProjectDtoImpl();
+    }
+
+    // Add new image list to internalProjectDto
+    addMediaListToProject(internalProjectDto, requestDto.getMediaDtoList());
+
+    // Cache new object to redis
+    projectRedisService.cacheById(internalProjectDto);
+  }
 
 }

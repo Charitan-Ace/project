@@ -1,11 +1,9 @@
 package ace.charitan.project.internal.project.service;
 
-import ace.charitan.common.dto.project.ExternalProjectDto;
+import ace.charitan.common.dto.project.*;
 import ace.charitan.common.dto.project.GetProjectByCharityIdDto.GetProjectByCharityIdRequestDto;
 import ace.charitan.common.dto.project.GetProjectByCharityIdDto.GetProjectByCharityIdResponseDto;
-import ace.charitan.common.dto.project.GetProjectByIdDto;
-import ace.charitan.common.dto.project.ProjectApproveDto;
-import ace.charitan.common.dto.project.ProjectHaltDto;
+import ace.charitan.project.internal.project.controller.ProjectRequestBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -87,5 +85,10 @@ class ProjectConsumer {
         GetProjectByCharityIdResponseDto responseDto = projectService.getProjectByCharityId(requestDto);
         System.out.println(responseDto);
         return responseDto;
+    }
+
+    @KafkaListener(topics = "project.update-project-media")
+    void handleUpdateProjectMedia(UpdateProjectMediaDto.UpdateProjectMediaRequestDto requestDto) {
+        projectService.handleUpdateProjectMedia(requestDto);
     }
 }
