@@ -99,24 +99,7 @@ class ProjectServiceImpl implements InternalProjectService {
       projectDto = optionalShardedProject.get();
     }
 
-    // TODO: Add videos and images query
-    List<String> projectIdList = Arrays.asList(projectDto.getId().toString());
-    GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto =
-        projectProducerService.sendAndReceive(new GetMediaByProjectIdRequestDto(projectIdList));
-
-    DonationsDto getDonationsByProjectIdDto =
-        projectProducerService.sendAndReceive(
-            new GetDonationsByProjectIdDto(projectDto.getId().toString()));
-
-    // Add media to project
-    addMediaListToProject(
-        projectDto, getMediaByProjectIdResponseDto.getMediaListDtoList().get(0).getMediaDtoList());
-
-    // Convert to impl
-    return projectDto.toInternalProjectDtoImpl(
-        getDonationsByProjectIdDto.getDonations().stream()
-            .map(DonationDto::getAmount)
-            .reduce(0.0, Double::sum));
+    return toProjectInternalDto(projectDto);
   }
 
   @Override
@@ -127,38 +110,35 @@ class ProjectServiceImpl implements InternalProjectService {
 
     if (searchProjectsDto.getStatus() != StatusType.COMPLETED
         && searchProjectsDto.getStatus() != StatusType.DELETED) {
-      return projectRepository.findProjectsByQuery(searchProjectsDto, pageable);
+
+      Page<Project> projects = projectRepository.findProjectsByQuery(searchProjectsDto, pageable);
+      return new PageImpl<>(toProjectsInternalDto(projects), pageable, projects.getTotalPages());
     }
 
     Page<Project> projects = projectShardService.findAllByQuery(searchProjectsDto, pageable);
-    return new PageImpl<>(
-        projects.stream()
-            .map(
-                project -> {
-                  List<String> projectIdList = Arrays.asList(project.getId().toString());
-                  GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto =
-                      projectProducerService.sendAndReceive(
-                          new GetMediaByProjectIdRequestDto(projectIdList));
+    return new PageImpl<>(toProjectsInternalDto(projects), pageable, projects.getTotalPages());
+  }
 
-                  DonationsDto getDonationsByProjectIdDto =
-                      projectProducerService.sendAndReceive(
-                          new GetDonationsByProjectIdDto(project.getId().toString()));
+  private List<InternalProjectDto> toProjectsInternalDto(Page<Project> projects) {
+    return projects.stream().map(this::toProjectInternalDto).collect(Collectors.toList());
+  }
 
-                  // Add media to project
-                  addMediaListToProject(
-                      project,
-                      getMediaByProjectIdResponseDto
-                          .getMediaListDtoList()
-                          .get(0)
-                          .getMediaDtoList());
-                  return project.toInternalProjectDtoImpl(
-                      getDonationsByProjectIdDto.getDonations().stream()
-                          .map(DonationDto::getAmount)
-                          .reduce(0.0, Double::sum));
-                })
-            .collect(Collectors.toList()),
-        pageable,
-        projects.getTotalPages());
+  private InternalProjectDto toProjectInternalDto(Project project) {
+    List<String> projectIdList = Arrays.asList(project.getId().toString());
+    GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto =
+        projectProducerService.sendAndReceive(new GetMediaByProjectIdRequestDto(projectIdList));
+
+    DonationsDto getDonationsByProjectIdDto =
+        projectProducerService.sendAndReceive(
+            new GetDonationsByProjectIdDto(project.getId().toString()));
+
+    // Add media to project
+    addMediaListToProject(
+        project, getMediaByProjectIdResponseDto.getMediaListDtoList().get(0).getMediaDtoList());
+    return project.toInternalProjectDtoImpl(
+        getDonationsByProjectIdDto.getDonations().stream()
+            .map(DonationDto::getAmount)
+            .reduce(0.0, Double::sum));
   }
 
   @Override
