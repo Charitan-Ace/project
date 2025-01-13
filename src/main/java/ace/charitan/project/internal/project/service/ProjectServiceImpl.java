@@ -1,5 +1,8 @@
 package ace.charitan.project.internal.project.service;
 
+import ace.charitan.common.dto.donation.DonationDto;
+import ace.charitan.common.dto.donation.DonationsDto;
+import ace.charitan.common.dto.donation.GetDonationsByProjectIdDto;
 import ace.charitan.common.dto.media.ExternalMediaDto;
 import ace.charitan.common.dto.media.GetMediaByProjectIdRequestDto;
 import ace.charitan.common.dto.media.GetMediaByProjectIdResponseDto;
@@ -101,12 +104,19 @@ class ProjectServiceImpl implements InternalProjectService {
     GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto =
         projectProducerService.sendAndReceive(new GetMediaByProjectIdRequestDto(projectIdList));
 
+    DonationsDto getDonationsByProjectIdDto =
+        projectProducerService.sendAndReceive(
+            new GetDonationsByProjectIdDto(projectDto.getId().toString()));
+
     // Add media to project
     addMediaListToProject(
         projectDto, getMediaByProjectIdResponseDto.getMediaListDtoList().get(0).getMediaDtoList());
 
     // Convert to impl
-    return projectDto.toInternalProjectDtoImpl();
+    return projectDto.toInternalProjectDtoImpl(
+        getDonationsByProjectIdDto.getDonations().stream()
+            .map(DonationDto::getAmount)
+            .reduce(0.0, Double::sum));
   }
 
   @Override
@@ -130,6 +140,10 @@ class ProjectServiceImpl implements InternalProjectService {
                       projectProducerService.sendAndReceive(
                           new GetMediaByProjectIdRequestDto(projectIdList));
 
+                  DonationsDto getDonationsByProjectIdDto =
+                      projectProducerService.sendAndReceive(
+                          new GetDonationsByProjectIdDto(project.getId().toString()));
+
                   // Add media to project
                   addMediaListToProject(
                       project,
@@ -137,7 +151,10 @@ class ProjectServiceImpl implements InternalProjectService {
                           .getMediaListDtoList()
                           .get(0)
                           .getMediaDtoList());
-                  return project.toInternalProjectDtoImpl();
+                  return project.toInternalProjectDtoImpl(
+                      getDonationsByProjectIdDto.getDonations().stream()
+                          .map(DonationDto::getAmount)
+                          .reduce(0.0, Double::sum));
                 })
             .collect(Collectors.toList()),
         pageable,

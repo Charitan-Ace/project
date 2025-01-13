@@ -37,4 +37,6 @@ public class InternalProjectDtoImpl implements InternalProjectDto {
 
     private List<ExternalMediaDto> mediaDtoList;
 
+    private Double currentDonation;
+
 }
