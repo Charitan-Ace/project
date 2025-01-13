@@ -36,24 +36,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import static ace.charitan.project.config.redis.RedisConstant.*;
-
 @Service
 class ProjectServiceImpl implements InternalProjectService {
 
-  @Autowired private ProjectRepository projectRepository;
-
-  @Autowired private ProjectShardService projectShardService;
-
-  @Autowired private ProjectProducerService projectProducerService;
+  @Autowired
+  private ProjectRepository projectRepository;
 
   @Autowired
-  @Qualifier("redisProjectTemplate")
-  private RedisTemplate<String, InternalProjectDtoImpl> redisProjectTemplate;
+  private ProjectShardService projectShardService;
 
   @Autowired
-  @Qualifier("redisProjectZSetTemplate")
-  private RedisTemplate<String, String> redisProjectZSetTemplate;
+  private ProjectProducerService projectProducerService;
+
+  @Autowired
+  private ProjectRedisService projectRedisService;
 
   // Validate endTime - startTime >= 1 week
   private boolean validateStartEndTime(Project project) {
@@ -71,17 +67,6 @@ class ProjectServiceImpl implements InternalProjectService {
 
   private void addMediaListToProject(Project project, List<ExternalMediaDto> mediaDtoList) {
     project.setMediaDtoList(mediaDtoList);
-  }
-
-  private void addToRedisZSet(InternalProjectDtoImpl internalProjectDto) {
-    // Add to sorted set with a lexicographical member key
-//    String compositeKey = donor.getLastName().trim().toLowerCase() + ":" + donor.getUserId();
-//    redisZSetTemplate.opsForZSet().add(DONOR_LIST_CACHE_KEY_LAST_NAME, compositeKey, 0);
-//
-//    compositeKey = donor.getFirstName().trim().toLowerCase() + ":" + donor.getUserId();
-//    redisZSetTemplate.opsForZSet().add(DONOR_LIST_CACHE_KEY_FIRST_NAME, compositeKey, 0);
-
-    
   }
 
   @Override
@@ -103,14 +88,15 @@ class ProjectServiceImpl implements InternalProjectService {
         new NewProjectSubscriptionRequestDto(project.toExternalProjectDto()));
 
     // Cache to redis
-    redisProjectTemplate.opsForValue().set(PROJECT_CACHE_PREFIX + project.getId(), internalProjectDto);
-    addToRedisZSet(internalProjectDto);
+    projectRedisService.createProject(internalProjectDto);
 
     // return project.toInternalProjectDto();
 
-//    redisTemplate.opsForValue().set(DONOR_CACHE_PREFIX + request.getUserId(), new DonorDTO(donor));
-//
-//    addToRedisZSet(donor);
+    // redisTemplate.opsForValue().set(DONOR_CACHE_PREFIX + request.getUserId(), new
+    // DonorDTO(donor));
+    //
+    // addToRedisZSet(donor);
+
     return project;
   }
 
@@ -135,8 +121,8 @@ class ProjectServiceImpl implements InternalProjectService {
 
     // TODO: Add videos and images query
     List<String> projectIdList = Arrays.asList(projectDto.getId().toString());
-    GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto =
-        projectProducerService.sendAndReceive(new GetMediaByProjectIdRequestDto(projectIdList));
+    GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto = projectProducerService
+        .sendAndReceive(new GetMediaByProjectIdRequestDto(projectIdList));
 
     // Add media to project
     addMediaListToProject(
@@ -163,9 +149,8 @@ class ProjectServiceImpl implements InternalProjectService {
             .map(
                 project -> {
                   List<String> projectIdList = Arrays.asList(project.getId().toString());
-                  GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto =
-                      projectProducerService.sendAndReceive(
-                          new GetMediaByProjectIdRequestDto(projectIdList));
+                  GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto = projectProducerService.sendAndReceive(
+                      new GetMediaByProjectIdRequestDto(projectIdList));
 
                   // Add media to project
                   addMediaListToProject(
@@ -186,8 +171,7 @@ class ProjectServiceImpl implements InternalProjectService {
   public InternalProjectDto updateProjectDetails(
       String projectId, UpdateProjectDto updateProjectDto) {
     // If project not found
-    Optional<Project> existedOptionalProject =
-        projectRepository.findById(UUID.fromString(projectId));
+    Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
 
     if (existedOptionalProject.isEmpty()) {
       throw new NotFoundProjectException();
@@ -218,8 +202,7 @@ class ProjectServiceImpl implements InternalProjectService {
   @Transactional
   public InternalProjectDto approveProject(String projectId) {
     // If project not found
-    Optional<Project> existedOptionalProject =
-        projectRepository.findById(UUID.fromString(projectId));
+    Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
 
     if (existedOptionalProject.isEmpty()) {
       throw new NotFoundProjectException();
@@ -249,8 +232,7 @@ class ProjectServiceImpl implements InternalProjectService {
   @Transactional
   public InternalProjectDto haltProject(String projectId) {
     // If project not found
-    Optional<Project> existedOptionalProject =
-        projectRepository.findById(UUID.fromString(projectId));
+    Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
 
     if (existedOptionalProject.isEmpty()) {
       throw new NotFoundProjectException();
@@ -280,8 +262,7 @@ class ProjectServiceImpl implements InternalProjectService {
   @Transactional
   public InternalProjectDto resumeProject(String projectId) {
     // If project not found
-    Optional<Project> existedOptionalProject =
-        projectRepository.findById(UUID.fromString(projectId));
+    Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
 
     if (existedOptionalProject.isEmpty()) {
       throw new NotFoundProjectException();
@@ -340,8 +321,7 @@ class ProjectServiceImpl implements InternalProjectService {
 
     try {
 
-      boolean result =
-          projectShardService.moveProjectFromProjectShardToProjectDeletedShard(projectId);
+      boolean result = projectShardService.moveProjectFromProjectShardToProjectDeletedShard(projectId);
       if (result) {
         System.out.println("ok");
       }
@@ -378,8 +358,7 @@ class ProjectServiceImpl implements InternalProjectService {
 
     try {
 
-      boolean result =
-          projectShardService.moveProjectFromProjectShardToProjectCompletedShard(projectId);
+      boolean result = projectShardService.moveProjectFromProjectShardToProjectCompletedShard(projectId);
       if (result) {
         System.out.println("ok");
       }
@@ -401,13 +380,11 @@ class ProjectServiceImpl implements InternalProjectService {
 
     List<Project> projects = projectRepository.findAllByCharityId(charitanId);
 
-    List<Project> otherShardProjects =
-        projectShardService.findAllByCharitanId(shardList, charitanId);
+    List<Project> otherShardProjects = projectShardService.findAllByCharitanId(shardList, charitanId);
 
-    List<ExternalProjectDto> externalProjectDtoList =
-        Stream.concat(projects.stream(), otherShardProjects.stream())
-            .map(Project::toExternalProjectDto)
-            .toList();
+    List<ExternalProjectDto> externalProjectDtoList = Stream.concat(projects.stream(), otherShardProjects.stream())
+        .map(Project::toExternalProjectDto)
+        .toList();
 
     return new GetProjectByCharityIdResponseDto(externalProjectDtoList);
   }

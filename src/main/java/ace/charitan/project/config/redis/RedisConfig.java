@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -23,7 +24,6 @@ public class RedisConfig {
 
     @Value("redis.port")
     private Integer redisPort;
-    
 
     @Bean
     JedisConnectionFactory jedisConnectionFactory() {
@@ -44,8 +44,8 @@ public class RedisConfig {
     RedisTemplate<String, InternalProjectDtoImpl> redisProjectTemplate(ObjectMapper objectMapper) {
         RedisTemplate<String, InternalProjectDtoImpl> template = new RedisTemplate<String, InternalProjectDtoImpl>();
 
-        Jackson2JsonRedisSerializer<InternalProjectDtoImpl> jsonSerializer =
-                new Jackson2JsonRedisSerializer<>(objectMapper, InternalProjectDtoImpl.class);
+        Jackson2JsonRedisSerializer<InternalProjectDtoImpl> jsonSerializer = new Jackson2JsonRedisSerializer<>(
+                objectMapper, InternalProjectDtoImpl.class);
 
         template.setConnectionFactory(jedisConnectionFactory());
 
@@ -62,8 +62,8 @@ public class RedisConfig {
     public RedisTemplate<String, String> redisProjectZSetTemplate(ObjectMapper objectMapper) {
         RedisTemplate<String, String> template = new RedisTemplate<String, String>();
 
-        Jackson2JsonRedisSerializer<String> jsonSerializer =
-                new Jackson2JsonRedisSerializer<>(objectMapper, String.class);
+        Jackson2JsonRedisSerializer<String> jsonSerializer = new Jackson2JsonRedisSerializer<>(objectMapper,
+                String.class);
 
         template.setConnectionFactory(jedisConnectionFactory());
 
@@ -74,5 +74,10 @@ public class RedisConfig {
         template.setValueSerializer(jsonSerializer);
 
         return template;
+    }
+
+    @Bean
+    public GenericJackson2JsonRedisSerializer genericJackson2JsonRedisSerializer() {
+        return new GenericJackson2JsonRedisSerializer();
     }
 }
