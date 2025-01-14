@@ -1,6 +1,9 @@
 package ace.charitan.project.internal.project.service;
 
 import ace.charitan.common.dto.TestKafkaMessageDto;
+import ace.charitan.common.dto.donation.DonationDto;
+import ace.charitan.common.dto.donation.DonationsDto;
+import ace.charitan.common.dto.donation.GetDonationsByProjectIdDto;
 import ace.charitan.common.dto.media.GetMediaByProjectIdRequestDto;
 import ace.charitan.common.dto.media.GetMediaByProjectIdResponseDto;
 import ace.charitan.common.dto.subscription.NewProjectSubscriptionDto.NewProjectSubscriptionRequestDto;
@@ -49,17 +52,6 @@ class ProjectProducerService {
     }
   }
 
-  // GetCountryByIsoCodeResponseDto sendAndReceive(GetCountryByIsoCodeRequestDto
-  // data) {
-  // GetCountryByIsoCodeResponseDto response =
-  // (GetCountryByIsoCodeResponseDto)
-  // sendAndReceive(ProjectProducerTopic.PROJECT_GEOGRAPHY_GET_COUNTRY_BY_ISO_CODE,
-  // data);
-  // System.out.println(response);
-  //
-  // return (GetCountryByIsoCodeResponseDto) response;
-  // }
-
   TestKafkaMessageDto sendAndReceive(TestKafkaMessageDto data) {
     System.out.println("start to send");
     TestKafkaMessageDto response = (TestKafkaMessageDto) sendAndReceive(
@@ -73,6 +65,14 @@ class ProjectProducerService {
         ProjectProducerTopic.PROJECT_MEDIA_GET_MEDIA_BY_PROJECT_ID, data);
     System.out.println(response);
     return response;
+  }
+
+  DonationsDto sendAndReceive(GetDonationsByProjectIdDto data) {
+    DonationsDto res =
+        (DonationsDto)
+            sendAndReceive(ProjectProducerTopic.PROJECT_DONATION_GET_DONATION_BY_PROJECT_ID, data.id());
+    System.out.println(res);
+    return res;
   }
 
   void send(NewProjectSubscriptionRequestDto data) {

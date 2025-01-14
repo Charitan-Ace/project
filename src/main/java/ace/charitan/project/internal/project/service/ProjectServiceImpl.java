@@ -1,27 +1,15 @@
 package ace.charitan.project.internal.project.service;
 
-import java.time.Duration;
-import java.time.ZonedDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import ace.charitan.common.dto.project.UpdateProjectMediaDto;
-import org.apache.kafka.common.metrics.Stat;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
+import ace.charitan.common.dto.donation.DonationDto;
+import ace.charitan.common.dto.donation.DonationsDto;
+import ace.charitan.common.dto.donation.GetDonationsByProjectIdDto;
 import ace.charitan.common.dto.media.ExternalMediaDto;
 import ace.charitan.common.dto.media.GetMediaByProjectIdRequestDto;
 import ace.charitan.common.dto.media.GetMediaByProjectIdResponseDto;
 import ace.charitan.common.dto.project.ExternalProjectDto;
 import ace.charitan.common.dto.project.GetProjectByCharityIdDto.GetProjectByCharityIdRequestDto;
 import ace.charitan.common.dto.project.GetProjectByCharityIdDto.GetProjectByCharityIdResponseDto;
+import ace.charitan.common.dto.project.UpdateProjectMediaDto;
 import ace.charitan.common.dto.subscription.NewProjectSubscriptionDto.NewProjectSubscriptionRequestDto;
 import ace.charitan.project.internal.auth.AuthModel;
 import ace.charitan.project.internal.auth.AuthUtils;
@@ -34,6 +22,21 @@ import ace.charitan.project.internal.project.exception.ProjectException.InvalidP
 import ace.charitan.project.internal.project.exception.ProjectException.NotFoundProjectException;
 import ace.charitan.project.internal.project.service.ProjectEnum.StatusType;
 import jakarta.transaction.Transactional;
+import java.time.Duration;
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 @Service
 class ProjectServiceImpl implements InternalProjectService {
@@ -53,6 +56,8 @@ class ProjectServiceImpl implements InternalProjectService {
   @Autowired
   private ProjectRedisService projectRedisService;
 
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
   // Validate endTime - startTime >= 1 week
   private boolean validateStartEndTime(Project project) {
 
@@ -67,7 +72,8 @@ class ProjectServiceImpl implements InternalProjectService {
     }
   }
 
-  private void addMediaListToProject(InternalProjectDtoImpl project, List<ExternalMediaDto> mediaDtoList) {
+  private void addMediaListToProject(
+      InternalProjectDtoImpl project, List<ExternalMediaDto> mediaDtoList) {
     project.setMediaDtoList(mediaDtoList);
   }
 
@@ -84,7 +90,7 @@ class ProjectServiceImpl implements InternalProjectService {
 
     project = projectRepository.save(project);
 
-    InternalProjectDtoImpl internalProjectDto = project.toInternalProjectDtoImpl();
+    InternalProjectDtoImpl internalProjectDto = project.toInternalProjectDtoImpl(0D);
 
     // Send topic to subscription service
     projectProducerService.send(
@@ -110,7 +116,7 @@ class ProjectServiceImpl implements InternalProjectService {
     // Check existed in redis first
     InternalProjectDtoImpl redisInternalProjectDtoImpl = projectRedisService.findOneById(projectId);
     if (!Objects.isNull(redisInternalProjectDtoImpl)) {
-      System.out.println("[GetProjectById] From Redis with <3: " + projectId);
+      logger.info("[GetProjectById] From Redis with <3: {}", projectId);
       return redisInternalProjectDtoImpl;
     }
 
@@ -130,25 +136,13 @@ class ProjectServiceImpl implements InternalProjectService {
       projectDto = optionalShardedProject.get();
     }
 
-    // TODO: Add videos and images query
-    List<String> projectIdList = Arrays.asList(projectDto.getId().toString());
-    GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto = projectProducerService
-        .sendAndReceive(new GetMediaByProjectIdRequestDto(projectIdList));
+    InternalProjectDtoImpl internalProjectDtoImpl = toProjectInternalDto(projectDto);
 
-    InternalProjectDtoImpl internalProjectDtoImpl = projectDto.toInternalProjectDtoImpl();
-
-    // Add media to project
-    addMediaListToProject(
-        internalProjectDtoImpl,
-        getMediaByProjectIdResponseDto.getMediaListDtoList().getFirst().getMediaDtoList());
-
-    // Cache project to redis
     projectRedisService.cacheById(internalProjectDtoImpl);
 
-    System.out.println("[GetProjectById] From DB with <3: " + projectId);
+    logger.info("[GetProjectById] From DB with <3: {}", projectId);
 
-    // Convert to impl
-    return internalProjectDtoImpl;
+    return toProjectInternalDto(projectDto);
   }
 
   @Override
@@ -159,33 +153,44 @@ class ProjectServiceImpl implements InternalProjectService {
 
     if (searchProjectsDto.getStatus() != StatusType.COMPLETED
         && searchProjectsDto.getStatus() != StatusType.DELETED) {
-      return projectRepository.findProjectsByQuery(searchProjectsDto, pageable);
+
+      Page<Project> projects = projectRepository.findProjectsByQuery(searchProjectsDto, pageable);
+      return new PageImpl<>(toProjectsInternalDto(projects), pageable, projects.getTotalPages());
     }
 
     Page<Project> projects = projectShardService.findAllByQuery(searchProjectsDto, pageable);
-    return new PageImpl<>(
-        projects.stream()
-            .map(
-                project -> {
-                  List<String> projectIdList = Arrays.asList(project.getId().toString());
-                  GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto = projectProducerService.sendAndReceive(
-                      new GetMediaByProjectIdRequestDto(projectIdList));
+    return new PageImpl<>(toProjectsInternalDto(projects), pageable, projects.getTotalPages());
+  }
 
-                  InternalProjectDtoImpl internalProjectDto = project.toInternalProjectDtoImpl();
+  private List<InternalProjectDto> toProjectsInternalDto(Page<Project> projects) {
+    return projects.stream().map(this::toProjectInternalDto).collect(Collectors.toList());
+  }
 
-                  // Add media to project
-                  addMediaListToProject(
-                      internalProjectDto,
-                      getMediaByProjectIdResponseDto
-                          .getMediaListDtoList()
-                          .get(0)
-                          .getMediaDtoList());
+  private InternalProjectDtoImpl toProjectInternalDto(Project project) {
+    List<String> projectIdList = Arrays.asList(project.getId().toString());
 
-                  return internalProjectDto;
-                })
-            .collect(Collectors.toList()),
-        pageable,
-        projects.getTotalPages());
+    DonationsDto getDonationsByProjectIdDto = projectProducerService.sendAndReceive(
+        new GetDonationsByProjectIdDto(project.getId().toString()));
+
+    InternalProjectDtoImpl internalProjectDto = project.toInternalProjectDtoImpl(0D);
+
+    try {
+      // TODO: Add videos and images query
+      GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto = projectProducerService
+          .sendAndReceive(new GetMediaByProjectIdRequestDto(projectIdList));
+
+      // Add media to project
+      addMediaListToProject(
+          internalProjectDto,
+          getMediaByProjectIdResponseDto.getMediaListDtoList().getFirst().getMediaDtoList());
+    } catch (Exception e) {
+      logger.error("Error getting media for projects #{}", projectIdList, e);
+    }
+
+    return project.toInternalProjectDtoImpl(
+        getDonationsByProjectIdDto.getDonations().stream()
+            .map(DonationDto::getAmount)
+            .reduce(0.0, Double::sum));
   }
 
   @Override
@@ -412,7 +417,8 @@ class ProjectServiceImpl implements InternalProjectService {
   }
 
   @Override
-  public void handleUpdateProjectMedia(UpdateProjectMediaDto.UpdateProjectMediaRequestDto requestDto) {
+  public void handleUpdateProjectMedia(
+      UpdateProjectMediaDto.UpdateProjectMediaRequestDto requestDto) {
     // Get from cache redis
     InternalProjectDtoImpl internalProjectDto = projectRedisService.findOneById(requestDto.getProjectId());
 
@@ -424,7 +430,7 @@ class ProjectServiceImpl implements InternalProjectService {
       }
 
       // Get project
-      internalProjectDto = optionalProject.get().toInternalProjectDtoImpl();
+      internalProjectDto = optionalProject.get().toInternalProjectDtoImpl(0D);
     }
 
     // Add new image list to internalProjectDto
@@ -435,7 +441,8 @@ class ProjectServiceImpl implements InternalProjectService {
   }
 
   @Override
-  public Page<InternalProjectDtoImpl> getMyProjects(String status, int page, int limit) throws Exception {
+  public Page<InternalProjectDtoImpl> getMyProjects(String status, int page, int limit)
+      throws Exception {
     AuthModel authModel = AuthUtils.getUserDetails();
 
     if (Objects.isNull(authModel)) {
@@ -464,12 +471,12 @@ class ProjectServiceImpl implements InternalProjectService {
 
       if (statusType != StatusType.DELETED && statusType != StatusType.COMPLETED) {
         // Search in main shard
-        projectDtoPage = projectRepository.findByCharityId(userId, pageable)
-            .map(Project::toInternalProjectDtoImpl);
+        projectDtoPage = projectRepository.findByCharityId(userId, pageable).map((this::toProjectInternalDto));
       } else {
         // Search in other shards
-        projectDtoPage = projectShardService.findByCharityId(userId, statusType, pageable)
-            .map(Project::toInternalProjectDtoImpl);
+        projectDtoPage = projectShardService
+            .findByCharityId(userId, statusType, pageable)
+            .map(this::toProjectInternalDto);
       }
 
       return projectDtoPage;
@@ -477,10 +484,7 @@ class ProjectServiceImpl implements InternalProjectService {
 
     // Add donor later
 
-    
-
     return new PageImpl<>(new ArrayList<>(), pageable, 0);
 
   }
-
 }

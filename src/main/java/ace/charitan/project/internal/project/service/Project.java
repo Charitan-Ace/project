@@ -108,10 +108,14 @@ class Project extends AbstractEntity implements InternalProjectDto {
                 statusType.toString(), categoryType.toString(), countryIsoCode, charityId);
     }
 
-    InternalProjectDtoImpl toInternalProjectDtoImpl() {
+    InternalProjectDtoImpl toInternalProjectDtoImpl(Double donation) {
         return new InternalProjectDtoImpl(
                 getId().toString(), title, description, goal, startTime, endTime, statusType, categoryType,
-                countryIsoCode, charityId, mediaDtoList);
+                countryIsoCode, charityId, mediaDtoList, donation);
     }
 
+    @Override
+    public Double getCurrentDonation() {
+        return 0.0;
+    }
 }
