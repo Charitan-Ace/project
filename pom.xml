@@ -14,7 +14,7 @@
 
     <groupId>ace.charitan</groupId>
     <artifactId>project</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.0.83-SNAPSHOT</version>
     <name>project</name>
     <description>project</description>
     <packaging>jar</packaging>
