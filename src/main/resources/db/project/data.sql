@@ -45,7 +45,7 @@ VALUES -- Global Crisis Charity Projects
         'PENDING',
         'HUMANITARIAN',
         'IL',
-        'charity1'
+        'd4e7aef8-629f-4419-91a7-8f3eb5bb5e2b'
     ),
     (
         '0c112e0e-09a0-4c16-8d87-51e2847055cc',
@@ -57,7 +57,7 @@ VALUES -- Global Crisis Charity Projects
         'APPROVED',
         'HUMANITARIAN',
         'UA',
-        'charity2'
+        '72d4e2c7-85a7-4d90-8135-ef7418c39b1d'
     ),
     (
         'cffedd29-972f-41c4-bbe6-54829087caf1',
@@ -69,7 +69,7 @@ VALUES -- Global Crisis Charity Projects
         'APPROVED',
         'FOOD',
         'ZA',
-        'charity3'
+        '14eeb072-6635-45c3-aad5-7e76fda0b26e'
     ),
     -- Local Charity Projects
     (
@@ -82,7 +82,7 @@ VALUES -- Global Crisis Charity Projects
         'PENDING',
         'HUMANITARIAN',
         'VN',
-        'individual1'
+        'e69accdd-4121-4172-a072-bf181a21cbfd'
     ),
     (
         'fb51bc08-5ffa-4444-b70a-3410b1bc91ca',
@@ -94,7 +94,7 @@ VALUES -- Global Crisis Charity Projects
         'PENDING',
         'HUMANITARIAN',
         'US',
-        'individual2'
+        '9b75c19d-f70d-4c6d-b10b-3d517bbac1c8'
     ),
     (
         '144a5377-2ccc-4efe-81e8-18a6da36450b',
@@ -106,7 +106,7 @@ VALUES -- Global Crisis Charity Projects
         'APPROVED',
         'HUMANITARIAN',
         'DE',
-        'charity4'
+        'e69accdd-4121-4172-a072-bf181a21cbfd'
     ),
     (
         '9284aa44-9bea-4647-80bd-55c413590404',
@@ -118,7 +118,7 @@ VALUES -- Global Crisis Charity Projects
         'APPROVED',
         'HUMANITARIAN',
         'CN',
-        'charity5'
+        '6f9619ff-8b86-d011-b42d-00cf4fc964ff'
     );
 -- DROP TABLE IF EXISTS project CASCADE;
 -- CREATE TABLE project (
