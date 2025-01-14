@@ -27,6 +27,9 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -48,6 +51,8 @@ class ProjectServiceImpl implements InternalProjectService {
   @Autowired private ProjectProducerService projectProducerService;
 
   @Autowired private ProjectRedisService projectRedisService;
+
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   // Validate endTime - startTime >= 1 week
   private boolean validateStartEndTime(Project project) {
@@ -107,7 +112,7 @@ class ProjectServiceImpl implements InternalProjectService {
     // Check existed in redis first
     InternalProjectDtoImpl redisInternalProjectDtoImpl = projectRedisService.findOneById(projectId);
     if (!Objects.isNull(redisInternalProjectDtoImpl)) {
-      System.out.println("[GetProjectById] From Redis with <3: " + projectId);
+      logger.info("[GetProjectById] From Redis with <3: {}", projectId);
       return redisInternalProjectDtoImpl;
     }
 
@@ -131,7 +136,7 @@ class ProjectServiceImpl implements InternalProjectService {
 
     projectRedisService.cacheById(internalProjectDtoImpl);
 
-    System.out.println("[GetProjectById] From DB with <3: " + projectId);
+    logger.info("[GetProjectById] From DB with <3: {}", projectId);
 
     return toProjectInternalDto(projectDto);
   }
@@ -159,18 +164,26 @@ class ProjectServiceImpl implements InternalProjectService {
 
   private InternalProjectDtoImpl toProjectInternalDto(Project project) {
     List<String> projectIdList = Arrays.asList(project.getId().toString());
-    GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto =
-        projectProducerService.sendAndReceive(new GetMediaByProjectIdRequestDto(projectIdList));
 
     DonationsDto getDonationsByProjectIdDto =
         projectProducerService.sendAndReceive(
             new GetDonationsByProjectIdDto(project.getId().toString()));
 
     InternalProjectDtoImpl internalProjectDto = project.toInternalProjectDtoImpl(0D);
-    // Add media to project
-    addMediaListToProject(
-        internalProjectDto,
-        getMediaByProjectIdResponseDto.getMediaListDtoList().get(0).getMediaDtoList());
+
+    try {
+      // TODO: Add videos and images query
+      GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto =
+              projectProducerService.sendAndReceive(new GetMediaByProjectIdRequestDto(projectIdList));
+
+      // Add media to project
+      addMediaListToProject(
+              internalProjectDto,
+              getMediaByProjectIdResponseDto.getMediaListDtoList().getFirst().getMediaDtoList());
+    } catch (Exception e) {
+      logger.error("Error getting media for projects #{}", projectIdList, e);
+    }
+
     return project.toInternalProjectDtoImpl(
         getDonationsByProjectIdDto.getDonations().stream()
             .map(DonationDto::getAmount)
