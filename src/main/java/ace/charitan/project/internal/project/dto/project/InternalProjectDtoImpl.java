@@ -40,4 +40,6 @@ public class InternalProjectDtoImpl implements InternalProjectDto, Serializable 
     @Setter
     private List<ExternalMediaDto> mediaDtoList;
 
+    private Double currentDonation;
+
 }

@@ -23,7 +23,7 @@ interface ProjectRepository extends JpaRepository<Project, UUID> {
         "(:#{#searchProjectsDto.countryIsoCodes} IS NULL OR p.countryIsoCode IN :#{#searchProjectsDto.countryIsoCodes}) AND " +
         "(:#{#searchProjectsDto.startTime} IS NULL OR p.startTime >= :#{#searchProjectsDto.startTime}) AND " +
         "(:#{#searchProjectsDto.endTime} IS NULL OR p.startTime <= :#{#searchProjectsDto.endTime})")
-    Page<InternalProjectDto> findProjectsByQuery(SearchProjectsDto searchProjectsDto, Pageable pageable);
+    Page<Project> findProjectsByQuery(SearchProjectsDto searchProjectsDto, Pageable pageable);
   
     Page<InternalProjectDto> findByCountryIsoCode(String countryIsoCode, Pageable pageable);
 

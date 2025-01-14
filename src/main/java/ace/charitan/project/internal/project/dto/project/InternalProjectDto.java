@@ -26,8 +26,12 @@ public interface InternalProjectDto {
 
     String getCountryIsoCode();
 
+    Double getCurrentDonation();
+
     String getCharityId();
 
     List<ExternalMediaDto> getMediaDtoList();
+
+
 
 }
