@@ -24,7 +24,15 @@ interface ProjectRepository extends JpaRepository<Project, UUID> {
         "(:#{#searchProjectsDto.startTime} IS NULL OR p.startTime >= :#{#searchProjectsDto.startTime}) AND " +
         "(:#{#searchProjectsDto.endTime} IS NULL OR p.startTime <= :#{#searchProjectsDto.endTime})")
     Page<Project> findProjectsByQuery(SearchProjectsDto searchProjectsDto, Pageable pageable);
-  
+    @Query("select p.id from Project p where" +
+            "(:#{#searchProjectsDto.categoryTypes} IS NULL OR p.categoryType IN :#{#searchProjectsDto.categoryTypes}) AND " +
+            "(:#{#searchProjectsDto.status} IS NULL OR p.statusType IN :#{#searchProjectsDto.status}) AND " +
+            "(:#{#searchProjectsDto.name} IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :#{#searchProjectsDto.name}, '%'))) AND " +
+            "(:#{#searchProjectsDto.countryIsoCodes} IS NULL OR p.countryIsoCode IN :#{#searchProjectsDto.countryIsoCodes}) AND " +
+            "(:#{#searchProjectsDto.startTime} IS NULL OR p.startTime >= :#{#searchProjectsDto.startTime}) AND " +
+            "(:#{#searchProjectsDto.endTime} IS NULL OR p.startTime <= :#{#searchProjectsDto.endTime})")
+    List<String> findProjectsIdByQuery(SearchProjectsDto searchProjectsDto);
+
     Page<InternalProjectDto> findByCountryIsoCode(String countryIsoCode, Pageable pageable);
 
     Page<Project> findByCharityId(String charityId, Pageable pageable);
