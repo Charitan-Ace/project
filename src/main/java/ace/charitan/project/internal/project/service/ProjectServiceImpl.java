@@ -195,7 +195,7 @@ class ProjectServiceImpl implements InternalProjectService {
 
   @Override
   public List<String> searchProjectsId(SearchProjectsDto searchProjectsDto) {
-    if (searchProjectsDto.getStatuses().get(0).getValue().equalsIgnoreCase("APPROVED")) {
+    if (searchProjectsDto.getStatus().getValue().equalsIgnoreCase("APPROVED")) {
       return projectRepository.findProjectsByQuery(searchProjectsDto);
     }
     return projectShardService.findAllFilteredCompletedProject(searchProjectsDto.getCategoryTypes(), searchProjectsDto.getCountryIsoCodes());

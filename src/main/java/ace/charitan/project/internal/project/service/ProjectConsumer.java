@@ -118,14 +118,11 @@ class ProjectConsumer {
         List<ProjectEnum.CategoryType> categoryTypes = categoryType == null
                 ? null
                 : Collections.singletonList(categoryType);
-        List<ProjectEnum.StatusType> statuses = statusType == null
-                ? null
-                : Collections.singletonList(statusType);
         List<String> countryIsoCodes = requestDto.isoCode().isEmpty()
                 ? null
                 : Collections.singletonList(requestDto.isoCode());
 
-        ProjectRequestBody.SearchProjectsDto searchProjectsDto = new ProjectRequestBody.SearchProjectsDto("", statuses, categoryTypes, countryIsoCodes, null, null);
+        ProjectRequestBody.SearchProjectsDto searchProjectsDto = new ProjectRequestBody.SearchProjectsDto("", statusType, categoryTypes, countryIsoCodes, null, null);
         GetProjectsByFilterResponseDto responseDto = new GetProjectsByFilterResponseDto(new ProjectIdListWrapperDto(projectService.searchProjectsId(searchProjectsDto)));
         System.out.println(Arrays.toString(responseDto.projectListWrapperDto().projectIdList().toArray()));
         return responseDto;
