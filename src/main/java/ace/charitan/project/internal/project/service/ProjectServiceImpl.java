@@ -142,7 +142,7 @@ class ProjectServiceImpl implements InternalProjectService {
 
     logger.info("[GetProjectById] From DB with <3: {}", projectId);
 
-    return toProjectInternalDto(projectDto);
+    return internalProjectDtoImpl;
   }
 
   @Override
