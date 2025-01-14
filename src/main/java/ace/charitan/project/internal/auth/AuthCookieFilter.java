@@ -27,16 +27,6 @@ public class AuthCookieFilter extends OncePerRequestFilter {
     @Autowired
     private JwtService jwtService;
 
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getRequestURI();
-        return path.contains("/ws/") ||
-               path.contains("/websocket") ||
-               path.contains("/info") ||
-               path.contains("/xhr_streaming") ||
-               path.contains("/xhr_send");
-    }
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws java.io.IOException, jakarta.servlet.ServletException {
