@@ -46,7 +46,7 @@ VALUES -- Global Crisis Charity Projects
            'COMPLETED',
            'HUMANITARIAN',
            'IL',
-           'charity1'
+           'e69accdd-4121-4172-a072-bf181a21cbfd'
        ),
        (
            'a5fc3b19-cb3d-461a-87db-c2ef8111bab1',
@@ -58,7 +58,7 @@ VALUES -- Global Crisis Charity Projects
            'COMPLETED',
            'EDUCATION',
            'UA',
-           'charity2'
+           '9b75c19d-f70d-4c6d-b10b-3d517bbac1c8'
        ),
        (
            'f3fd724b-bc67-480e-a6f1-58ae9f1f2998',
@@ -70,5 +70,5 @@ VALUES -- Global Crisis Charity Projects
            'COMPLETED',
            'FOOD',
            'ZA',
-           'charity3'
+           '6f9619ff-8b86-d011-b42d-00cf4fc964ff'
        );

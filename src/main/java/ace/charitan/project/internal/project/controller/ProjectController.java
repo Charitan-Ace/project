@@ -109,7 +109,7 @@ class ProjectController {
         return new ResponseEntity<>(projectDto, HttpStatus.OK);
     }
 
-    @GetMapping("/my-projects/status/{statusType}")
+    @PostMapping("/my-projects/status/{statusType}")
     ResponseEntity<Page<InternalProjectDtoImpl>> getMyProjects(
             @PathVariable String statusType,
             @RequestParam(defaultValue = "0") int page,

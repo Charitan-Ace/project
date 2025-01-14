@@ -44,13 +44,17 @@ class ProjectServiceImpl implements InternalProjectService {
   @Value("${data.charitan-id}")
   private String DEFAULT_CHARITAN_ID;
 
-  @Autowired private ProjectRepository projectRepository;
+  @Autowired
+  private ProjectRepository projectRepository;
 
-  @Autowired private ProjectShardService projectShardService;
+  @Autowired
+  private ProjectShardService projectShardService;
 
-  @Autowired private ProjectProducerService projectProducerService;
+  @Autowired
+  private ProjectProducerService projectProducerService;
 
-  @Autowired private ProjectRedisService projectRedisService;
+  @Autowired
+  private ProjectRedisService projectRedisService;
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -165,21 +169,20 @@ class ProjectServiceImpl implements InternalProjectService {
   private InternalProjectDtoImpl toProjectInternalDto(Project project) {
     List<String> projectIdList = Arrays.asList(project.getId().toString());
 
-    DonationsDto getDonationsByProjectIdDto =
-        projectProducerService.sendAndReceive(
-            new GetDonationsByProjectIdDto(project.getId().toString()));
+    DonationsDto getDonationsByProjectIdDto = projectProducerService.sendAndReceive(
+        new GetDonationsByProjectIdDto(project.getId().toString()));
 
     InternalProjectDtoImpl internalProjectDto = project.toInternalProjectDtoImpl(0D);
 
     try {
       // TODO: Add videos and images query
-      GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto =
-              projectProducerService.sendAndReceive(new GetMediaByProjectIdRequestDto(projectIdList));
+      GetMediaByProjectIdResponseDto getMediaByProjectIdResponseDto = projectProducerService
+          .sendAndReceive(new GetMediaByProjectIdRequestDto(projectIdList));
 
       // Add media to project
       addMediaListToProject(
-              internalProjectDto,
-              getMediaByProjectIdResponseDto.getMediaListDtoList().getFirst().getMediaDtoList());
+          internalProjectDto,
+          getMediaByProjectIdResponseDto.getMediaListDtoList().getFirst().getMediaDtoList());
     } catch (Exception e) {
       logger.error("Error getting media for projects #{}", projectIdList, e);
     }
@@ -195,8 +198,7 @@ class ProjectServiceImpl implements InternalProjectService {
   public InternalProjectDto updateProjectDetails(
       String projectId, UpdateProjectDto updateProjectDto) {
     // If project not found
-    Optional<Project> existedOptionalProject =
-        projectRepository.findById(UUID.fromString(projectId));
+    Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
 
     if (existedOptionalProject.isEmpty()) {
       throw new NotFoundProjectException();
@@ -227,8 +229,7 @@ class ProjectServiceImpl implements InternalProjectService {
   @Transactional
   public InternalProjectDto approveProject(String projectId) {
     // If project not found
-    Optional<Project> existedOptionalProject =
-        projectRepository.findById(UUID.fromString(projectId));
+    Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
 
     if (existedOptionalProject.isEmpty()) {
       throw new NotFoundProjectException();
@@ -258,8 +259,7 @@ class ProjectServiceImpl implements InternalProjectService {
   @Transactional
   public InternalProjectDto haltProject(String projectId) {
     // If project not found
-    Optional<Project> existedOptionalProject =
-        projectRepository.findById(UUID.fromString(projectId));
+    Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
 
     if (existedOptionalProject.isEmpty()) {
       throw new NotFoundProjectException();
@@ -289,8 +289,7 @@ class ProjectServiceImpl implements InternalProjectService {
   @Transactional
   public InternalProjectDto resumeProject(String projectId) {
     // If project not found
-    Optional<Project> existedOptionalProject =
-        projectRepository.findById(UUID.fromString(projectId));
+    Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
 
     if (existedOptionalProject.isEmpty()) {
       throw new NotFoundProjectException();
@@ -349,8 +348,7 @@ class ProjectServiceImpl implements InternalProjectService {
 
     try {
 
-      boolean result =
-          projectShardService.moveProjectFromProjectShardToProjectDeletedShard(projectId);
+      boolean result = projectShardService.moveProjectFromProjectShardToProjectDeletedShard(projectId);
       if (result) {
         System.out.println("ok");
       }
@@ -387,8 +385,7 @@ class ProjectServiceImpl implements InternalProjectService {
 
     try {
 
-      boolean result =
-          projectShardService.moveProjectFromProjectShardToProjectCompletedShard(projectId);
+      boolean result = projectShardService.moveProjectFromProjectShardToProjectCompletedShard(projectId);
       if (result) {
         System.out.println("ok");
       }
@@ -410,13 +407,11 @@ class ProjectServiceImpl implements InternalProjectService {
 
     List<Project> projects = projectRepository.findAllByCharityId(charitanId);
 
-    List<Project> otherShardProjects =
-        projectShardService.findAllByCharitanId(shardList, charitanId);
+    List<Project> otherShardProjects = projectShardService.findAllByCharitanId(shardList, charitanId);
 
-    List<ExternalProjectDto> externalProjectDtoList =
-        Stream.concat(projects.stream(), otherShardProjects.stream())
-            .map(Project::toExternalProjectDto)
-            .toList();
+    List<ExternalProjectDto> externalProjectDtoList = Stream.concat(projects.stream(), otherShardProjects.stream())
+        .map(Project::toExternalProjectDto)
+        .toList();
 
     return new GetProjectByCharityIdResponseDto(externalProjectDtoList);
   }
@@ -425,13 +420,11 @@ class ProjectServiceImpl implements InternalProjectService {
   public void handleUpdateProjectMedia(
       UpdateProjectMediaDto.UpdateProjectMediaRequestDto requestDto) {
     // Get from cache redis
-    InternalProjectDtoImpl internalProjectDto =
-        projectRedisService.findOneById(requestDto.getProjectId());
+    InternalProjectDtoImpl internalProjectDto = projectRedisService.findOneById(requestDto.getProjectId());
 
     if (Objects.isNull(internalProjectDto)) {
       // Query from db again
-      Optional<Project> optionalProject =
-          projectRepository.findById(UUID.fromString(requestDto.getProjectId()));
+      Optional<Project> optionalProject = projectRepository.findById(UUID.fromString(requestDto.getProjectId()));
       if (optionalProject.isEmpty()) {
         return;
       }
@@ -478,14 +471,12 @@ class ProjectServiceImpl implements InternalProjectService {
 
       if (statusType != StatusType.DELETED && statusType != StatusType.COMPLETED) {
         // Search in main shard
-        projectDtoPage =
-            projectRepository.findByCharityId(userId, pageable).map((this::toProjectInternalDto));
+        projectDtoPage = projectRepository.findByCharityId(userId, pageable).map((this::toProjectInternalDto));
       } else {
         // Search in other shards
-        projectDtoPage =
-            projectShardService
-                .findByCharityId(userId, statusType, pageable)
-                .map(this::toProjectInternalDto);
+        projectDtoPage = projectShardService
+            .findByCharityId(userId, statusType, pageable)
+            .map(this::toProjectInternalDto);
       }
 
       return projectDtoPage;
@@ -494,5 +485,6 @@ class ProjectServiceImpl implements InternalProjectService {
     // Add donor later
 
     return new PageImpl<>(new ArrayList<>(), pageable, 0);
+
   }
 }
