@@ -46,7 +46,7 @@ class ProjectProducerService {
       RequestReplyFuture<String, Object, Object> replyFuture = replyingKafkaTemplate.sendAndReceive(record);
       // SendResult<String, Object> sendResult = replyFuture.getSendFuture().get(10,
       // TimeUnit.SECONDS);
-      ConsumerRecord<String, Object> consumerRecord = replyFuture.get(10, TimeUnit.SECONDS);
+      ConsumerRecord<String, Object> consumerRecord = replyFuture.get(20, TimeUnit.SECONDS);
       return consumerRecord.value();
     } catch (Exception exception) {
       exception.printStackTrace();
