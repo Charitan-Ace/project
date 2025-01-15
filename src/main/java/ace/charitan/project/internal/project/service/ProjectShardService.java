@@ -65,8 +65,7 @@ class ProjectShardService {
     RowMapper<Project> rowMapper = new ProjectRowMapper();
 
     // Try completed projects first
-    Optional<Project> completedProject =
-        queryForOptional(projectCompletedJdbcTemplate, SQL, rowMapper, projectId);
+    Optional<Project> completedProject = queryForOptional(projectCompletedJdbcTemplate, SQL, rowMapper, projectId);
 
     // If not found in completed, try deleted projects
     return completedProject.isPresent()
@@ -83,8 +82,7 @@ class ProjectShardService {
     if (searchProjectsDto.getCategoryTypes() != null
         && !searchProjectsDto.getCategoryTypes().isEmpty()) {
 
-      String inClause =
-          String.join(",", Collections.nCopies(searchProjectsDto.getCategoryTypes().size(), "?"));
+      String inClause = String.join(",", Collections.nCopies(searchProjectsDto.getCategoryTypes().size(), "?"));
       rowCountSql.append(String.format(" AND category_type IN (%s)", inClause));
       sqlQuery.append(String.format(" AND category_type IN (%s)", inClause));
       params.addAll(searchProjectsDto.getCategoryTypes().stream().map(Enum::toString).toList());
@@ -93,8 +91,7 @@ class ProjectShardService {
     if (searchProjectsDto.getCountryIsoCodes() != null
         && !searchProjectsDto.getCountryIsoCodes().isEmpty()) {
 
-      String inClause =
-          String.join(",", Collections.nCopies(searchProjectsDto.getCountryIsoCodes().size(), "?"));
+      String inClause = String.join(",", Collections.nCopies(searchProjectsDto.getCountryIsoCodes().size(), "?"));
       rowCountSql.append(String.format(" AND country_iso_code IN (%s)", inClause));
       sqlQuery.append(String.format(" AND country_iso_code IN (%s)", inClause));
       params.addAll(searchProjectsDto.getCountryIsoCodes());
@@ -109,8 +106,7 @@ class ProjectShardService {
 
   @Transactional
   Page<Project> findAllByQuery(SearchProjectsDto searchProjectsDto, Pageable pageable) {
-    StringBuilder rowCountSql =
-        new StringBuilder("SELECT count(1) AS row_count FROM project WHERE 1=1");
+    StringBuilder rowCountSql = new StringBuilder("SELECT count(1) AS row_count FROM project WHERE 1=1");
     StringBuilder sqlQuery = new StringBuilder("SELECT * FROM project WHERE 1=1");
     List<Object> params = new ArrayList<>();
 
@@ -125,35 +121,52 @@ class ProjectShardService {
         .append(pageable.getOffset());
 
     // Choose template based on status
-    JdbcTemplate jdbcTemplate =
-        searchProjectsDto.getStatus() == StatusType.COMPLETED
-            ? projectCompletedJdbcTemplate
-            : projectDeletedJdbcTemplate;
+    JdbcTemplate jdbcTemplate = searchProjectsDto.getStatus() == StatusType.COMPLETED
+        ? projectCompletedJdbcTemplate
+        : projectDeletedJdbcTemplate;
 
     System.out.println(params);
     // Execute count query
-    int total =
-        jdbcTemplate.queryForObject(
-            rowCountSql.toString(), params.toArray(), (rs, rowNum) -> rs.getInt(1));
+    int total = jdbcTemplate.queryForObject(
+        rowCountSql.toString(), params.toArray(), (rs, rowNum) -> rs.getInt(1));
 
     System.out.println(total);
 
     // Execute main query
-    List<Project> projects =
-        jdbcTemplate.query(sqlQuery.toString(), params.toArray(), new ProjectRowMapper());
+    List<Project> projects = jdbcTemplate.query(sqlQuery.toString(), params.toArray(), new ProjectRowMapper());
 
     return new PageImpl<>(projects, pageable, total);
   }
 
+  @Transactional
   Page<Project> findByCharityId(String charityId, StatusType statusType, Pageable pageable) {
     List<Project> projectList = List.of();
-    JdbcTemplate jdbcTemplate = (statusType == StatusType.DELETED) ? projectDeletedJdbcTemplate : projectCompletedJdbcTemplate;
+    JdbcTemplate jdbcTemplate = (statusType == StatusType.DELETED) ? projectDeletedJdbcTemplate
+        : projectCompletedJdbcTemplate;
 
     String sql = "SELECT * FROM project WHERE charityId = ? LIMIT ? OFFSET ?";
     String countSql = "COUNT * FROM project WHERE charityId = ?";
 
-    projectList = jdbcTemplate.query(sql, new ProjectRowMapper(), charityId, pageable.getPageSize(), pageable.getPageNumber());
+    projectList = jdbcTemplate.query(sql, new ProjectRowMapper(), charityId, pageable.getPageSize(),
+        pageable.getPageNumber());
     Integer total = jdbcTemplate.queryForObject(countSql, Integer.class, charityId);
+
+    return new PageImpl<>(projectList, pageable, total);
+  }
+
+  @Transactional
+  Page<Project> findByProjectIdIn(List<String> projectIdList, StatusType statusType, Pageable pageable) {
+
+    List<Project> projectList = List.of();
+    JdbcTemplate jdbcTemplate = (statusType == StatusType.DELETED) ? projectDeletedJdbcTemplate
+        : projectCompletedJdbcTemplate;
+
+    String sql = "SELECT * FROM project WHERE id IN CAST(? AS UUID) LIMIT ? OFFSET ?";
+    String countSql = "COUNT * FROM project WHERE id IN CAST(? AS UUID)";
+
+    projectList = jdbcTemplate.query(sql, new ProjectRowMapper(), projectIdList, pageable.getPageSize(),
+        pageable.getPageNumber());
+    Integer total = jdbcTemplate.queryForObject(countSql, Integer.class, projectIdList);
 
     return new PageImpl<>(projectList, pageable, total);
   }
@@ -164,15 +177,13 @@ class ProjectShardService {
     List<Project> completedProjectList = new ArrayList<>();
 
     if (shardList.contains("PROJECT_DELETED")) {
-      deletedProjectList =
-          projectDeletedJdbcTemplate.query(
-              "SELECT * FROM project where charity_id = ?", new ProjectRowMapper(), charitanId);
+      deletedProjectList = projectDeletedJdbcTemplate.query(
+          "SELECT * FROM project where charity_id = ?", new ProjectRowMapper(), charitanId);
     }
 
     if (shardList.contains("PROJECT_COMPLETED")) {
-      completedProjectList =
-          projectCompletedJdbcTemplate.query(
-              "SELECT * FROM project where charity_id = ?", new ProjectRowMapper(), charitanId);
+      completedProjectList = projectCompletedJdbcTemplate.query(
+          "SELECT * FROM project where charity_id = ?", new ProjectRowMapper(), charitanId);
     }
 
     return Stream.concat(deletedProjectList.stream(), completedProjectList.stream()).toList();
@@ -180,8 +191,8 @@ class ProjectShardService {
 
   @Transactional
   boolean moveProjectFromProjectShardToProjectDeletedShard(String id) {
-    Map<String, Object> project =
-        projectJdbcTemplate.queryForMap("SELECT * FROM project where id = CAST(? AS UUID)", id);
+    Map<String, Object> project = projectJdbcTemplate.queryForMap("SELECT * FROM project where id = CAST(? AS UUID)",
+        id);
 
     if (Objects.isNull(project)) {
       throw new NotFoundProjectException();
@@ -211,8 +222,8 @@ class ProjectShardService {
 
   @Transactional
   public boolean moveProjectFromProjectShardToProjectCompletedShard(String id) {
-    Map<String, Object> project =
-        projectJdbcTemplate.queryForMap("SELECT * FROM project where id = CAST(? AS UUID)", id);
+    Map<String, Object> project = projectJdbcTemplate.queryForMap("SELECT * FROM project where id = CAST(? AS UUID)",
+        id);
 
     if (Objects.isNull(project)) {
       throw new NotFoundProjectException();
@@ -240,46 +251,44 @@ class ProjectShardService {
     return true;
   }
 
-    List<String> findAllFilteredCompletedProject(List<ProjectEnum.CategoryType> categoryType, List<String> isoCode) {
+  List<String> findAllFilteredCompletedProject(List<ProjectEnum.CategoryType> categoryType, List<String> isoCode) {
 
-        System.out.println("Start");
-        // Prepare the base query
-        StringBuilder query = new StringBuilder("SELECT * FROM project WHERE");
-        List<Object> params = new ArrayList<>();
+    System.out.println("Start");
+    // Prepare the base query
+    StringBuilder query = new StringBuilder("SELECT * FROM project WHERE");
+    List<Object> params = new ArrayList<>();
 
-        // Add categoryType filter if not null or empty
-        if (categoryType != null && !categoryType.isEmpty()) {
-            query.append(" category_type IN (");
-            query.append(categoryType.stream().map(ct -> "?").collect(Collectors.joining(",")));
-            params.addAll(categoryType.stream().map(Enum::name).toList()); // Convert enums to their string names
-            query.append(") ");
-        }
-
-        // Add isoCode filter if not null or empty
-        if (isoCode != null && !isoCode.isEmpty()) {
-            if (!params.isEmpty()) {
-                query.append("AND");
-            }
-            query.append(" country_iso_code IN (");
-            query.append(isoCode.stream().map(code -> "?").collect(Collectors.joining(",")));
-            query.append(")");
-            params.addAll(isoCode);
-        }
-
-        System.out.println("Final Query: " + query);
-        System.out.println("Parameters: " + params);
-
-        // Execute the query
-        List<Project> completedProjectList = projectCompletedJdbcTemplate.query(
-                query.toString(),
-                new ProjectRowMapper(),
-                params.toArray()
-        );
-
-        // Map the list of projects to a list of project IDs
-        return completedProjectList.stream()
-                .map(project -> project.getId().toString()) // Convert UUID to String
-                .collect(Collectors.toList());
+    // Add categoryType filter if not null or empty
+    if (categoryType != null && !categoryType.isEmpty()) {
+      query.append(" category_type IN (");
+      query.append(categoryType.stream().map(ct -> "?").collect(Collectors.joining(",")));
+      params.addAll(categoryType.stream().map(Enum::name).toList()); // Convert enums to their string names
+      query.append(") ");
     }
-}
 
+    // Add isoCode filter if not null or empty
+    if (isoCode != null && !isoCode.isEmpty()) {
+      if (!params.isEmpty()) {
+        query.append("AND");
+      }
+      query.append(" country_iso_code IN (");
+      query.append(isoCode.stream().map(code -> "?").collect(Collectors.joining(",")));
+      query.append(")");
+      params.addAll(isoCode);
+    }
+
+    System.out.println("Final Query: " + query);
+    System.out.println("Parameters: " + params);
+
+    // Execute the query
+    List<Project> completedProjectList = projectCompletedJdbcTemplate.query(
+        query.toString(),
+        new ProjectRowMapper(),
+        params.toArray());
+
+    // Map the list of projects to a list of project IDs
+    return completedProjectList.stream()
+        .map(project -> project.getId().toString()) // Convert UUID to String
+        .collect(Collectors.toList());
+  }
+}

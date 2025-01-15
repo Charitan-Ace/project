@@ -3,6 +3,8 @@ package ace.charitan.project.internal.project.service;
 import ace.charitan.common.dto.donation.DonationDto;
 import ace.charitan.common.dto.donation.DonationsDto;
 import ace.charitan.common.dto.donation.GetDonationsByProjectIdDto;
+import ace.charitan.common.dto.donation.GetProjectIdsByDonorIdRequestDto;
+import ace.charitan.common.dto.donation.GetProjectIdsByDonorIdResponseDto;
 import ace.charitan.common.dto.media.ExternalMediaDto;
 import ace.charitan.common.dto.media.GetMediaByProjectIdRequestDto;
 import ace.charitan.common.dto.media.GetMediaByProjectIdResponseDto;
@@ -478,13 +480,13 @@ class ProjectServiceImpl implements InternalProjectService {
     // return existingProjectDtoList;
     // }
 
-    List<Project> projectList = new ArrayList<>();
     Pageable pageable = PageRequest.of(page, limit);
     Page<InternalProjectDtoImpl> projectDtoPage;
 
+    StatusType statusType = StatusType.fromValue(status);
+
     // If role is charity
     if (role.equals("CHARITY")) {
-      StatusType statusType = StatusType.fromValue(status);
 
       if (statusType != StatusType.DELETED && statusType != StatusType.COMPLETED) {
         // Search in main shard
@@ -500,8 +502,26 @@ class ProjectServiceImpl implements InternalProjectService {
       return projectDtoPage;
     }
 
-    // Add donor
+    // For donor
+    GetProjectIdsByDonorIdResponseDto getProjectIdsByDonorIdResponseDto = projectProducerService
+        .sendAndReceive(new GetProjectIdsByDonorIdRequestDto(userId));
 
-    return new PageImpl<>(new ArrayList<>(), pageable, 0);
+    List<String> projectIdList = getProjectIdsByDonorIdResponseDto.getWrapper().getProjectIds();
+    System.out.println("List of projectId" + projectIdList);
+
+    // search in list and match with status
+    if (statusType != StatusType.DELETED && statusType != StatusType.COMPLETED) {
+      // Search in main shard
+      projectDtoPage = projectRepository.findByStatusTypeAndIdIn(statusType,
+          projectIdList.stream().map(id -> UUID.fromString(id)).toList(), pageable).map(this::toProjectInternalDto);
+    } else {
+
+      // // Search in other shards
+      projectDtoPage = projectShardService
+          .findByProjectIdIn(projectIdList, statusType, pageable)
+          .map(this::toProjectInternalDto);
+    }
+
+    return projectDtoPage;
   }
 }
