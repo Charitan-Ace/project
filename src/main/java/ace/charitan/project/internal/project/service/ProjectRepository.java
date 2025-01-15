@@ -35,6 +35,8 @@ interface ProjectRepository extends JpaRepository<Project, UUID> {
 
     Page<InternalProjectDto> findByCountryIsoCode(String countryIsoCode, Pageable pageable);
 
+    Page<Project> findByStatusTypeAndCharityId(ProjectEnum.StatusType statusType, String charityId, Pageable pageable);
+
     Page<Project> findByCharityId(String charityId, Pageable pageable);
 
     List<Project> findAllByCharityId(String charitanId);
