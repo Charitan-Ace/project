@@ -14,7 +14,7 @@
 
     <groupId>ace.charitan</groupId>
     <artifactId>project</artifactId>
-    <version>0.0.83-SNAPSHOT</version>
+    <version>0.0.87-SNAPSHOT</version>
     <name>project</name>
     <description>project</description>
     <packaging>jar</packaging>
@@ -114,7 +114,7 @@
         <dependency>
             <groupId>ace.charitan</groupId>
             <artifactId>common</artifactId>
-            <version>0.0.84-SNAPSHOT</version>
+            <version>0.0.89-SNAPSHOT</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api -->

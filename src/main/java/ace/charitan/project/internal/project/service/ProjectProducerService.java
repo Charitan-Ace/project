@@ -4,6 +4,8 @@ import ace.charitan.common.dto.TestKafkaMessageDto;
 import ace.charitan.common.dto.donation.DonationDto;
 import ace.charitan.common.dto.donation.DonationsDto;
 import ace.charitan.common.dto.donation.GetDonationsByProjectIdDto;
+import ace.charitan.common.dto.donation.GetProjectIdsByDonorIdRequestDto;
+import ace.charitan.common.dto.donation.GetProjectIdsByDonorIdResponseDto;
 import ace.charitan.common.dto.media.GetMediaByProjectIdRequestDto;
 import ace.charitan.common.dto.media.GetMediaByProjectIdResponseDto;
 import ace.charitan.common.dto.subscription.NewProjectSubscriptionDto.NewProjectSubscriptionRequestDto;
@@ -44,7 +46,7 @@ class ProjectProducerService {
       RequestReplyFuture<String, Object, Object> replyFuture = replyingKafkaTemplate.sendAndReceive(record);
       // SendResult<String, Object> sendResult = replyFuture.getSendFuture().get(10,
       // TimeUnit.SECONDS);
-      ConsumerRecord<String, Object> consumerRecord = replyFuture.get(10, TimeUnit.SECONDS);
+      ConsumerRecord<String, Object> consumerRecord = replyFuture.get(20, TimeUnit.SECONDS);
       return consumerRecord.value();
     } catch (Exception exception) {
       exception.printStackTrace();
@@ -68,14 +70,23 @@ class ProjectProducerService {
   }
 
   DonationsDto sendAndReceive(GetDonationsByProjectIdDto data) {
-    DonationsDto res =
-        (DonationsDto)
-            sendAndReceive(ProjectProducerTopic.PROJECT_DONATION_GET_DONATION_BY_PROJECT_ID, data.id());
+    DonationsDto res = (DonationsDto) sendAndReceive(ProjectProducerTopic.PROJECT_DONATION_GET_DONATION_BY_PROJECT_ID,
+        data.id());
     System.out.println(res);
     return res;
+  }
+
+  GetProjectIdsByDonorIdResponseDto sendAndReceive(GetProjectIdsByDonorIdRequestDto dto) {
+    GetProjectIdsByDonorIdResponseDto res = (GetProjectIdsByDonorIdResponseDto) sendAndReceive(
+        ProjectProducerTopic.PROJECT_DONATION_GET_PROJECTS_BY_DONOR_ID,
+        dto);
+    System.out.println(res);
+    return res;
+
   }
 
   void send(NewProjectSubscriptionRequestDto data) {
     send(ProjectProducerTopic.PROJECT_SUBSCRIPTION_NEW_PROJECT, data);
   }
+
 }
