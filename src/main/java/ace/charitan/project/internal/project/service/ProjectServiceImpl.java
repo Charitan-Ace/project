@@ -77,8 +77,10 @@ class ProjectServiceImpl implements InternalProjectService {
   public InternalProjectDto createProject(CreateProjectDto createProjectDto) {
 
     AuthModel authModel = AuthUtils.getUserDetails();
+    log.info(authModel);
 
     String charityId = !Objects.isNull(authModel) ? authModel.getUsername() : DEFAULT_CHARITAN_ID;
+    log.info(charityId);
 
     Project project = new Project(createProjectDto, charityId);
     validateProjectDetails(project);
@@ -497,7 +499,7 @@ class ProjectServiceImpl implements InternalProjectService {
       if (statusType != StatusType.DELETED && statusType != StatusType.COMPLETED) {
         // Search in main shard
         projectDtoPage =
-            projectRepository.findByCharityId(userId, pageable).map((this::toProjectInternalDto));
+            projectRepository.findByStatusTypeAndCharityId(statusType, userId, pageable).map((this::toProjectInternalDto));
       } else {
         // Search in other shards
         projectDtoPage =
@@ -509,7 +511,8 @@ class ProjectServiceImpl implements InternalProjectService {
       return projectDtoPage;
     }
 
-    // Add donor later
+    // Add donor
+    
 
     return new PageImpl<>(new ArrayList<>(), pageable, 0);
   }
