@@ -79,7 +79,6 @@ class ProjectServiceImpl implements InternalProjectService {
   }
 
   @Override
-  @Transactional
   public InternalProjectDto createProject(CreateProjectDto createProjectDto) {
 
     AuthModel authModel = AuthUtils.getUserDetails();
@@ -111,7 +110,6 @@ class ProjectServiceImpl implements InternalProjectService {
   }
 
   @Override
-  @Transactional
   public InternalProjectDto getProjectById(String projectId) {
 
     // Check existed in redis first
@@ -213,7 +211,6 @@ class ProjectServiceImpl implements InternalProjectService {
   }
 
   @Override
-  @Transactional
   public InternalProjectDto updateProjectDetails(
       String projectId, UpdateProjectDto updateProjectDto) {
     // If project not found
@@ -245,7 +242,6 @@ class ProjectServiceImpl implements InternalProjectService {
   }
 
   @Override
-  @Transactional
   public InternalProjectDto approveProject(String projectId) {
     // If project not found
     Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
@@ -275,7 +271,6 @@ class ProjectServiceImpl implements InternalProjectService {
   }
 
   @Override
-  @Transactional
   public InternalProjectDto haltProject(String projectId) {
     // If project not found
     Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
@@ -305,7 +300,6 @@ class ProjectServiceImpl implements InternalProjectService {
   }
 
   @Override
-  @Transactional
   public InternalProjectDto resumeProject(String projectId) {
     // If project not found
     Optional<Project> existedOptionalProject = projectRepository.findById(UUID.fromString(projectId));
@@ -335,7 +329,6 @@ class ProjectServiceImpl implements InternalProjectService {
   }
 
   @Override
-  @Transactional
   public InternalProjectDto deleteProject(String projectId) {
     // try {
 
@@ -379,7 +372,6 @@ class ProjectServiceImpl implements InternalProjectService {
   }
 
   @Override
-  @Transactional
   public InternalProjectDto completeProject(String projectId) {
     // // If project not found
     // Optional<Project> existedOptionalProject =
